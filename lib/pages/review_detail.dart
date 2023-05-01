@@ -102,20 +102,69 @@ class ReviewDetail extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(4, 15, 0, 0),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                review.review,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 15,
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(4, 15, 0, 3),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: SingleChildScrollView(
+                                  child: Text(
+                                    review.review,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 35,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.star_border_rounded,
+                                    size: 25,
+                                  ),
+                                  tooltip: 'Show Snackbar',
+                                  onPressed: () {
+                                    print("sdasd");
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 40,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.messenger_outline,
+                                    size: 20,
+                                  ),
+                                  tooltip: 'Show Snackbar',
+                                  onPressed: () {
+                                    print("sdasd");
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: 40,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.share,
+                                    size: 20,
+                                  ),
+                                  tooltip: 'Show Snackbar',
+                                  onPressed: () {
+                                    print("sdasd");
+                                  },
+                                ),
+                              )
+                            ],
+                          )
                         ],
                       ),
                     ),

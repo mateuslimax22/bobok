@@ -1,4 +1,5 @@
 import 'package:bobok/pages/profile.dart';
+import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> {
     const Text("livros"),
     ListCard(),
     const Text("mundo"),
+    const Profile(),
   ];
 
   @override
@@ -33,13 +35,12 @@ class _HomeState extends State<Home> {
           actions: [
             IconButton(
               icon: const Icon(
-                Icons.account_box,
-                size: 40,
+                Icons.add,
+                size: 35,
               ),
               tooltip: 'Show Snackbar',
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Profile()));
+                Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
               },
             ),
           ],
@@ -51,17 +52,22 @@ class _HomeState extends State<Home> {
           height: 50,
           items: [
             Icon(
-              Icons.menu_book_rounded,
+              Icons.collections_bookmark,
               size: 25,
               color: Theme.of(context).colorScheme.primary,
             ),
             Icon(
-              Icons.add,
+              Icons.clear_all,
               size: 25,
               color: Theme.of(context).colorScheme.primary,
             ),
             Icon(
-              Icons.compare_arrows,
+              Icons.all_inclusive,
+              size: 25,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Icon(
+              Icons.person,
               size: 25,
               color: Theme.of(context).colorScheme.primary,
             ),

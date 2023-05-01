@@ -6,6 +6,7 @@ class Review {
   final String imageUrl;
   final String likes;
   final bool spoiler;
+  final String category;
 
   Review({
     required this.id,
@@ -15,5 +16,6 @@ class Review {
     required this.imageUrl,
     required this.likes,
     required this.spoiler,
+    required this.category,
   });
 }

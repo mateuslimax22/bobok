@@ -1,8 +1,10 @@
 import 'package:bobok/pages/home.dart';
+import 'package:bobok/pages/onboard_modal.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/menu/navegationBar.dart';
 
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:readmore/readmore.dart';
 
 class Onboarding extends StatefulWidget {
@@ -70,12 +72,11 @@ class _OnboardingState extends State<Onboarding> {
                             .copyWith(letterSpacing: 0.5)),
                   ),
                   ElevatedButtonTh(
-                    label: 'Entrar',
+                    label: 'Começar',
                     target: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Home()));
+                      return showBarModalBottomSheet(
+                          context: context,
+                          builder: (context) => const OnboardModal());
                     },
                     fontSize: 20,
                     fontWeight: FontWeight.w500,

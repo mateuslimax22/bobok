@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "432378802396",
+    "firebase_url": "https://bobok-cc168-default-rtdb.firebaseio.com",
+    "project_id": "bobok-cc168",
+    "storage_bucket": "bobok-cc168.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432378802396:android:c2c107b3fce36cca844419",
+        "android_client_info": {
+          "package_name": "com.example.bobok"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432378802396-m63cvasj9qi4vjeq9hodh2u9ifr7gji9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bobok",
+            "certificate_hash": "8d397e47ec28f1c9b40f839b0e346f23bb2c7335"
+          }
+        },
+        {
+          "client_id": "432378802396-970gbviiq2p6q0tovcpesstv0thp8bff.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8I3PO9oa44HB-lslzlu4npmoutlDWJng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432378802396-970gbviiq2p6q0tovcpesstv0thp8bff.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
