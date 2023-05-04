@@ -7,6 +7,7 @@ class Review {
   final String likes;
   final bool spoiler;
   final String category;
+  final List<String> genres;
 
   Review({
     required this.id,
@@ -17,5 +18,6 @@ class Review {
     required this.likes,
     required this.spoiler,
     required this.category,
+    required this.genres,
   });
 }

@@ -13,6 +13,7 @@ final dummyReviws = [
     likes: "102",
     spoiler: false,
     category: "livro",
+    genres: [],
   ),
   Review(
     id: "02",
@@ -25,6 +26,7 @@ final dummyReviws = [
     likes: "102",
     spoiler: true,
     category: "livro",
+    genres: [],
   ),
   Review(
     id: "03",
@@ -37,6 +39,7 @@ final dummyReviws = [
     likes: "102",
     spoiler: false,
     category: "livro",
+    genres: [],
   ),
   Review(
     id: "04",
@@ -49,5 +52,6 @@ final dummyReviws = [
     likes: "102",
     spoiler: false,
     category: "livro",
+    genres: [],
   ),
 ];

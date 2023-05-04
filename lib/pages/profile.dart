@@ -1,5 +1,9 @@
+import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mix/mix.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,6 +15,8 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
+
     return Scaffold(
         body: Column(
       children: [
@@ -23,15 +29,19 @@ class _ProfileState extends State<Profile> {
               width: 110,
               child: Stack(
                 children: [
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(
-                      Icons.account_box,
-                      size: 125,
+                  Container(
+                    padding: EdgeInsets.all(8), // Border width
+                    decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
-                    tooltip: 'Show Snackbar',
-                    onPressed: () {},
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      child: SizedBox.fromSize(
+                        size: Size.fromRadius(48), // Image radius
+                        child: Image.network(user.photoURL!, fit: BoxFit.cover),
+                      ),
+                    ),
                   ),
                   Positioned(
                       bottom: 0,
@@ -60,7 +70,7 @@ class _ProfileState extends State<Profile> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 10, 8),
                   child: Text(
-                    "Mateus",
+                    user.displayName!,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 25,
@@ -134,8 +144,16 @@ class _ProfileState extends State<Profile> {
                     ),
                   ],
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      final provider = Provider.of<GoogleSignInProvider>(
+                          context,
+                          listen: false);
+                      provider.logout();
+                    },
+                    child: const Text("LOGOUT"))
               ],
-            )
+            ),
           ],
         )
       ],
