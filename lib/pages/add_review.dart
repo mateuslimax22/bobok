@@ -16,6 +16,8 @@ class AddReview extends StatefulWidget {
 class _AddReviewState extends State<AddReview> {
   // Initial Selected Value
   String dropdownvalue = 'Livro';
+  String img =
+      'https://m.media-amazon.com/images/I/51TMmMNtZiL._SX331_BO1,204,203,200_.jpg';
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
@@ -62,7 +64,7 @@ class _AddReviewState extends State<AddReview> {
     });
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -96,34 +98,79 @@ class _AddReviewState extends State<AddReview> {
       isLoading = true;
     });
 
-    const baseUrl = 'https://bobok-cc168-default-rtdb.firebaseio.com';
-
-    Future AddReview = post(
-      Uri.parse('$baseUrl/Reviews.json'),
-      body: jsonEncode({
-        'id': Random().nextDouble().toString(),
-        'username': newReview.username,
-        'title': newReview.title,
-        'review': newReview.review,
-        'imageUrl': newReview.imageUrl,
-        'likes': newReview.likes,
-        'spoiler': newReview.spoiler,
-        'category': newReview.category,
-        'genres': newReview.genres,
-      }),
-    );
-
-    AddReview.then(
-      (response) {
-        //final id = jsonDecode(response.body)['name'];
+    try {
+      const baseUrl = 'https://bobok-cc168-default-rtdb.firebaseio.co';
+      var resp = await post(
+        Uri.parse('$baseUrl/Reviews.json'),
+        body: jsonEncode({
+          'id': Random().nextDouble().toString(),
+          'username': newReview.username,
+          'title': newReview.title,
+          'review': newReview.review,
+          'imageUrl': newReview.imageUrl,
+          'likes': newReview.likes,
+          'spoiler': newReview.spoiler,
+          'category': newReview.category,
+          'genres': newReview.genres,
+        }),
+      );
+      if (resp.statusCode != 200) {
+        showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: const Text("Ocorreu um erro!"),
+                  content: const Text("Não foi possivel salvar sua resenha ;("),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text("OK"))
+                  ],
+                ));
+        setState(() {
+          isLoading = false;
+        });
+      } else {
         setState(() {
           isLoading = false;
         });
         Navigator.of(context).pop();
-      },
-    );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-    print(newReview.review);
+  Future<void> _getImage() async {
+    try {
+      const baseUrl =
+          'https://serpapi.com/search.json?q=Apple&engine=google_images&ijn=0';
+      var resp = await get(
+        Uri.parse(baseUrl),
+      );
+      if (resp.statusCode != 200) {
+        showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: const Text("Ocorreu um erro!"),
+                  content: const Text("Não foi possivel salvar sua resenha ;("),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text("OK"))
+                  ],
+                ));
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        print(jsonDecode(resp.body)['images_results'][0]['thumbnail']);
+        setState(() {
+          img = jsonDecode(resp.body)['images_results'][0]['thumbnail'];
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -303,6 +350,45 @@ class _AddReviewState extends State<AddReview> {
                           ),
                         ],
                       ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.35),
+                                    spreadRadius: 1,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox.fromSize(
+                                  child: GestureDetector(
+                                    child: Image.network(img,
+                                        width: 100,
+                                        height: 150,
+                                        fit: BoxFit.cover),
+                                    onTap: () {},
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                   SizedBox(
@@ -325,6 +411,7 @@ class _AddReviewState extends State<AddReview> {
                                     : Theme.of(context).colorScheme.background,
                               ),
                               onPressed: () {
+                                _getImage();
                                 setState(() {
                                   if (genresSelect.contains(genres[index])) {
                                     genresSelect.remove(genres[index]);
