@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:bobok/models/review.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:web_scraper/web_scraper.dart';
 
 class AddReview extends StatefulWidget {
   const AddReview({super.key});
@@ -16,15 +18,16 @@ class AddReview extends StatefulWidget {
 class _AddReviewState extends State<AddReview> {
   // Initial Selected Value
   String dropdownvalue = 'Livro';
-  String img =
-      'https://m.media-amazon.com/images/I/51TMmMNtZiL._SX331_BO1,204,203,200_.jpg';
+  String img = 'https://color-hex.org/colors/5d3fd3.png';
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
 
+  bool spoiler = false;
   bool msgError = false;
   bool notValid = false;
   bool isLoading = false;
+  String titleFolder = '';
 
   List<String> genresSelect = [];
   FocusNode myFocusNodeTitle = new FocusNode();
@@ -86,10 +89,9 @@ class _AddReviewState extends State<AddReview> {
       username: user.displayName!,
       title: _formData["title"].toString(),
       review: _formData["review"].toString(),
-      imageUrl:
-          "https://m.media-amazon.com/images/I/41897yAI4LL._SY344_BO1,204,203,200_QL70_ML2_.jpg",
+      imageUrl: img.toString(),
       likes: "0",
-      spoiler: false,
+      spoiler: spoiler,
       category: _formData["category"].toString(),
       genres: genresSelect,
     );
@@ -99,7 +101,7 @@ class _AddReviewState extends State<AddReview> {
     });
 
     try {
-      const baseUrl = 'https://bobok-cc168-default-rtdb.firebaseio.co';
+      const baseUrl = 'https://bobok-cc168-default-rtdb.firebaseio.com';
       var resp = await post(
         Uri.parse('$baseUrl/Reviews.json'),
         body: jsonEncode({
@@ -141,35 +143,17 @@ class _AddReviewState extends State<AddReview> {
   }
 
   Future<void> _getImage() async {
-    try {
-      const baseUrl =
-          'https://serpapi.com/search.json?q=Apple&engine=google_images&ijn=0';
-      var resp = await get(
-        Uri.parse(baseUrl),
-      );
-      if (resp.statusCode != 200) {
-        showDialog<void>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text("Ocorreu um erro!"),
-                  content: const Text("Não foi possivel salvar sua resenha ;("),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text("OK"))
-                  ],
-                ));
-        setState(() {
-          isLoading = false;
-        });
-      } else {
-        print(jsonDecode(resp.body)['images_results'][0]['thumbnail']);
-        setState(() {
-          img = jsonDecode(resp.body)['images_results'][0]['thumbnail'];
-        });
-      }
-    } catch (e) {
-      print(e);
+    final webScraper = WebScraper('https://www.google.com.br/');
+    if (await webScraper.loadWebPage(
+        'search?q=$titleFolder+capa&tbm=isch&ved=2ahUKEwiA5-mJ5Oj-AhUOObkGHVTDA40Q2-cCegQIABAA&oq=harry+po&gs_lcp=CgNpbWcQARgBMgQIIxAnMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIHCAAQigUQQzIHCAAQigUQQzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzoKCAAQigUQsQMQQ1AAWLYCYKYQaABwAHgAgAGEAYgBhgOSAQMwLjOYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&sclient=img&ei=nIVaZICpC47y5OUP1IaP6Ag&authuser=0&bih=912&biw=1447&hl=pt-BR')) {
+      var tiktokProfilePictureURL = webScraper.getElement('img', ['src']);
+      var result = tiktokProfilePictureURL.map((item) {
+        return item;
+      }).toList();
+      print(result[1]["attributes"]["src"]);
+      setState(() {
+        img = (result[1]["attributes"]["src"]);
+      });
     }
   }
 
@@ -214,9 +198,12 @@ class _AddReviewState extends State<AddReview> {
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -230,7 +217,7 @@ class _AddReviewState extends State<AddReview> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            width: MediaQuery.of(context).size.width * 0.65,
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: PhysicalModel(
@@ -276,7 +263,7 @@ class _AddReviewState extends State<AddReview> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            width: MediaQuery.of(context).size.width * 0.65,
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: PhysicalModel(
@@ -309,6 +296,9 @@ class _AddReviewState extends State<AddReview> {
                                         horizontal: 8, vertical: 0),
                                   ),
                                   textInputAction: TextInputAction.next,
+                                  onChanged: (value) {
+                                    titleFolder = value;
+                                  },
                                   onSaved: (title) {
                                     _formData['title'] = title ?? '';
                                   },
@@ -323,6 +313,26 @@ class _AddReviewState extends State<AddReview> {
                                   },
                                   onTap: () {},
                                 ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.65,
+                            child: SwitchListTile(
+                              contentPadding:
+                                  const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              activeColor:
+                                  Theme.of(context).colorScheme.primary,
+                              title: const Text('Contém Spoiler?'),
+                              value: spoiler,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  spoiler = value;
+                                });
+                              },
+                              secondary: const Icon(
+                                Icons.warning_rounded,
+                                color: Colors.red,
                               ),
                             ),
                           ),
@@ -365,7 +375,7 @@ class _AddReviewState extends State<AddReview> {
                                   BoxShadow(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primary
+                                        .onPrimary
                                         .withOpacity(0.35),
                                     spreadRadius: 1,
                                     blurRadius: 4,
@@ -377,8 +387,10 @@ class _AddReviewState extends State<AddReview> {
                                 borderRadius: BorderRadius.circular(10),
                                 child: SizedBox.fromSize(
                                   child: GestureDetector(
-                                    child: Image.network(img,
-                                        width: 100,
+                                    child: Image?.network(img,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.27,
                                         height: 150,
                                         fit: BoxFit.cover),
                                     onTap: () {},

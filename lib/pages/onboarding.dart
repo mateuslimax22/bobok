@@ -1,6 +1,5 @@
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboard_modal.dart';
-import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

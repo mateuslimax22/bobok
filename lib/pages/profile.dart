@@ -1,8 +1,8 @@
+import 'package:bobok/data/dummy_data.dart';
+import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/google_sign_in.dart';
-import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mix/mix.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -16,6 +16,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    final List<Review> loadedReviewUser = dummyReviws;
 
     return Scaffold(
         body: Column(
@@ -151,10 +152,25 @@ class _ProfileState extends State<Profile> {
                           listen: false);
                       provider.logout();
                     },
-                    child: const Text("LOGOUT"))
+                    child: const Text("LOGOUT")),
               ],
             ),
           ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
+            width: MediaQuery.of(context).size.width,
+            child: GridView.builder(
+                itemCount: loadedReviewUser.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3 / 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10),
+                itemBuilder: (ctx, i) => Text(loadedReviewUser[i].title)),
+          ),
         )
       ],
     ));
