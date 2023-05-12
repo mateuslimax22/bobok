@@ -55,7 +55,7 @@ class _OnboardModal extends State<OnboardModal> {
             label: const Text("Continuar com o FaceBook"),
             icon: const FaIcon(
               FontAwesomeIcons.facebook,
-              color: const Color.fromARGB(255, 66, 134, 244),
+              color: Color.fromARGB(255, 66, 134, 244),
             ),
             style: ElevatedButton.styleFrom(
               minimumSize: Size(MediaQuery.of(context).size.width * 0.8, 50),

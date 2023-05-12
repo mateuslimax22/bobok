@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class NavegationBar extends StatelessWidget {
   const NavegationBar({Key? key}) : super(key: key);
@@ -28,9 +27,9 @@ class NavegationBar extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                child: Icon(Icons.add, size: 30),
                 elevation: 0.1,
                 foregroundColor: Theme.of(context).colorScheme.background,
+                child: const Icon(Icons.add, size: 30),
               ),
             ),
           ),
@@ -197,9 +196,9 @@ class BNBCustomPainter extends CustomPainter {
     path_0.close();
     canvas.drawShadow(path_0, Colors.black, 10, true);
 
-    Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    paint_0_fill.color = color;
-    canvas.drawPath(path_0, paint_0_fill);
+    Paint paint0Fill = Paint()..style = PaintingStyle.fill;
+    paint0Fill.color = color;
+    canvas.drawPath(path_0, paint0Fill);
   }
 
   @override

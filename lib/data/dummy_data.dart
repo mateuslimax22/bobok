@@ -1,5 +1,4 @@
 import 'package:bobok/models/review.dart';
-import 'package:flutter/foundation.dart';
 
 final dummyReviws = [
   Review(

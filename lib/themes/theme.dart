@@ -19,8 +19,9 @@ ThemeData globalTheme = ThemeData(
       primaryContainer: Color.fromARGB(255, 181, 251, 187),
       secondaryContainer: Color.fromARGB(255, 255, 144, 124)),
   textTheme: const TextTheme(
-      headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-      bodyText2:
+      displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+      displayMedium: TextStyle(fontSize: 30.0, color: Colors.black),
+      bodyMedium:
           TextStyle(fontSize: 14.0, color: Color.fromARGB(255, 93, 63, 211)),
-      headline6: TextStyle(fontSize: 40.0, color: Colors.black)),
+      titleLarge: TextStyle(fontSize: 40.0, color: Colors.black)),
 );

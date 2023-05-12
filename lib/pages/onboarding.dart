@@ -14,6 +14,7 @@ class Onboarding extends StatefulWidget {
 }
 
 class _OnboardingState extends State<Onboarding> {
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -26,7 +27,7 @@ class _OnboardingState extends State<Onboarding> {
             child: Text('Algo deu errado ;( '),
           );
         } else if (snapshot.hasData) {
-          return Home();
+          return const Home();
         } else {
           return Container(
             height: double.infinity,
@@ -53,7 +54,7 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                 ),
                 Container(
-                  height: 280,
+                  height: 400,
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Theme.of(context)
@@ -62,41 +63,44 @@ class _OnboardingState extends State<Onboarding> {
                           .withOpacity(0.8),
                       borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(20))),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text('Bem vindo ao \n BoBok.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(letterSpacing: 0.5)),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Text(
-                              'Navegue e se divirta com a melhor experiência \n em leitura.',
+                  child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Bem vindo ao BoBok',
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText2!
+                                  .displayMedium!
                                   .copyWith(letterSpacing: 0.5)),
-                        ),
-                        ElevatedButtonTh(
-                          label: 'Começar',
-                          target: () {
-                            return showBarModalBottomSheet(
-                                context: context,
-                                builder: (context) => const OnboardModal());
-                          },
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          width: 260,
-                          height: 45,
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                                'Navegue e se divirta com a melhor experiência \n em leitura.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(letterSpacing: 0.5)),
+                          ),
+                          ElevatedButtonTh(
+                            label: 'Começar',
+                            target: () {
+                              return showBarModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => const OnboardModal());
+                            },
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            width: 260,
+                            height: 45,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

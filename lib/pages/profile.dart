@@ -31,7 +31,7 @@ class _ProfileState extends State<Profile> {
               child: Stack(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(8), // Border width
+                    padding: const EdgeInsets.all(8), // Border width
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -39,7 +39,7 @@ class _ProfileState extends State<Profile> {
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: SizedBox.fromSize(
-                        size: Size.fromRadius(48), // Image radius
+                        size: const Size.fromRadius(48), // Image radius
                         child: Image.network(user.photoURL!, fit: BoxFit.cover),
                       ),
                     ),

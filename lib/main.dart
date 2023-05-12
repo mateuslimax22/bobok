@@ -24,11 +24,11 @@ class MyApp extends StatelessWidget {
         create: (context) => GoogleSignInProvider(),
         child: MaterialApp(
           theme: globalTheme,
-          home: Onboarding(),
+          home: const Onboarding(),
           routes: {
-            AppRoutes.REVIEW_DETAIL: (ctx) => ReviewDetail(),
-            AppRoutes.ADD_REVIEW: (ctx) => AddReview(),
-            AppRoutes.HOME: (ctx) => Home(),
+            AppRoutes.REVIEW_DETAIL: (ctx) => const ReviewDetail(),
+            AppRoutes.ADD_REVIEW: (ctx) => const AddReview(),
+            AppRoutes.HOME: (ctx) => const Home(),
           },
         ),
       );

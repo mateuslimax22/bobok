@@ -1,6 +1,5 @@
 import 'package:bobok/models/review.dart';
 import 'package:flutter/material.dart';
-import 'package:mix/mix.dart';
 
 class ReviewDetail extends StatelessWidget {
   const ReviewDetail({
