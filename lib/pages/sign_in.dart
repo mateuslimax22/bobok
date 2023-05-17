@@ -1,6 +1,9 @@
+import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
+import 'package:bobok/provider/google_sign_in.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../wisgets/btn/elevated.dart';
 import 'onboard_modal.dart';
 
@@ -51,7 +54,7 @@ class _SignIn extends State<SignIn> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.47,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                     color: Theme.of(context)
@@ -63,7 +66,7 @@ class _SignIn extends State<SignIn> {
                 child: Form(
                   key: _formKey,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -75,7 +78,7 @@ class _SignIn extends State<SignIn> {
                                 .displayMedium!
                                 .copyWith(letterSpacing: 0.5)),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: PhysicalModel(
@@ -87,14 +90,8 @@ class _SignIn extends State<SignIn> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Email",
-                                  // labelStyle: TextStyle(
-                                  //     color: myFocusNodeEmail.hasFocus
-                                  //         ? Theme.of(context)
-                                  //             .colorScheme
-                                  //             .primary
-                                  //         : Theme.of(context)
-                                  //             .colorScheme
-                                  //             .onPrimary),
+                                  labelStyle:
+                                      const TextStyle(letterSpacing: 0.5),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: const BorderRadius.all(
@@ -137,14 +134,8 @@ class _SignIn extends State<SignIn> {
                                 controller: _passwordController,
                                 decoration: InputDecoration(
                                   labelText: "Senha",
-                                  // labelStyle: TextStyle(
-                                  //     color: myFocusNodePassw.hasFocus
-                                  //         ? Theme.of(context)
-                                  //             .colorScheme
-                                  //             .primary
-                                  //         : Theme.of(context)
-                                  //             .colorScheme
-                                  //             .onPrimary),
+                                  labelStyle:
+                                      const TextStyle(letterSpacing: 0.5),
                                   border: InputBorder.none,
                                   focusedBorder: OutlineInputBorder(
                                       borderRadius: const BorderRadius.all(
@@ -183,17 +174,20 @@ class _SignIn extends State<SignIn> {
                             ),
                           ),
                         ),
-                        ElevatedButtonTh(
-                          label: 'Começar',
-                          target: () {
-                            return showBarModalBottomSheet(
-                                context: context,
-                                builder: (context) => const OnboardModal());
-                          },
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          width: 260,
-                          height: 45,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ElevatedButtonTh(
+                            label: 'Começar',
+                            target: () {
+                              return showBarModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => const OnboardModal());
+                            },
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            width: 260,
+                            height: 45,
+                          ),
                         ),
                         Row(children: <Widget>[
                           Expanded(
@@ -202,8 +196,8 @@ class _SignIn extends State<SignIn> {
                                     left: 10.0, right: 20.0),
                                 child: Divider(
                                   color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  height: 36,
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  height: 28,
                                 )),
                           ),
                           Text(
@@ -220,11 +214,66 @@ class _SignIn extends State<SignIn> {
                                     left: 20.0, right: 10.0),
                                 child: Divider(
                                   color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  height: 36,
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  height: 28,
                                 )),
                           ),
                         ]),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: ElevatedButton.icon(
+                            label: const Text("Continuar com o Google"),
+                            icon: const FaIcon(
+                              FontAwesomeIcons.google,
+                              color: Color.fromARGB(255, 214, 45, 32),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(
+                                  MediaQuery.of(context).size.width * 0.8, 50),
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.background,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(12), // <-- Radius
+                              ),
+                            ),
+                            onPressed: () {
+                              final provider =
+                                  Provider.of<GoogleSignInProvider>(context,
+                                      listen: false);
+                              provider.googleLogin();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Não possue conta ? ",
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(AppRoutes.SIGN_UP);
+                                  // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
+                                },
+                                child: Text("Cadastre-se.",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        letterSpacing: 0.5)),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
