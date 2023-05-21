@@ -149,7 +149,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                     margin: const EdgeInsets.only(left: 10.0, right: 20.0),
                     child: Divider(
                       color: Theme.of(context).colorScheme.onPrimary,
-                      height: 28,
+                      height: 30.8,
                     )),
               ),
               Text(

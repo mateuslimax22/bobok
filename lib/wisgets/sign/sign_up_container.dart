@@ -1,9 +1,7 @@
 import 'package:bobok/pages/onboard_modal.dart';
+import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:bobok/provider/google_sign_in.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import '../../wisgets/btn/elevated.dart';
 
 class SignUpConatiner extends StatefulWidget {
@@ -21,7 +19,30 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   bool notValid = false;
   bool isLoading = false;
   bool passwordVisible = false;
+  bool confirmPasswordVisible = false;
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  void _validatePassword(String password) {
+    List<int> passwordValid = [];
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigits = password.contains(RegExp(r'[0-9]'));
+    bool hasSpecialCharacters =
+        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+    if (hasUppercase) passwordValid.add(1);
+    if (hasLowercase) passwordValid.add(1);
+    if (hasDigits) passwordValid.add(1);
+    if (hasSpecialCharacters) passwordValid.add(1);
+
+    if (passwordValid.length <= 2) {
+      print("fraca");
+    } else if (passwordValid.length == 3) {
+      print("media");
+    } else {
+      print("forte");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +131,9 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                               ? Icons.visibility
                               : Icons.visibility_off)),
                     ),
+                    onChanged: (value) {
+                      _validatePassword(_passwordController.text);
+                    },
                     keyboardType: TextInputType.text,
                     obscureText: !passwordVisible,
                     onSaved: (senha) {
@@ -129,9 +153,102 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: SizedBox(
+                width: deviceWidth * 0.8,
+                child: const Text(
+                    "Utilize letra maiuscula, número e caracteres especiais"),
+              ),
+            ),
+            SizedBox(
+              width: deviceWidth * 0.8,
+              height: 5,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: 5, // Define o número de contêineres desejados
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.8),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(3))),
+                      width: deviceWidth * 0.147,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: SizedBox(
+                width: deviceWidth * 0.8,
+                child: Row(
+                  children: [Text("Nivel: "), Text("media")],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: PhysicalModel(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).colorScheme.background,
+                  elevation: 2.0,
+                  shadowColor: Theme.of(context).colorScheme.onPrimary,
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      labelText: "Confirmar senha",
+                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      border: InputBorder.none,
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 0),
+                      suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              confirmPasswordVisible = !confirmPasswordVisible;
+                            });
+                          },
+                          child: Icon(confirmPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off)),
+                    ),
+                    keyboardType: TextInputType.text,
+                    obscureText: !confirmPasswordVisible,
+                    onSaved: (confirmaSenha) {
+                      _formData['confirmaSenha'] = confirmaSenha ?? '';
+                    },
+                    validator: (confirmaSenha) {
+                      final title = confirmaSenha ?? '';
+
+                      if (title.trim().isEmpty) {
+                        return 'Confirmar a senha obrigatório.';
+                      } else if (title.trim() != _formData['senha']) {
+                        return 'Senhas diferentes';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
-                label: 'Começar',
+                label: 'Cadastrar',
                 target: () {
                   return showBarModalBottomSheet(
                       context: context,
@@ -143,79 +260,6 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 height: 45,
               ),
             ),
-            Row(children: <Widget>[
-              Expanded(
-                child: Container(
-                    margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                    child: Divider(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      height: 28,
-                    )),
-              ),
-              Text(
-                "OR",
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall!
-                    .copyWith(letterSpacing: 0.5),
-              ),
-              Expanded(
-                child: Container(
-                    margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-                    child: Divider(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      height: 28,
-                    )),
-              ),
-            ]),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: ElevatedButton.icon(
-                label: const Text("Continuar com o Google"),
-                icon: const FaIcon(
-                  FontAwesomeIcons.google,
-                  color: Color.fromARGB(255, 214, 45, 32),
-                ),
-                style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      Size(MediaQuery.of(context).size.width * 0.8, 50),
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // <-- Radius
-                  ),
-                ),
-                onPressed: () {
-                  final provider =
-                      Provider.of<GoogleSignInProvider>(context, listen: false);
-                  provider.googleLogin();
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       Text(
-            //         "Não possue conta ? ",
-            //         style: TextStyle(
-            //             color: Theme.of(context).colorScheme.onPrimary),
-            //       ),
-            //       InkWell(
-            //         onTap: () {
-            //           Navigator.of(context).pushNamed(AppRoutes.SIGN_UP);
-            //           // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
-            //         },
-            //         child: Text("Cadastre-se.",
-            //             style: TextStyle(
-            //                 color: Theme.of(context).colorScheme.primary,
-            //                 letterSpacing: 0.5)),
-            //       ),
-            //     ],
-            //   ),
-            // )
           ],
         ),
       ),

@@ -16,8 +16,9 @@ class _SignIn extends State<SignIn> {
   double containerSizeHeight = deviceHeight * 0.47;
   bool _isVisible = true;
   bool _signIn = true;
+  bool _enter = true;
   bool _showLogo = true;
-
+  double _imageHeight = 1.0;
   void _changeContainer() {
     setState(() {
       if (containerSizeHeight == deviceHeight * 0.47) {
@@ -25,8 +26,11 @@ class _SignIn extends State<SignIn> {
         setState(() {
           _isVisible = !_isVisible;
           _signIn = false;
+          _imageHeight = 0.5;
+          _enter = false;
         });
-        Future.delayed(const Duration(milliseconds: 300), () {
+
+        Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
             _showLogo = false;
           });
@@ -34,6 +38,7 @@ class _SignIn extends State<SignIn> {
         Future.delayed(const Duration(milliseconds: 800), () {
           setState(() {
             _isVisible = !_isVisible;
+            _enter = true;
           });
           containerChild = const SignUpConatiner();
         });
@@ -41,6 +46,7 @@ class _SignIn extends State<SignIn> {
         containerSizeHeight = deviceHeight * 0.47;
         setState(() {
           _isVisible = !_isVisible;
+          _enter = false;
         });
 
         Future.delayed(const Duration(milliseconds: 800), () {
@@ -48,6 +54,8 @@ class _SignIn extends State<SignIn> {
             _isVisible = !_isVisible;
             _signIn = true;
             _showLogo = true;
+            _enter = true;
+            _imageHeight = 1.0;
           });
           containerChild = const SignInConatiner();
         });
@@ -62,26 +70,40 @@ class _SignIn extends State<SignIn> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "Não possue conta ? ",
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-          ),
+          _showLogo
+              ? Text(
+                  "Não possui conta ? ",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                )
+              : Text(
+                  "Já possui conta ? ",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
           InkWell(
             onTap: () {
               _changeContainer();
               // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
             },
-            child: Text("Cadastre-se.",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    letterSpacing: 0.5)),
+            child: _showLogo
+                ? Text("Cadastre-se.",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5))
+                : Text(
+                    "Entar ",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5),
+                  ),
           ),
         ],
       ),
     );
     return Scaffold(
       body: SingleChildScrollView(
-        reverse: true,
+        reverse: _signIn ? true : false,
         child: Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
@@ -99,15 +121,19 @@ class _SignIn extends State<SignIn> {
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
                     child: _showLogo
-                        ? Container(
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            width: MediaQuery.of(context).size.width,
+                        ? AnimatedContainer(
+                            height: MediaQuery.of(context).size.height *
+                                0.4 *
+                                _imageHeight,
+                            width: MediaQuery.of(context).size.width *
+                                _imageHeight,
                             decoration: const BoxDecoration(
                               image: DecorationImage(
                                   alignment: Alignment.centerLeft,
                                   image: AssetImage("images/logoWhite.png"),
                                   fit: BoxFit.contain),
                             ),
+                            duration: const Duration(milliseconds: 500),
                           )
                         : null),
               ),
@@ -119,7 +145,7 @@ class _SignIn extends State<SignIn> {
                           .withOpacity(0.8),
                       borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(20))),
-                  duration: Duration(seconds: 1),
+                  duration: const Duration(seconds: 1),
                   curve: Curves.easeInOut,
                   height: containerSizeHeight,
                   width: MediaQuery.of(context).size.width,
@@ -129,7 +155,10 @@ class _SignIn extends State<SignIn> {
                           opacity: _isVisible ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 400),
                           child: containerChild),
-                      showContent
+                      AnimatedOpacity(
+                          opacity: _enter ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 400),
+                          child: showContent)
                     ],
                   )),
             ],
