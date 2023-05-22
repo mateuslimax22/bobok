@@ -20,6 +20,12 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   bool isLoading = false;
   bool passwordVisible = false;
   bool confirmPasswordVisible = false;
+  String levelPassword = "Fraca";
+  bool is6Digits = false;
+  bool isUppercase = false;
+  bool isNumber = false;
+  bool isSpecialCharacters = false;
+
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -30,17 +36,60 @@ class _SignUpConatiner extends State<SignUpConatiner> {
     bool hasDigits = password.contains(RegExp(r'[0-9]'));
     bool hasSpecialCharacters =
         password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    if (hasUppercase) passwordValid.add(1);
-    if (hasLowercase) passwordValid.add(1);
-    if (hasDigits) passwordValid.add(1);
-    if (hasSpecialCharacters) passwordValid.add(1);
-
-    if (passwordValid.length <= 2) {
-      print("fraca");
-    } else if (passwordValid.length == 3) {
-      print("media");
+    if (hasUppercase) {
+      passwordValid.add(1);
+      setState(() {
+        isUppercase = true;
+      });
     } else {
-      print("forte");
+      setState(() {
+        isUppercase = false;
+      });
+    }
+    if (hasLowercase) passwordValid.add(1);
+    if (hasDigits) {
+      passwordValid.add(1);
+      setState(() {
+        isNumber = true;
+      });
+    } else {
+      setState(() {
+        isNumber = false;
+      });
+    }
+    if (hasSpecialCharacters) {
+      passwordValid.add(1);
+      setState(() {
+        isSpecialCharacters = true;
+      });
+    } else {
+      setState(() {
+        isSpecialCharacters = false;
+      });
+    }
+
+    if (password.length < 6) {
+      setState(() {
+        levelPassword = "Fraca";
+        is6Digits = true;
+      });
+    } else {
+      setState(() {
+        is6Digits = true;
+      });
+      if (passwordValid.length <= 2) {
+        setState(() {
+          levelPassword = "Fraca";
+        });
+      } else if (passwordValid.length == 3) {
+        setState(() {
+          levelPassword = "Média";
+        });
+      } else {
+        setState(() {
+          levelPassword = "Forte";
+        });
+      }
     }
   }
 
@@ -109,6 +158,45 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Usuário",
+                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      border: InputBorder.none,
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 0),
+                    ),
+                    textInputAction: TextInputAction.next,
+                    onSaved: (user) {
+                      _formData['user'] = user ?? '';
+                    },
+                    validator: (user) {
+                      final title = user ?? '';
+
+                      if (title.trim().isEmpty) {
+                        return 'Nome de usuário obrigatório.';
+                      }
+
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: PhysicalModel(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).colorScheme.background,
+                  elevation: 2.0,
+                  shadowColor: Theme.of(context).colorScheme.onPrimary,
+                  child: TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: "Senha",
@@ -152,30 +240,87 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: SizedBox(
+            SizedBox(
                 width: deviceWidth * 0.8,
-                child: const Text(
-                    "Utilize letra maiuscula, número e caracteres especiais"),
-              ),
-            ),
+                height: 80,
+                child: GridView.count(
+                  padding: const EdgeInsets.all(0),
+                  crossAxisCount: 2,
+                  childAspectRatio: 4,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_box,
+                          color: isUppercase ? Colors.green : Colors.grey,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text("Letra maiúscula")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_box,
+                          color: isNumber ? Colors.green : Colors.grey,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text("Números")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_box,
+                          color:
+                              isSpecialCharacters ? Colors.green : Colors.grey,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text("Caracteres especiais")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_box,
+                          color:
+                              isSpecialCharacters ? Colors.green : Colors.grey,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text("Mais de 6 dígitos")
+                      ],
+                    ),
+                  ],
+                )),
             SizedBox(
               width: deviceWidth * 0.8,
               height: 5,
               child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
-                itemCount: 5, // Define o número de contêineres desejados
+                itemCount: levelPassword == "Fraca"
+                    ? 1
+                    : levelPassword == "Média"
+                        ? 3
+                        : 5, // Define o número de contêineres desejados
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.8),
+                          color: levelPassword == "Fraca"
+                              ? Colors.red
+                              : levelPassword == "Média"
+                                  ? Colors.orange
+                                  : Colors.green,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(3))),
                       width: deviceWidth * 0.147,
@@ -189,7 +334,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               child: SizedBox(
                 width: deviceWidth * 0.8,
                 child: Row(
-                  children: [Text("Nivel: "), Text("media")],
+                  children: [const Text("Nivel: "), Text(levelPassword)],
                 ),
               ),
             ),

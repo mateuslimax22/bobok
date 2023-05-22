@@ -48,6 +48,11 @@ class _SignIn extends State<SignIn> {
           _isVisible = !_isVisible;
           _enter = false;
         });
+        Future.delayed(const Duration(milliseconds: 400), () {
+          setState(() {
+            containerChild = const Text("");
+          });
+        });
 
         Future.delayed(const Duration(milliseconds: 800), () {
           setState(() {
