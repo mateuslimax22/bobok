@@ -1,6 +1,6 @@
-import 'package:bobok/pages/onboard_modal.dart';
+import 'package:bobok/pages/onboarding.dart';
+import 'package:bobok/provider/auth_email.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +21,39 @@ class _SignInConatiner extends State<SignInConatiner> {
   bool notValid = false;
   bool isLoading = false;
   bool passwordVisible = false;
+  bool isLoadingRegister = false;
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    void _submitForm() async {
+      final isValid = _formKey.currentState?.validate() ?? false;
+
+      if (!isValid) {
+        notValid = true;
+        return;
+      }
+
+      _formKey.currentState?.save();
+
+      setState(() {
+        isLoadingRegister = true;
+      });
+
+      final user = await AuthEmail(context).signInWithEmailAndPassword(
+        _formData["email"].toString(),
+        _formData['senha'].toString(),
+      );
+
+      if (user != null) {
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Onboarding()),
+        );
+      }
+    }
+
     return Form(
       key: _formKey,
       child: Padding(
@@ -133,9 +162,7 @@ class _SignInConatiner extends State<SignInConatiner> {
               child: ElevatedButtonTh(
                 label: 'Começar',
                 target: () {
-                  return showBarModalBottomSheet(
-                      context: context,
-                      builder: (context) => const OnboardModal());
+                  _submitForm();
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -189,7 +216,10 @@ class _SignInConatiner extends State<SignInConatiner> {
                   final provider =
                       Provider.of<GoogleSignInProvider>(context, listen: false);
                   provider.googleLogin();
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Onboarding()),
+                  );
                 },
               ),
             ),

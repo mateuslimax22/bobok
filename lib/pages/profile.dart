@@ -16,6 +16,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    print(user);
     final List<Review> loadedReviewUser = dummyReviws;
 
     return Scaffold(

@@ -51,6 +51,9 @@ dependencies:
   group_button: ^5.2.2
   html: ^0.15.3
   web_scraper: ^0.1.4
+  firebase_storage: ^11.2.1
+  uuid: ^3.0.7
+  file_picker: ^5.3.1
 
 
 

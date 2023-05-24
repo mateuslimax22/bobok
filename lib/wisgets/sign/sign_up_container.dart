@@ -1,7 +1,9 @@
-import 'package:bobok/pages/onboard_modal.dart';
+import 'dart:io';
+
+import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../wisgets/btn/elevated.dart';
 
 class SignUpConatiner extends StatefulWidget {
@@ -14,6 +16,7 @@ class SignUpConatiner extends StatefulWidget {
 class _SignUpConatiner extends State<SignUpConatiner> {
   final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
+  File? _avatar;
   bool spoiler = false;
   bool msgError = false;
   bool notValid = false;
@@ -24,11 +27,13 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   bool is6Digits = false;
   bool isUppercase = false;
   bool isNumber = false;
+  bool isLoadingRegister = false;
   bool isSpecialCharacters = false;
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
   void _validatePassword(String password) {
     List<int> passwordValid = [];
     bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
@@ -95,6 +100,42 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
   @override
   Widget build(BuildContext context) {
+    void _uploadImage() async {
+      final result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+      if (result != null) {
+        setState(() {
+          _avatar = File(result.files.first.path!);
+        });
+      }
+    }
+
+    // ignore: no_leading_underscores_for_local_identifiers
+    void _submitForm() async {
+      final isValid = _formKey.currentState?.validate() ?? false;
+
+      if (!isValid) {
+        notValid = true;
+        return;
+      }
+
+      _formKey.currentState?.save();
+
+      setState(() {
+        isLoadingRegister = true;
+      });
+
+      final user = await AuthEmail(context).createUserWithEmailAndPassword(
+          _formData["user"].toString(),
+          _formData["email"].toString(),
+          _formData['senha'].toString(),
+          _avatar);
+
+      if (user != null) {
+        Navigator.pop(context);
+      }
+    }
+
     return Form(
       key: _formKey,
       child: Padding(
@@ -109,6 +150,75 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     .textTheme
                     .displayMedium!
                     .copyWith(letterSpacing: 0.5)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 110,
+                width: 110,
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8), // Border width
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        child: SizedBox.fromSize(
+                          size: const Size.fromRadius(48), // Image radius
+                          child: _avatar == null
+                              ? IconButton(
+                                  padding: const EdgeInsets.all(0),
+                                  icon: Icon(
+                                    Icons.person,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    size: 80,
+                                  ),
+                                  onPressed: () {
+                                    _uploadImage();
+                                  },
+                                )
+                              : Image.file(
+                                  _avatar!,
+                                  fit: BoxFit.fill,
+                                ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: RawMaterialButton(
+                            onPressed: () {},
+                            elevation: 2.0,
+                            fillColor: Theme.of(context).colorScheme.background,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(0),
+                              icon: Icon(
+                                Icons.camera_alt_outlined,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                _uploadImage();
+                              },
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: SizedBox(
@@ -380,9 +490,11 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
                       if (title.trim().isEmpty) {
                         return 'Confirmar a senha obrigatório.';
-                      } else if (title.trim() != _formData['senha']) {
-                        return 'Senhas diferentes';
                       }
+                      // } else if (title.trim() !=
+                      //     _formData['senha'].toString()) {
+                      //   return 'Senhas diferentes';
+                      // }
 
                       return null;
                     },
@@ -395,9 +507,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               child: ElevatedButtonTh(
                 label: 'Cadastrar',
                 target: () {
-                  return showBarModalBottomSheet(
-                      context: context,
-                      builder: (context) => const OnboardModal());
+                  _submitForm();
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,

@@ -2,6 +2,7 @@ import 'package:bobok/pages/add_review.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboarding.dart';
 import 'package:bobok/pages/review_detail.dart';
+import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/themes/theme.dart';
 import 'package:bobok/utils/app_routes.dart';
@@ -24,8 +25,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     deviceWidth = MediaQuery.of(context).size.width;
     deviceHeight = MediaQuery.of(context).size.height;
-    return ChangeNotifierProvider(
-      create: (context) => GoogleSignInProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthEmail(context)),
+        ChangeNotifierProvider(create: (context) => GoogleSignInProvider()),
+      ],
       child: MaterialApp(
         theme: globalTheme,
         home: const Onboarding(),
