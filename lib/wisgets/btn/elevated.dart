@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ElevatedButtonTh extends StatelessWidget {
+class ElevatedButtonTh extends StatefulWidget {
   const ElevatedButtonTh({
     Key? key,
     required this.label,
@@ -19,6 +19,11 @@ class ElevatedButtonTh extends StatelessWidget {
   final double height;
 
   @override
+  State<ElevatedButtonTh> createState() => _ElevatedButtonThState();
+}
+
+class _ElevatedButtonThState extends State<ElevatedButtonTh> {
+  @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context),
@@ -27,14 +32,14 @@ class ElevatedButtonTh extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             backgroundColor: Theme.of(context).colorScheme.primary,
-            minimumSize: Size(width, height)),
-        onPressed: target,
+            minimumSize: Size(widget.width, widget.height)),
+        onPressed: widget.target,
         child: Text(
-          label,
+          widget.label,
           style: TextStyle(
               color: Theme.of(context).colorScheme.background,
-              fontSize: fontSize,
-              fontWeight: fontWeight,
+              fontSize: widget.fontSize,
+              fontWeight: widget.fontWeight,
               letterSpacing: 1.5),
         ),
       ),

@@ -13,16 +13,17 @@ class SignIn extends StatefulWidget {
 
 class _SignIn extends State<SignIn> {
   Widget containerChild = const SignInConatiner();
-  double containerSizeHeight = deviceHeight * 0.47;
+  bool containerSizeHeight = false;
   bool _isVisible = true;
   bool _signIn = true;
   bool _enter = true;
   bool _showLogo = true;
   double _imageHeight = 1.0;
+
   void _changeContainer() {
     setState(() {
-      if (containerSizeHeight == deviceHeight * 0.47) {
-        containerSizeHeight = deviceHeight * 0.95;
+      if (containerSizeHeight == false) {
+        containerSizeHeight = true;
         setState(() {
           _isVisible = !_isVisible;
           _signIn = false;
@@ -30,7 +31,7 @@ class _SignIn extends State<SignIn> {
           _enter = false;
         });
 
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 300), () {
           setState(() {
             _showLogo = false;
           });
@@ -43,12 +44,12 @@ class _SignIn extends State<SignIn> {
           containerChild = const SignUpConatiner();
         });
       } else {
-        containerSizeHeight = deviceHeight * 0.47;
+        containerSizeHeight = false;
         setState(() {
           _isVisible = !_isVisible;
           _enter = false;
         });
-        Future.delayed(const Duration(milliseconds: 400), () {
+        Future.delayed(const Duration(milliseconds: 150), () {
           setState(() {
             containerChild = const Text("");
           });
@@ -110,8 +111,8 @@ class _SignIn extends State<SignIn> {
       body: SingleChildScrollView(
         reverse: _signIn ? true : false,
         child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          height: deviceHeight,
+          width: deviceWidth,
           decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("images/backZoo.png"), fit: BoxFit.cover),
@@ -122,7 +123,7 @@ class _SignIn extends State<SignIn> {
             children: [
               AnimatedOpacity(
                 opacity: _signIn ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 300),
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
                     child: _showLogo
@@ -138,34 +139,43 @@ class _SignIn extends State<SignIn> {
                                   image: AssetImage("images/logoWhite.png"),
                                   fit: BoxFit.contain),
                             ),
-                            duration: const Duration(milliseconds: 500),
+                            duration: const Duration(milliseconds: 300),
                           )
                         : null),
               ),
-              AnimatedContainer(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .background
-                          .withOpacity(0.8),
-                      borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(20))),
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeInOut,
-                  height: containerSizeHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      AnimatedOpacity(
-                          opacity: _isVisible ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 400),
-                          child: containerChild),
-                      AnimatedOpacity(
-                          opacity: _enter ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 400),
-                          child: showContent)
-                    ],
-                  )),
+              SizedBox(
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return AnimatedContainer(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .background
+                            .withOpacity(0.8),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20))),
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeInOut,
+                    height: containerSizeHeight
+                        ? deviceHeight * 0.96
+                        : constraints.maxWidth * 1.03,
+                    width: MediaQuery.of(context).size.width,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          AnimatedOpacity(
+                              opacity: _isVisible ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 400),
+                              child: containerChild),
+                          AnimatedOpacity(
+                              opacity: _enter ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 400),
+                              child: showContent)
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
             ],
           ),
         ),

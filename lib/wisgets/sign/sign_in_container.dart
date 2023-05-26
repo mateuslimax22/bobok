@@ -200,10 +200,20 @@ class _SignInConatiner extends State<SignInConatiner> {
               padding: const EdgeInsets.symmetric(vertical: 5.0),
               child: ElevatedButton.icon(
                 label: const Text("Continuar com o Google"),
-                icon: const FaIcon(
-                  FontAwesomeIcons.google,
-                  color: Color.fromARGB(255, 214, 45, 32),
-                ),
+                icon: isLoading
+                    ? Container(
+                        width: 24,
+                        height: 24,
+                        padding: const EdgeInsets.all(2.0),
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : const FaIcon(
+                        FontAwesomeIcons.google,
+                        color: Color.fromARGB(255, 214, 45, 32),
+                      ),
                 style: ElevatedButton.styleFrom(
                   minimumSize:
                       Size(MediaQuery.of(context).size.width * 0.8, 50),
@@ -213,13 +223,12 @@ class _SignInConatiner extends State<SignInConatiner> {
                   ),
                 ),
                 onPressed: () {
+                  setState(() {
+                    isLoading = true;
+                  });
                   final provider =
                       Provider.of<GoogleSignInProvider>(context, listen: false);
                   provider.googleLogin();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Onboarding()),
-                  );
                 },
               ),
             ),

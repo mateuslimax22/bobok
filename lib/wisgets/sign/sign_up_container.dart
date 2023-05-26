@@ -158,7 +158,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 child: Stack(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8), // Border width
+                      padding: const EdgeInsets.all(4), // Border width
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         borderRadius:
@@ -185,7 +185,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                                 )
                               : Image.file(
                                   _avatar!,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.cover,
                                 ),
                         ),
                       ),
@@ -367,7 +367,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text("Letra maiúscula")
+                        Flexible(child: Text("Letra maiúscula"))
                       ],
                     ),
                     Row(
@@ -379,7 +379,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text("Números")
+                        Flexible(child: Text("Números"))
                       ],
                     ),
                     Row(
@@ -392,7 +392,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text("Caracteres especiais")
+                        Flexible(child: Text("Caracteres especiais"))
                       ],
                     ),
                     Row(
@@ -405,7 +405,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text("Mais de 6 dígitos")
+                        Flexible(child: Text("Mais de 6 dígitos"))
                       ],
                     ),
                   ],

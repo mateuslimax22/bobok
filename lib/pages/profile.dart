@@ -1,9 +1,11 @@
+// ignore_for_file: dead_code
+
 import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
-import 'package:bobok/provider/google_sign_in.dart';
+import 'package:bobok/wisgets/btn/elevated.dart';
+import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -13,167 +15,249 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  bool isEdit = false;
+  void onChangedEdit() {
+    setState(() {
+      print(isEdit);
+      isEdit = !isEdit;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
-    print(user);
     final List<Review> loadedReviewUser = dummyReviws;
 
     return Scaffold(
-        body: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Stack(
           children: [
-            SizedBox(
-              height: 110,
-              width: 110,
-              child: Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8), // Border width
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      child: SizedBox.fromSize(
-                        size: const Size.fromRadius(48), // Image radius
-                        child: Image.network(user.photoURL!, fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: RawMaterialButton(
-                          onPressed: () {},
-                          elevation: 2.0,
-                          fillColor: Theme.of(context).colorScheme.background,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5))),
-                          child: Icon(
-                            Icons.camera_alt_outlined,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      )),
-                ],
-              ),
-            ),
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 10, 8),
-                  child: Text(
-                    user.displayName!,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 25,
-                        letterSpacing: 1.5),
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Avaliadores",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
+                                  Text(
+                                    "2000",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 20,
+                                        letterSpacing: 1.5),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Leitores",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
+                                  Text(
+                                    "20",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 20,
+                                        letterSpacing: 1.5),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          height: 110,
+                          width: 110,
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.all(4), // Border width
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10)),
+                                  ),
+                                  child: SizedBox(
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                      child: SizedBox.fromSize(
+                                        size: const Size.fromRadius(
+                                            48), // Image radius
+                                        child: Image.network(user.photoURL!,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (isEdit)
+                                Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: RawMaterialButton(
+                                        onPressed: () {},
+                                        elevation: 2.0,
+                                        fillColor: Theme.of(context)
+                                            .colorScheme
+                                            .background,
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5))),
+                                        child: Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                    ))
+                              else
+                                const SizedBox()
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ElevatedButtonTh(
+                                    label: 'Editar',
+                                    target: onChangedEdit,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    width: 260,
+                                    height: 30,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    child: SizedBox(
+                                      child: Text(
+                                        user.displayName!,
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 20,
+                                            letterSpacing: 1.5),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          )),
+                    ],
                   ),
                 ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.00),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Avaliações",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Column(
+                            children: [
+                              const Text("Indicações"),
+                              Expanded(
+                                child: SizedBox(
+                                  child: GridView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: loadedReviewUser.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              childAspectRatio: (2.8 / 4),
+                                              crossAxisCount: 1,
+                                              mainAxisSpacing: 2),
+                                      itemBuilder: (ctx, i) => ProfileReview(
+                                          itemReview: loadedReviewUser[i])),
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "1000",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.00),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Avaliadores",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
+                      Expanded(
+                        flex: 7,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Column(
+                            children: [
+                              const Text("Resenhas"),
+                              Expanded(
+                                child: SizedBox(
+                                  child: GridView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: loadedReviewUser.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              childAspectRatio: (2.8 / 4),
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: 2,
+                                              mainAxisSpacing: 2),
+                                      itemBuilder: (ctx, i) => ProfileReview(
+                                          itemReview: loadedReviewUser[i])),
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "2000",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.00),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Leitores",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
-                          ),
-                          Text(
-                            "20",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      final provider = Provider.of<GoogleSignInProvider>(
-                          context,
-                          listen: false);
-                      provider.logout();
-                    },
-                    child: const Text("LOGOUT")),
+                    ],
+                  ),
+                )
               ],
             ),
           ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            width: MediaQuery.of(context).size.width,
-            child: GridView.builder(
-                itemCount: loadedReviewUser.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 3 / 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10),
-                itemBuilder: (ctx, i) => Text(loadedReviewUser[i].title)),
-          ),
-        )
-      ],
-    ));
+        ));
   }
 }
