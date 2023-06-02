@@ -1,5 +1,4 @@
 import 'package:bobok/models/review.dart';
-import 'package:bobok/pages/review_detail.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 
