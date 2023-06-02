@@ -125,15 +125,11 @@ class _SignUpConatiner extends State<SignUpConatiner> {
         isLoadingRegister = true;
       });
 
-      final user = await AuthEmail(context).createUserWithEmailAndPassword(
+      await AuthEmail(context).createUserWithEmailAndPassword(
           _formData["user"].toString(),
           _formData["email"].toString(),
           _formData['senha'].toString(),
           _avatar);
-
-      if (user != null) {
-        Navigator.pop(context);
-      }
     }
 
     return Form(

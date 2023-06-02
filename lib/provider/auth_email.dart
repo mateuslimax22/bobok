@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/user.dart';
 
@@ -11,22 +11,11 @@ class AuthEmail extends ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? user;
   bool isLoading = true;
 
   late final BuildContext _context;
-
-  // AuthService() {
-  //   _authCheck();
-  // }
-
-  // _authCheck() {
-  //   _auth.authStateChanges().listen((User? userFireBase) {
-  //     user = (userFireBase == null) ? null : userFireBase;
-  //     isLoading = false;
-  //     notifyListeners();
-  //   });
-  // }
 
   Future<UserData?> createUserWithEmailAndPassword(
       String userName, String email, String password, File? avatar) async {
@@ -39,9 +28,8 @@ class AuthEmail extends ChangeNotifier {
       String? fileUrl;
 
       if (avatar != null) {
-        final fileName = '${const Uuid().v4()}}${avatar.path.split('.').last}';
-
-        final fileRef = _storage.ref(fileName);
+        final fileRef =
+            _storage.ref().child("profilePics").child(credential.user!.uid);
 
         await fileRef.putFile(avatar);
 
@@ -49,6 +37,16 @@ class AuthEmail extends ChangeNotifier {
 
         await credential.user?.updatePhotoURL(fileUrl);
       }
+      //add user on database
+      await _firestore.collection('users').doc(credential.user!.uid).set({
+        'username': userName,
+        'uid': credential.user!.uid,
+        'email': email,
+        'followers': [],
+        'following': [],
+        'photoUrl': fileUrl,
+      });
+      notifyListeners();
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(

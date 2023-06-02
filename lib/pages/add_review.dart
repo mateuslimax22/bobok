@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:bobok/models/review.dart';
+import 'package:bobok/provider/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:web_scraper/web_scraper.dart';
 
 class AddReview extends StatefulWidget {
@@ -29,8 +26,8 @@ class _AddReviewState extends State<AddReview> {
   String titleFolder = '';
 
   List<String> genresSelect = [];
-  FocusNode myFocusNodeTitle = new FocusNode();
-  FocusNode myFocusNodeReview = new FocusNode();
+  FocusNode myFocusNodeTitle = FocusNode();
+  FocusNode myFocusNodeReview = FocusNode();
 
   // List of items in our dropdown menu
   var items = [
@@ -84,7 +81,6 @@ class _AddReviewState extends State<AddReview> {
     _formKey.currentState?.save();
 
     final newReview = Review(
-      id: Random().nextDouble().toString(),
       username: user.displayName!,
       title: _formData["title"].toString(),
       review: _formData["review"].toString(),
@@ -100,22 +96,18 @@ class _AddReviewState extends State<AddReview> {
     });
 
     try {
-      const baseUrl = 'https://bobok-cc168-default-rtdb.firebaseio.com';
-      var resp = await post(
-        Uri.parse('$baseUrl/Reviews.json'),
-        body: jsonEncode({
-          'id': Random().nextDouble().toString(),
-          'username': newReview.username,
-          'title': newReview.title,
-          'review': newReview.review,
-          'imageUrl': newReview.imageUrl,
-          'likes': newReview.likes,
-          'spoiler': newReview.spoiler,
-          'category': newReview.category,
-          'genres': newReview.genres,
-        }),
-      );
-      if (resp.statusCode != 200) {
+      String res = await FirestoreMethods().uploadReview(
+          newReview.imageUrl,
+          newReview.username,
+          newReview.title,
+          newReview.review,
+          newReview.spoiler,
+          newReview.category,
+          newReview.genres);
+
+      print(res);
+      if (res != "sucess") {
+        // ignore: use_build_context_synchronously
         showDialog<void>(
             context: context,
             builder: (ctx) => AlertDialog(
@@ -134,10 +126,21 @@ class _AddReviewState extends State<AddReview> {
         setState(() {
           isLoading = false;
         });
+        // ignore: use_build_context_synchronously
         Navigator.of(context).pop();
       }
     } catch (e) {
-      print(e);
+      showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+                title: const Text("Ocorreu um erro!"),
+                content: const Text("Não foi possivel salvar sua resenha ;("),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("OK"))
+                ],
+              ));
     }
   }
 
@@ -149,7 +152,6 @@ class _AddReviewState extends State<AddReview> {
       var result = tiktokProfilePictureURL.map((item) {
         return item;
       }).toList();
-      print(result[1]["attributes"]["src"]);
       setState(() {
         img = (result[1]["attributes"]["src"]);
       });

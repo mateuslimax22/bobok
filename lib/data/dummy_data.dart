@@ -2,7 +2,7 @@ import 'package:bobok/models/review.dart';
 
 final dummyReviws = [
   Review(
-    id: "01",
+    uid: "01",
     username: "Mateus",
     title: "Harry Potter E A Pedra Filosofal",
     review:
@@ -15,7 +15,7 @@ final dummyReviws = [
     genres: [],
   ),
   Review(
-    id: "02",
+    uid: "02",
     username: "Gil",
     title: "A arte da guerra",
     review:
@@ -28,7 +28,7 @@ final dummyReviws = [
     genres: [],
   ),
   Review(
-    id: "03",
+    uid: "03",
     username: "Mateus",
     title: "Neuromancer: 1",
     review:
@@ -41,7 +41,7 @@ final dummyReviws = [
     genres: [],
   ),
   Review(
-    id: "04",
+    uid: "04",
     username: "Alan",
     title: "Harry Potter E A Pedra Filosofal",
     review:

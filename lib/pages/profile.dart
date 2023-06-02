@@ -4,6 +4,7 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool isEdit = false;
+  String userName = "";
   void onChangedEdit() {
     setState(() {
       print(isEdit);
@@ -24,8 +26,22 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    getUserName();
+  }
+
+  final user = FirebaseAuth.instance.currentUser!;
+  void getUserName() async {
+    DocumentSnapshot snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    print(snap.data());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
     final List<Review> loadedReviewUser = dummyReviws;
 
     return Scaffold(
@@ -125,8 +141,21 @@ class _ProfileState extends State<Profile> {
                                       child: SizedBox.fromSize(
                                         size: const Size.fromRadius(
                                             48), // Image radius
-                                        child: Image.network(user.photoURL!,
-                                            fit: BoxFit.cover),
+                                        child: user.photoURL == null
+                                            ? IconButton(
+                                                padding:
+                                                    const EdgeInsets.all(0),
+                                                icon: Icon(
+                                                  Icons.person,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                                  size: 80,
+                                                ),
+                                                onPressed: () {},
+                                              )
+                                            : Image.network(user.photoURL!,
+                                                fit: BoxFit.cover),
                                       ),
                                     ),
                                   ),
