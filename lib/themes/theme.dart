@@ -16,6 +16,7 @@ ThemeData globalTheme = ThemeData(
       primary: Color.fromARGB(255, 93, 63, 211),
       secondary: Color.fromARGB(255, 190, 190, 190),
       surface: Colors.transparent,
+      inverseSurface: Color.fromARGB(255, 223, 215, 250),
       primaryContainer: Color.fromARGB(255, 181, 251, 187),
       secondaryContainer: Color.fromARGB(255, 255, 144, 124)),
   textTheme: const TextTheme(

@@ -3,6 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -25,7 +29,13 @@ class FirestoreMethods {
       String id = const Uuid().v1();
       fileRef = fileRef.child(id);
 
-      await fileRef.putString(imageUrl, format: PutStringFormat.dataUrl);
+      var response = await http.get(Uri.parse(imageUrl));
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      File file = File(join(documentDirectory.path, 'imagetest.png'));
+      file.writeAsBytesSync(response.bodyBytes);
+
+      await fileRef.putFile(file);
+      String fileUrl = await fileRef.getDownloadURL();
 
       String postId = const Uuid().v1();
       final newReview = Review(
@@ -33,7 +43,8 @@ class FirestoreMethods {
         username: userName,
         title: title,
         review: review,
-        imageUrl: imageUrl,
+        imageUrl: fileUrl,
+        profileImg: _auth.currentUser!.photoURL!,
         postId: postId,
         likes: [],
         datePublish: DateTime.now(),
@@ -48,5 +59,21 @@ class FirestoreMethods {
       res = e.toString();
     }
     return res;
+  }
+
+  Future<void> likePost(String? postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
+        await _firestore.collection('reviews').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await _firestore.collection('reviews').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid])
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

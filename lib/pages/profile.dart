@@ -20,7 +20,6 @@ class _ProfileState extends State<Profile> {
   String userName = "";
   void onChangedEdit() {
     setState(() {
-      print(isEdit);
       isEdit = !isEdit;
     });
   }
@@ -37,7 +36,6 @@ class _ProfileState extends State<Profile> {
         .collection('users')
         .doc(user.uid)
         .get();
-    print(snap.data());
   }
 
   @override

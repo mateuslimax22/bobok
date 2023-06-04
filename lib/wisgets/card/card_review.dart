@@ -1,15 +1,40 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 
-class CardReview extends StatelessWidget {
+class CardReview extends StatefulWidget {
   const CardReview({
     Key? key,
     required this.colorback,
-    required this.listReview,
+    required this.review,
+    required this.avatar,
+    required this.user,
   }) : super(key: key);
-  final Review listReview;
+  final Review review;
   final Color colorback;
+  final String? avatar;
+  final user;
+
+  @override
+  State<CardReview> createState() => _CardReviewState();
+}
+
+class _CardReviewState extends State<CardReview> {
+  bool isLike = false;
+  int countLikes = 0;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      countLikes = widget.review.likes.length;
+    });
+    if (widget.review.likes.contains(widget.user.uid)) {
+      setState(() {
+        isLike = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +42,12 @@ class CardReview extends StatelessWidget {
       margin: const EdgeInsets.all(0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       elevation: 1,
-      color: colorback,
+      color: widget.colorback,
       child: SizedBox(
         width: double.infinity,
         height: 300,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background.withOpacity(0.8),
@@ -35,33 +60,50 @@ class CardReview extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          width: 40,
-                          height: 35,
-                          child: IconButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            alignment: Alignment.bottomLeft,
-                            iconSize: 30,
-                            onPressed: () {
-                              print("sdasd7");
-                            },
-                            icon: const Icon(
-                              Icons.account_box,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              child: SizedBox.fromSize(
+                                size: const Size.fromRadius(48), // Image radius
+                                child: widget.avatar == null
+                                    ? IconButton(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: Icon(
+                                          Icons.person,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .background,
+                                          size: 80,
+                                        ),
+                                        onPressed: () {},
+                                      )
+                                    : Image.network(widget.avatar!,
+                                        fit: BoxFit.cover),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          listReview.username,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: 12,
-                              letterSpacing: 1.5),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Text(
+                              widget.review.username,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: 15,
+                                  letterSpacing: 1.5),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: 40,
@@ -83,7 +125,7 @@ class CardReview extends StatelessWidget {
                   width: double.infinity,
                   height: 205,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
@@ -120,14 +162,22 @@ class CardReview extends StatelessWidget {
                                     child: SizedBox.fromSize(
                                       child: GestureDetector(
                                         child: Image.network(
-                                            listReview.imageUrl,
+                                            widget.review.imageUrl,
                                             width: 100,
                                             height: 150,
                                             fit: BoxFit.cover),
                                         onTap: () {
                                           Navigator.of(context).pushNamed(
                                             AppRoutes.REVIEW_DETAIL,
-                                            arguments: listReview,
+                                            arguments: {
+                                              'review': widget.review.review,
+                                              'title': widget.review.title,
+                                              'imageUrl':
+                                                  widget.review.imageUrl,
+                                              'userName':
+                                                  widget.review.username,
+                                              'isComment': false
+                                            },
                                           );
                                         },
                                       ),
@@ -145,7 +195,7 @@ class CardReview extends StatelessWidget {
                                       width: MediaQuery.of(context).size.width *
                                           0.6,
                                       child: Text(
-                                        listReview.title.toUpperCase(),
+                                        widget.review.title.toUpperCase(),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -172,7 +222,7 @@ class CardReview extends StatelessWidget {
                                           0.6,
                                       child: Expanded(
                                         child: Text(
-                                          listReview.review.toUpperCase(),
+                                          widget.review.review.toUpperCase(),
                                           maxLines: 8,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -203,7 +253,15 @@ class CardReview extends StatelessWidget {
                                         onPressed: () {
                                           Navigator.of(context).pushNamed(
                                             AppRoutes.REVIEW_DETAIL,
-                                            arguments: listReview,
+                                            arguments: {
+                                              'review': widget.review.review,
+                                              'title': widget.review.title,
+                                              'imageUrl':
+                                                  widget.review.imageUrl,
+                                              'userName':
+                                                  widget.review.username,
+                                              'isComment': false
+                                            },
                                           );
                                         },
                                       ),
@@ -223,19 +281,42 @@ class CardReview extends StatelessWidget {
                   children: [
                     SizedBox(
                       height: 35,
+                      width: 25,
                       child: IconButton(
-                        icon: const Icon(
-                          Icons.star_border_rounded,
-                          size: 25,
-                        ),
+                        icon: Icon(Icons.star_border_rounded,
+                            size: 25,
+                            color: isLike
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onPrimary),
                         tooltip: 'Show Snackbar',
-                        onPressed: () {
-                          print("sdasd");
+                        onPressed: () async {
+                          setState(() {
+                            isLike = !isLike;
+                          });
+                          await FirestoreMethods().likePost(
+                              widget.review.postId,
+                              widget.user.uid,
+                              widget.review.likes);
+
+                          setState(() {
+                            countLikes = widget.review.likes.length;
+                          });
                         },
                       ),
                     ),
                     SizedBox(
+                        height: 40,
+                        width: 10,
+                        child: Text(
+                          countLikes.toString(),
+                          style: TextStyle(
+                              color: isLike
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onPrimary),
+                        )),
+                    SizedBox(
                       height: 40,
+                      width: 30,
                       child: IconButton(
                         icon: const Icon(
                           Icons.messenger_outline,
@@ -243,7 +324,16 @@ class CardReview extends StatelessWidget {
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
-                          print("sdasd");
+                          Navigator.of(context).pushNamed(
+                            AppRoutes.REVIEW_DETAIL,
+                            arguments: {
+                              'review': widget.review.review,
+                              'title': widget.review.title,
+                              'imageUrl': widget.review.imageUrl,
+                              'userName': widget.review.username,
+                              'isComment': true
+                            },
+                          );
                         },
                       ),
                     ),

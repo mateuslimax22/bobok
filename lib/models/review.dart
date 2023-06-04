@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Review {
   final String? uid;
   final String? postId;
@@ -6,11 +8,11 @@ class Review {
   final String review;
   final datePublish;
   final String imageUrl;
+  final String? profileImg;
   final likes;
   final bool spoiler;
   final String category;
-
-  final List<String> genres;
+  final genres;
 
   Review({
     this.uid,
@@ -18,6 +20,7 @@ class Review {
     required this.title,
     required this.review,
     required this.imageUrl,
+    this.profileImg,
     this.datePublish,
     this.postId,
     required this.likes,
@@ -32,6 +35,7 @@ class Review {
         "title": title,
         "review": review,
         "imageUrl": imageUrl,
+        "profileImg": profileImg,
         "postId": postId,
         "likes": [],
         "datePublish": datePublish,
@@ -39,4 +43,21 @@ class Review {
         "category": category,
         "genres": genres,
       };
+
+  static Review fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+    return Review(
+        uid: snapshot['uid'],
+        username: snapshot['username'],
+        title: snapshot['title'],
+        review: snapshot['review'],
+        imageUrl: snapshot['imageUrl'],
+        profileImg: snapshot['profileImg'],
+        postId: snapshot['postId'],
+        likes: snapshot['likes'],
+        datePublish: ['datePublish'],
+        spoiler: snapshot['spoiler'],
+        category: snapshot['category'],
+        genres: snapshot['genres']);
+  }
 }
