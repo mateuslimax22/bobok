@@ -1,6 +1,7 @@
 import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
+import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class CardReview extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CardReviewState extends State<CardReview> {
       elevation: 1,
       color: widget.colorback,
       child: SizedBox(
-        width: double.infinity,
+        width: deviceWidth,
         height: 300,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -122,93 +123,122 @@ class _CardReviewState extends State<CardReview> {
                   ],
                 ),
                 SizedBox(
-                  width: double.infinity,
-                  height: 205,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 20, 0, 0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withOpacity(0.35),
-                                        spreadRadius: 1,
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
+                  height: 180,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.35),
+                                    spreadRadius: 1,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: SizedBox.fromSize(
-                                      child: GestureDetector(
-                                        child: Image.network(
-                                            widget.review.imageUrl,
-                                            width: 100,
-                                            height: 150,
-                                            fit: BoxFit.cover),
-                                        onTap: () {
-                                          Navigator.of(context).pushNamed(
-                                            AppRoutes.REVIEW_DETAIL,
-                                            arguments: {
-                                              'review': widget.review.review,
-                                              'title': widget.review.title,
-                                              'imageUrl':
-                                                  widget.review.imageUrl,
-                                              'userName':
-                                                  widget.review.username,
-                                              'isComment': false
-                                            },
-                                          );
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: SizedBox.fromSize(
+                                  child: GestureDetector(
+                                    child: Image.network(widget.review.imageUrl,
+                                        width: 100,
+                                        height: 150,
+                                        fit: BoxFit.cover),
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                        AppRoutes.REVIEW_DETAIL,
+                                        arguments: {
+                                          'review': widget.review.review,
+                                          'title': widget.review.title,
+                                          'postId': widget.review.postId,
+                                          'imageUrl': widget.review.imageUrl,
+                                          'profileImg': widget.user.photoURL,
+                                          'userName': widget.review.username,
+                                          'userUid': widget.user.uid,
+                                          'isComment': false
                                         },
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Text(
-                                        widget.review.title.toUpperCase(),
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            fontSize: 14,
-                                            letterSpacing: 1.5),
-                                      ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: deviceWidth * 0.6,
+                                    child: Text(
+                                      widget.review.title.toUpperCase(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 14,
+                                          letterSpacing: 1.5),
                                     ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                    child: Text(
+                                      "Resenha: ".toUpperCase(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 10,
+                                          letterSpacing: 1.5),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: deviceWidth * 0.6,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            widget.review.review.toUpperCase(),
+                                            maxLines: 8,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                                fontSize: 10,
+                                                letterSpacing: 1.5),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: const Size(50, 30),
+                                      ),
                                       child: Text(
-                                        "Resenha: ".toUpperCase(),
+                                        "ver mais.".toUpperCase(),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -216,63 +246,29 @@ class _CardReviewState extends State<CardReview> {
                                             fontSize: 10,
                                             letterSpacing: 1.5),
                                       ),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                          AppRoutes.REVIEW_DETAIL,
+                                          arguments: {
+                                            'review': widget.review.review,
+                                            'title': widget.review.title,
+                                            'postId': widget.review.postId,
+                                            'imageUrl': widget.review.imageUrl,
+                                            'profileImg': widget.user.photoURL,
+                                            'userName': widget.review.username,
+                                            'userUid': widget.user.uid,
+                                            'isComment': false
+                                          },
+                                        );
+                                      },
                                     ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Expanded(
-                                        child: Text(
-                                          widget.review.review.toUpperCase(),
-                                          maxLines: 8,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary,
-                                              fontSize: 10,
-                                              letterSpacing: 1.5),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                      child: TextButton(
-                                        style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: const Size(50, 30),
-                                        ),
-                                        child: Text(
-                                          "ver mais.".toUpperCase(),
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary,
-                                              fontSize: 10,
-                                              letterSpacing: 1.5),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pushNamed(
-                                            AppRoutes.REVIEW_DETAIL,
-                                            arguments: {
-                                              'review': widget.review.review,
-                                              'title': widget.review.title,
-                                              'imageUrl':
-                                                  widget.review.imageUrl,
-                                              'userName':
-                                                  widget.review.username,
-                                              'isComment': false
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -328,9 +324,12 @@ class _CardReviewState extends State<CardReview> {
                             AppRoutes.REVIEW_DETAIL,
                             arguments: {
                               'review': widget.review.review,
+                              'postId': widget.review.postId,
                               'title': widget.review.title,
                               'imageUrl': widget.review.imageUrl,
+                              'profileImg': widget.user.photoURL,
                               'userName': widget.review.username,
+                              'userUid': widget.user.uid,
                               'isComment': true
                             },
                           );

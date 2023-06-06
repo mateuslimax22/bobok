@@ -1,75 +1,134 @@
-import 'package:bobok/utils/constants.dart';
+import 'package:bobok/provider/firestore_methods.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../card/card_comment.dart';
 
 class CommentsCard extends StatefulWidget {
-  const CommentsCard({super.key});
+  const CommentsCard({
+    super.key,
+    required this.avatar,
+    required this.postId,
+    required this.userUid,
+    required this.userName,
+  });
+  final String? avatar;
+  final String postId;
+  final String userName;
+  final userUid;
 
   @override
   State<CommentsCard> createState() => _CommentsCard();
 }
 
 class _CommentsCard extends State<CommentsCard> {
+  TextEditingController _textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textEditingController
+        .dispose(); // Lembre-se de liberar o controller quando não for mais necessário.
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AnimatedContainer(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Theme.of(context).colorScheme.background,
-                  Theme.of(context).colorScheme.inverseSurface,
-                ],
-              ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20))),
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.easeInOut,
-          height: deviceHeight * 0.60,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Comentários"),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: deviceHeight * 0.07,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 40,
-                height: 35,
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  color: Theme.of(context).colorScheme.primary,
-                  iconSize: 40,
-                  onPressed: () {
-                    print("sdasd7");
-                  },
-                  icon: const Icon(
-                    Icons.account_box,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  decoration:
-                      InputDecoration(hintText: "Adicione um comentário"),
-                ),
-              )
+    return AnimatedContainer(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Theme.of(context).colorScheme.background,
+              Theme.of(context).colorScheme.inverseSurface,
             ],
           ),
-        )
-      ],
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeInOut,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('reviews')
+                        .doc(widget.postId)
+                        .collection('comments')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          print(snapshot.data!.docs[index].data());
+                          return CardComment(
+                            snap: snapshot.data!.docs[index],
+                          );
+                        },
+                      );
+                    })),
+            SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 45,
+                    height: 35,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5)),
+                        child: widget.avatar == null
+                            ? IconButton(
+                                padding: const EdgeInsets.all(0),
+                                icon: Icon(
+                                  Icons.person,
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                  size: 40,
+                                ),
+                                onPressed: () {},
+                              )
+                            : Image.network(widget.avatar!, fit: BoxFit.cover),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: TextField(
+                        controller: _textEditingController,
+                        decoration: InputDecoration(
+                            hintText: "Adicione um comentário",
+                            border: InputBorder.none),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right_outlined),
+                    onPressed: () async {
+                      await FirestoreMethods().postComment(
+                          widget.postId,
+                          _textEditingController.text,
+                          widget.userUid,
+                          widget.userName,
+                          widget.avatar!);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

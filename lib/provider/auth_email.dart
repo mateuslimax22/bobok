@@ -75,4 +75,13 @@ class AuthEmail extends ChangeNotifier {
 
     return null;
   }
+
+  Future<UserData> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return UserData.fromSnap(documentSnapshot);
+  }
 }
