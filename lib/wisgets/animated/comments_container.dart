@@ -46,7 +46,7 @@ class _CommentsCard extends State<CommentsCard> {
       duration: const Duration(milliseconds: 800),
       curve: Curves.easeInOut,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(top: 20),
         child: Column(
           children: [
             Expanded(
@@ -106,14 +106,14 @@ class _CommentsCard extends State<CommentsCard> {
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: TextField(
                         controller: _textEditingController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             hintText: "Adicione um comentário",
                             border: InputBorder.none),
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.chevron_right_outlined),
+                    icon: const Icon(Icons.chevron_right_outlined),
                     onPressed: () async {
                       await FirestoreMethods().postComment(
                           widget.postId,
@@ -121,6 +121,9 @@ class _CommentsCard extends State<CommentsCard> {
                           widget.userUid,
                           widget.userName,
                           widget.avatar!);
+                      setState(() {
+                        _textEditingController.text = '';
+                      });
                     },
                   ),
                 ],

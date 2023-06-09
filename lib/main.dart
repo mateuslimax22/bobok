@@ -2,6 +2,7 @@ import 'package:bobok/pages/add_review.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboarding.dart';
 import 'package:bobok/pages/review_detail.dart';
+import 'package:bobok/pages/search.dart';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/themes/theme.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.REVIEW_DETAIL: (ctx) => const ReviewDetail(),
           AppRoutes.ADD_REVIEW: (ctx) => const AddReview(),
           AppRoutes.HOME: (ctx) => const Home(),
+          AppRoutes.SEARCH: (ctx) => const Search(),
         },
       ),
     );

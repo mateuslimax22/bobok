@@ -4,12 +4,13 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({super.key, required this.uid});
+  final String uid;
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -17,7 +18,14 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool isEdit = false;
+  var userData = {};
   String userName = "";
+  int postLen = 0;
+  int followers = 0;
+  int following = 0;
+  bool isFollowing = false;
+  bool isLoading = false;
+
   void onChangedEdit() {
     setState(() {
       isEdit = !isEdit;
@@ -30,12 +38,29 @@ class _ProfileState extends State<Profile> {
     getUserName();
   }
 
-  final user = FirebaseAuth.instance.currentUser!;
   void getUserName() async {
-    DocumentSnapshot snap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    try {
+      var userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.uid)
+          .get();
+
+      userData = userSnap.data()!;
+      // get post lENGTH
+      var postSnap = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', isEqualTo: widget.uid)
+          .get();
+
+      postLen = postSnap.docs.length;
+      userData = userSnap.data()!;
+      followers = userSnap.data()!['followers'].length;
+      following = userSnap.data()!['following'].length;
+      isFollowing = userSnap.data()!['followers'].contains(widget.uid);
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -76,7 +101,7 @@ class _ProfileState extends State<Profile> {
                                         letterSpacing: 1.5),
                                   ),
                                   Text(
-                                    "2000",
+                                    followers.toString(),
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -100,7 +125,7 @@ class _ProfileState extends State<Profile> {
                                         letterSpacing: 1.5),
                                   ),
                                   Text(
-                                    "20",
+                                    following.toString(),
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -137,24 +162,29 @@ class _ProfileState extends State<Profile> {
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10)),
                                       child: SizedBox.fromSize(
-                                        size: const Size.fromRadius(
-                                            48), // Image radius
-                                        child: user.photoURL == null
-                                            ? IconButton(
-                                                padding:
-                                                    const EdgeInsets.all(0),
-                                                icon: Icon(
-                                                  Icons.person,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .background,
-                                                  size: 80,
-                                                ),
-                                                onPressed: () {},
-                                              )
-                                            : Image.network(user.photoURL!,
-                                                fit: BoxFit.cover),
-                                      ),
+                                          size: const Size.fromRadius(
+                                              48), // Image radius
+                                          child: userData['photoUrl'] == null
+                                              ? IconButton(
+                                                  padding:
+                                                      const EdgeInsets.all(0),
+                                                  icon: Icon(
+                                                    Icons.person,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .background,
+                                                    size: 80,
+                                                  ),
+                                                  onPressed: () {},
+                                                )
+                                              : Image(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                    userData['photoUrl'],
+                                                    maxHeight: 150,
+                                                    maxWidth: 110,
+                                                  ))),
                                     ),
                                   ),
                                 ),
@@ -210,7 +240,7 @@ class _ProfileState extends State<Profile> {
                                         const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                     child: SizedBox(
                                       child: Text(
-                                        user.displayName!,
+                                        userData['username'].toString(),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -225,6 +255,7 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
+                const Divider(),
                 Expanded(
                   child: Row(
                     children: [
@@ -260,21 +291,42 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                             children: [
                               const Text("Resenhas"),
-                              Expanded(
-                                child: SizedBox(
-                                  child: GridView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: loadedReviewUser.length,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              childAspectRatio: (2.8 / 4),
-                                              crossAxisCount: 2,
-                                              crossAxisSpacing: 2,
-                                              mainAxisSpacing: 2),
-                                      itemBuilder: (ctx, i) => ProfileReview(
-                                          itemReview: loadedReviewUser[i])),
-                                ),
-                              ),
+                              FutureBuilder(
+                                  future: FirebaseFirestore.instance
+                                      .collection('reviews')
+                                      .where('uid', isEqualTo: widget.uid)
+                                      .get(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+
+                                    return Expanded(
+                                      child: SizedBox(
+                                        child: GridView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                (snapshot.data! as dynamic)
+                                                    .docs
+                                                    .length,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    childAspectRatio: (2.8 / 4),
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 2,
+                                                    mainAxisSpacing: 2),
+                                            itemBuilder: (ctx, i) {
+                                              Review review = Review.fromSnap(
+                                                  snapshot.data!.docs[i]);
+                                              return ProfileReview(
+                                                  itemReview: review);
+                                            }),
+                                      ),
+                                    );
+                                  })
                             ],
                           ),
                         ),

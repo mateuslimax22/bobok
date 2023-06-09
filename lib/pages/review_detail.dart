@@ -66,26 +66,39 @@ class _ReviewDetailState extends State<ReviewDetail> {
                               SizedBox(
                                 width: 40,
                                 height: 35,
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                  color: Theme.of(context).colorScheme.primary,
-                                  iconSize: 40,
-                                  onPressed: () {
-                                    print("sdasd7");
-                                  },
-                                  icon: const Icon(
-                                    Icons.account_box,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    child: arguments['profileImg'] == null
+                                        ? IconButton(
+                                            padding: const EdgeInsets.all(0),
+                                            icon: Icon(
+                                              Icons.person,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              size: 40,
+                                            ),
+                                            onPressed: () {},
+                                          )
+                                        : Image.network(arguments['profileImg'],
+                                            fit: BoxFit.cover),
                                   ),
                                 ),
                               ),
-                              Text(
-                                arguments['userName'],
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontSize: 20,
-                                    letterSpacing: 1.5),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  arguments['userName'],
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                      fontSize: 20,
+                                      letterSpacing: 1.5),
+                                ),
                               ),
                             ],
                           ),

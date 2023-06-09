@@ -1,8 +1,10 @@
 import 'package:bobok/pages/profile.dart';
+import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +21,10 @@ class _HomeState extends State<Home> {
   final pages = [
     const Text("livros"),
     ListCard(),
-    const Text("mundo"),
-    const Profile(),
+    const World(),
+    Profile(
+      uid: FirebaseAuth.instance.currentUser!.uid,
+    ),
   ];
 
   @override
@@ -58,16 +62,28 @@ class _HomeState extends State<Home> {
                           );
                         }).toList();
                       })
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.add,
-                        size: 35,
-                      ),
-                      tooltip: 'Show Snackbar',
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
-                      },
-                    ),
+                  : index == 2
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.search,
+                            size: 35,
+                          ),
+                          tooltip: 'Show Snackbar',
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(AppRoutes.SEARCH);
+                          },
+                        )
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.add,
+                            size: 35,
+                          ),
+                          tooltip: 'Show Snackbar',
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pushNamed(AppRoutes.ADD_REVIEW);
+                          },
+                        )
             ]),
         bottomNavigationBar: CurvedNavigationBar(
           color: Theme.of(context).colorScheme.background,

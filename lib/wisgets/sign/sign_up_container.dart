@@ -1,9 +1,8 @@
 import 'dart:io';
-
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/utils/constants.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../wisgets/btn/elevated.dart';
 
 class SignUpConatiner extends StatefulWidget {
@@ -101,11 +100,15 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   @override
   Widget build(BuildContext context) {
     void _uploadImage() async {
-      final result = await FilePicker.platform.pickFiles(type: FileType.image);
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 25,
+      );
 
-      if (result != null) {
+      if (image != null) {
         setState(() {
-          _avatar = File(result.files.first.path!);
+          _avatar = File(image.path);
         });
       }
     }

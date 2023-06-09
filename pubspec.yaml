@@ -56,6 +56,9 @@ dependencies:
   file_picker: ^5.3.1
   cloud_firestore: ^4.8.0
   intl: ^0.18.1
+  image: ^4.0.17
+  image_picker: ^0.8.7+5
+  cached_network_image: ^3.2.3
 
 
 

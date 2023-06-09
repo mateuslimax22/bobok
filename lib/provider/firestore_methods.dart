@@ -1,4 +1,5 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -99,5 +100,22 @@ class FirestoreMethods {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<void> deleteReview(String? postId) async {
+    try {
+      await _firestore.collection('reviews').doc(postId).delete();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<UserData> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return UserData.fromSnap(documentSnapshot);
   }
 }

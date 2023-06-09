@@ -16,7 +16,8 @@ class ProfileReview extends StatelessWidget {
       elevation: 1,
       color: Theme.of(context).colorScheme.onBackground,
       child: GridTile(
-          child: Image.network(itemReview.imageUrl, fit: BoxFit.cover)),
+          child: Image.network(itemReview.imageUrl,
+              cacheHeight: 150, cacheWidth: 110, fit: BoxFit.cover)),
     );
   }
 }

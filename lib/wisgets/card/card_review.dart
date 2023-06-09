@@ -2,6 +2,7 @@ import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CardReview extends StatefulWidget {
@@ -24,9 +25,11 @@ class CardReview extends StatefulWidget {
 class _CardReviewState extends State<CardReview> {
   bool isLike = false;
   int countLikes = 0;
+  int commentLen = 0;
   @override
   void initState() {
     super.initState();
+    getComments();
     setState(() {
       countLikes = widget.review.likes.length;
     });
@@ -37,8 +40,34 @@ class _CardReviewState extends State<CardReview> {
     }
   }
 
+  void getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('reviews')
+          .doc(widget.review.postId)
+          .collection('comments')
+          .get();
+
+      commentLen = snap.docs.length;
+    } catch (e) {
+      print(e);
+    }
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    void menuAppbar(String value) {
+      switch (value) {
+        case 'Delete resenha':
+          FirestoreMethods().deleteReview(widget.review.postId);
+          break;
+        case 'Ocutar resenhas desse usuário':
+          break;
+      }
+    }
+
     return Card(
       margin: const EdgeInsets.all(0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -107,19 +136,39 @@ class _CardReviewState extends State<CardReview> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
-                      height: 35,
-                      child: IconButton(
-                        color: Theme.of(context).colorScheme.primary,
-                        iconSize: 20,
-                        onPressed: () {
-                          print("sdasd");
-                        },
-                        icon: const Icon(
-                          Icons.more_vert_outlined,
+                        width: 40,
+                        height: 35,
+                        child: PopupMenuButton<String>(
+                            onSelected: menuAppbar,
+                            itemBuilder: (BuildContext context) {
+                              if (widget.user.uid == widget.review.uid) {
+                                return {'Delete resenha'}.map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              } else {
+                                return {'Ocutar resenhas desse usuário'}
+                                    .map((String choice) {
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              }
+                            })
+                        // IconButton(
+                        //   color: Theme.of(context).colorScheme.primary,
+                        //   iconSize: 20,
+                        //   onPressed: () {
+                        //     print("sdasd");
+                        //   },
+                        //   icon: const Icon(
+                        //     Icons.more_vert_outlined,
+                        //   ),
+                        // ),
                         ),
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(
@@ -133,7 +182,7 @@ class _CardReviewState extends State<CardReview> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
@@ -184,6 +233,7 @@ class _CardReviewState extends State<CardReview> {
                               padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   SizedBox(
                                     width: deviceWidth * 0.6,
@@ -350,6 +400,33 @@ class _CardReviewState extends State<CardReview> {
                       ),
                     )
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        AppRoutes.REVIEW_DETAIL,
+                        arguments: {
+                          'review': widget.review.review,
+                          'postId': widget.review.postId,
+                          'title': widget.review.title,
+                          'imageUrl': widget.review.imageUrl,
+                          'profileImg': widget.user.photoURL,
+                          'userName': widget.review.username,
+                          'userUid': widget.user.uid,
+                          'isComment': true
+                        },
+                      );
+                    },
+                    child: Text(
+                      "Ver todos os $commentLen comentários",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 13,
+                          letterSpacing: 1.5),
+                    ),
+                  ),
                 )
               ],
             ),
