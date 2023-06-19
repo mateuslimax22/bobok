@@ -1,13 +1,17 @@
 import 'package:bobok/pages/add_review.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboarding.dart';
+import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/review_detail.dart';
 import 'package:bobok/pages/search.dart';
+import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/themes/theme.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/listCard/list_card_home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +43,11 @@ class MyApp extends StatelessWidget {
           AppRoutes.ADD_REVIEW: (ctx) => const AddReview(),
           AppRoutes.HOME: (ctx) => const Home(),
           AppRoutes.SEARCH: (ctx) => const Search(),
+          AppRoutes.LISTHOME: (ctx) => ListCard(),
+          AppRoutes.BOOK: (ctx) => const Text("livros"),
+          AppRoutes.PROFILE: (ctx) =>
+              Profile(uid: FirebaseAuth.instance.currentUser!.uid),
+          AppRoutes.WORLD: (ctx) => const World(),
         },
       ),
     );

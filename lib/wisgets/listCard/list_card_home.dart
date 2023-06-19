@@ -13,7 +13,10 @@ class ListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('reviews').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('reviews')
+          .orderBy("datePublish", descending: true)
+          .snapshots(),
       builder: (context,
           AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

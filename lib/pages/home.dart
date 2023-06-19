@@ -1,3 +1,4 @@
+import 'package:bobok/pages/books.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/google_sign_in.dart';
@@ -15,11 +16,11 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int index = 1;
 
   final pages = [
-    const Text("livros"),
+    const Books(),
     ListCard(),
     const World(),
     Profile(
@@ -117,6 +118,16 @@ class _HomeState extends State<Home> {
             setState(() => this.index = index);
           },
         ),
-        body: pages[index]);
+        body: IndexedStack(
+          children: [
+            const Books(),
+            ListCard(),
+            const World(),
+            Profile(
+              uid: FirebaseAuth.instance.currentUser!.uid,
+            ),
+          ],
+          index: index,
+        ));
   }
 }

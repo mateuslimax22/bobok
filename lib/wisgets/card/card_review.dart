@@ -47,13 +47,12 @@ class _CardReviewState extends State<CardReview> {
           .doc(widget.review.postId)
           .collection('comments')
           .get();
-
-      commentLen = snap.docs.length;
+      setState(() {
+        commentLen = snap.docs.length;
+      });
     } catch (e) {
       print(e);
     }
-
-    setState(() {});
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
+import 'package:bobok/wisgets/listCard/List_card_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -290,43 +291,8 @@ class _ProfileState extends State<Profile> {
                           padding: const EdgeInsets.only(left: 8),
                           child: Column(
                             children: [
-                              const Text("Resenhas"),
-                              FutureBuilder(
-                                  future: FirebaseFirestore.instance
-                                      .collection('reviews')
-                                      .where('uid', isEqualTo: widget.uid)
-                                      .get(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }
-
-                                    return Expanded(
-                                      child: SizedBox(
-                                        child: GridView.builder(
-                                            shrinkWrap: true,
-                                            itemCount:
-                                                (snapshot.data! as dynamic)
-                                                    .docs
-                                                    .length,
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    childAspectRatio: (2.8 / 4),
-                                                    crossAxisCount: 2,
-                                                    crossAxisSpacing: 2,
-                                                    mainAxisSpacing: 2),
-                                            itemBuilder: (ctx, i) {
-                                              Review review = Review.fromSnap(
-                                                  snapshot.data!.docs[i]);
-                                              return ProfileReview(
-                                                  itemReview: review);
-                                            }),
-                                      ),
-                                    );
-                                  })
+                              Text("Resenhas"),
+                              ListCardProfile(),
                             ],
                           ),
                         ),
