@@ -20,7 +20,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int index = 1;
 
   final pages = [
-    const Books(),
+    Books(
+      uid: FirebaseAuth.instance.currentUser!.uid,
+    ),
     ListCard(),
     const World(),
     Profile(
@@ -120,7 +122,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         body: IndexedStack(
           children: [
-            const Books(),
+            Books(uid: FirebaseAuth.instance.currentUser!.uid),
             ListCard(),
             const World(),
             Profile(

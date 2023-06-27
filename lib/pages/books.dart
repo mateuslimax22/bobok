@@ -1,8 +1,20 @@
-import 'package:bobok/utils/constants.dart';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:bobok/models/pdf.dart';
+import 'package:bobok/pages/view_pdf.dart';
+import 'package:bobok/provider/firestore_methods.dart';
+
+import 'package:bobok/wisgets/listCard/list_pdf_books.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf_render/pdf_render.dart';
+import 'package:pdf_render/pdf_render_widgets.dart';
 
 class Books extends StatefulWidget {
-  const Books({Key? key}) : super(key: key);
+  const Books({super.key, required this.uid});
+  final String uid;
 
   @override
   _BooksState createState() => _BooksState();
@@ -10,23 +22,179 @@ class Books extends StatefulWidget {
 
 class _BooksState extends State<Books> {
   List<String> cards = ['Card 2', 'Card 1', 'Card 3'];
+  File? pdf;
+  String filePath = '';
   int selectedIndex = 1;
+  var listPdf;
+
+  @override
+  void initState() {
+    super.initState();
+    getListPdf();
+  }
+
+  void getListPdf() async {
+    var listPdfs = await FirebaseFirestore.instance
+        .collection('pdfs')
+        .where('uid', isEqualTo: widget.uid)
+        .get();
+    final pdfs = listPdfs.docs.map((doc) => Pdf.fromSnap(doc)).toList();
+
+    setState(() {
+      listPdf = listPdfs.docs.length;
+      filePath = pdfs[0].listPdf[0];
+    });
+  }
+
+  void pickPDF() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      File pdfFile = File(result.files.single.path!);
+      openPDF(pdfFile);
+      FirestoreMethods().addListPdf(result.files.single.path!, listPdf);
+
+      // Faça algo com o arquivo PDF selecionado, como abrir ou salvar em uma lista de acesso rápido.
+    } else {
+      // Nenhum arquivo foi selecionado.
+    }
+  }
+
+  void openPDF(File pdfFile) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PDFViewerScreen(pdfFile: pdfFile),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Positioned(top: 20, left: 0, child: buildCard(0, const Offset(-30, 0))),
-        Positioned(
-            top: 20,
-            left: deviceWidth - 150,
-            child: buildCard(2, const Offset(30, 0))),
-        Positioned(
-            top: 20,
-            left: deviceWidth * 0.3,
-            child: buildCard(1, const Offset(0, 0))),
-      ],
-    ));
+      body: Column(
+        children: [
+          Row(children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 150,
+                width: 110,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 150,
+                      padding: const EdgeInsets.all(4), // Border width
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        child: SizedBox.fromSize(
+                            size: const Size.fromRadius(48), // Image radius
+                            child: listPdf == null
+                                ? IconButton(
+                                    padding: const EdgeInsets.all(0),
+                                    icon: Icon(
+                                      Icons.book,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      size: 80,
+                                    ),
+                                    onPressed: () {
+                                      pickPDF();
+                                    },
+                                  )
+                                : PdfDocumentLoader.openFile(filePath,
+                                    pageNumber: 1,
+                                    pageBuilder:
+                                        (context, textureBuilder, pageSize) =>
+                                            textureBuilder())),
+                      ),
+                    ),
+                    Positioned(
+                        top: 0,
+                        right: 0,
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: RawMaterialButton(
+                            onPressed: () {},
+                            elevation: 2.0,
+                            fillColor: Theme.of(context).colorScheme.background,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            child: IconButton(
+                              padding: const EdgeInsets.all(0),
+                              icon: Icon(
+                                Icons.note_add,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                pickPDF();
+                              },
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+            // SizedBox(
+            //   height: 150,
+            //   width: deviceWidth,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: ListCardPdf(),
+            //   ),
+            // )
+            Expanded(
+                child: SingleChildScrollView(
+                    child: Column(children: [
+              SizedBox(height: 150, child: ListCardPdf())
+            ])))
+          ])
+        ],
+      ),
+      //     body: Stack(
+      //   children: [
+      //     Positioned(top: 20, left: 0, child: buildCard(0, const Offset(-30, 0))),
+      //     Positioned(
+      //         top: 20,
+      //         left: deviceWidth - 150,
+      //         child: buildCard(2, const Offset(30, 0))),
+      //     Positioned(
+      //         top: 20,
+      //         left: deviceWidth * 0.3,
+      //         child: buildCard(1, const Offset(0, 0))),
+      //     Positioned(
+      //       top: 250,
+      //       child: SizedBox(
+      //         height: 200,
+      //         width: deviceWidth,
+      //         child: ListCardPdf(),
+      //         // child: ListView.builder(
+      //         //   itemCount: QuickAccessList().pdfFiles.length,
+      //         //   itemBuilder: (context, index) {
+      //         //     return ListTile(
+      //         //       title: Text(
+      //         //           QuickAccessList().pdfFiles[index].path.split('/').last),
+      //         //     );
+      //         //   },
+      //         // ),
+      //       ),
+      //     )
+      //   ],
+      // )
+    );
   }
 
   Widget buildCard(int index, Offset offset) {
@@ -35,7 +203,22 @@ class _BooksState extends State<Books> {
       feedback: Card(
         child: Padding(
           padding: EdgeInsets.all(20.0),
-          child: Container(width: 100, height: 200, child: Text(cards[index])),
+          child: Container(
+              width: 100,
+              height: 200,
+              child: Center(
+                child: IconButton(
+                  padding: const EdgeInsets.all(0),
+                  icon: Icon(
+                    Icons.note_add,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 80,
+                  ),
+                  onPressed: () {
+                    pickPDF();
+                  },
+                ),
+              )),
         ),
       ),
       childWhenDragging: Container(),
@@ -51,8 +234,22 @@ class _BooksState extends State<Books> {
         child: Card(
           child: Padding(
             padding: EdgeInsets.all(20.0),
-            child:
-                Container(width: 100, height: 200, child: Text(cards[index])),
+            child: Container(
+                width: 100,
+                height: 200,
+                child: Center(
+                  child: IconButton(
+                    padding: const EdgeInsets.all(0),
+                    icon: Icon(
+                      Icons.note_add,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      pickPDF();
+                    },
+                  ),
+                )),
           ),
         ),
       ),

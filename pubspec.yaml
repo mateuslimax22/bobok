@@ -59,6 +59,7 @@ dependencies:
   image: ^4.0.17
   image_picker: ^0.8.7+5
   cached_network_image: ^3.2.3
+  pdf_render: ^1.4.0
 
 
 

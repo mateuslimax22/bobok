@@ -102,6 +102,20 @@ class FirestoreMethods {
     }
   }
 
+  Future<void> addListPdf(String files, int? pdfs) async {
+    try {
+      String pdfsId = const Uuid().v1();
+      _storage.ref().child("pdfs").child(_auth.currentUser!.uid);
+      await _firestore.collection('pdfs').doc(pdfsId).set({
+        'pdfsId': pdfsId,
+        'uid': _auth.currentUser!.uid,
+        'listPdf': [files]
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> deleteReview(String? postId) async {
     try {
       await _firestore.collection('reviews').doc(postId).delete();
