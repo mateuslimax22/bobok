@@ -2,16 +2,21 @@
 
 import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
+import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key, required this.uid});
-  final String uid;
+  const Profile({super.key, required this.uid, required this.currentUid});
+  final String? uid;
+  final bool? currentUid;
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -19,6 +24,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool isEdit = false;
+  final user = FirebaseAuth.instance.currentUser!;
   var userData = {};
   String userName = "";
   int postLen = 0;
@@ -36,6 +42,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    print('******************************************************');
     getUserName();
   }
 
@@ -47,6 +54,9 @@ class _ProfileState extends State<Profile> {
           .get();
 
       userData = userSnap.data()!;
+
+      // print(userData['uid']);
+      // userData['uid'] ?? getUserName();
       // get post lENGTH
       var postSnap = await FirebaseFirestore.instance
           .collection('posts')
@@ -54,22 +64,55 @@ class _ProfileState extends State<Profile> {
           .get();
 
       postLen = postSnap.docs.length;
-      userData = userSnap.data()!;
       followers = userSnap.data()!['followers'].length;
       following = userSnap.data()!['following'].length;
-      isFollowing = userSnap.data()!['followers'].contains(widget.uid);
+      isFollowing = userSnap.data()!['followers'].contains(user.uid);
       setState(() {});
     } catch (e) {
-      print(e);
+      if (e.toString() == "Null check operator used on a null value") {
+        getUserName();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Review> loadedReviewUser = dummyReviws;
+    void menuAppbar(String value) {
+      switch (value) {
+        case 'Logout':
+          final provider =
+              Provider.of<GoogleSignInProvider>(context, listen: false);
+          provider.logout();
+          break;
+        case 'Settings':
+          break;
+      }
+    }
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: widget.currentUid == false
+            ? AppBar(
+                elevation: 0,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                titleSpacing: 5,
+                title: Image.asset('images/logoName.png',
+                    width: 138, height: 31, fit: BoxFit.fill),
+                actions: [
+                    PopupMenuButton<String>(
+                        onSelected: menuAppbar,
+                        itemBuilder: (BuildContext context) {
+                          return {'Logout', 'Settings'}.map((String choice) {
+                            return PopupMenuItem<String>(
+                              value: choice,
+                              child: Text(choice),
+                            );
+                          }).toList();
+                        })
+                  ])
+            : null,
         body: Stack(
           children: [
             Column(
@@ -228,14 +271,49 @@ class _ProfileState extends State<Profile> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ElevatedButtonTh(
-                                    label: 'Editar',
-                                    target: onChangedEdit,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    width: 260,
-                                    height: 30,
-                                  ),
+                                  widget.uid == user.uid
+                                      ? ElevatedButtonTh(
+                                          label: 'Editar',
+                                          target: onChangedEdit,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          width: 260,
+                                          height: 30,
+                                        )
+                                      : isFollowing
+                                          ? ElevatedButtonTh(
+                                              label: 'Remover',
+                                              target: () async {
+                                                await FirestoreMethods()
+                                                    .followUser(
+                                                        user.uid, widget.uid);
+
+                                                setState(() {
+                                                  isFollowing = false;
+                                                  followers--;
+                                                });
+                                              },
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              width: 260,
+                                              height: 30,
+                                            )
+                                          : ElevatedButtonTh(
+                                              label: 'Adicionar',
+                                              target: () async {
+                                                await FirestoreMethods()
+                                                    .followUser(
+                                                        user.uid, widget.uid);
+                                                setState(() {
+                                                  isFollowing = true;
+                                                  followers++;
+                                                });
+                                              },
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              width: 260,
+                                              height: 30,
+                                            ),
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -292,7 +370,9 @@ class _ProfileState extends State<Profile> {
                           child: Column(
                             children: [
                               Text("Resenhas"),
-                              ListCardProfile(),
+                              ListCardProfile(
+                                uid: widget.uid,
+                              ),
                             ],
                           ),
                         ),

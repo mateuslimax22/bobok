@@ -1,6 +1,5 @@
 import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/animated/comments_container.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ReviewDetail extends StatefulWidget {

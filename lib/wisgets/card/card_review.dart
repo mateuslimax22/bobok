@@ -1,4 +1,5 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
@@ -12,10 +13,14 @@ class CardReview extends StatefulWidget {
     required this.review,
     required this.avatar,
     required this.user,
+    required this.reviewUid,
+    required this.onFunc,
   }) : super(key: key);
   final Review review;
   final Color colorback;
   final String? avatar;
+  final String? reviewUid;
+  final Function onFunc;
   final user;
 
   @override
@@ -122,13 +127,25 @@ class _CardReviewState extends State<CardReview> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              widget.review.username,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 15,
-                                  letterSpacing: 1.5),
+                            child: GestureDetector(
+                              onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Profile(
+                                        uid: widget.reviewUid,
+                                        currentUid: false),
+                                  ),
+                                )
+                              },
+                              child: Text(
+                                widget.review.username,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: 15,
+                                    letterSpacing: 1.5),
+                              ),
                             ),
                           ),
                         ],

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:bobok/models/pdf.dart';
-import 'package:bobok/models/review.dart';
 import 'package:bobok/pages/view_pdf.dart';
-import 'package:bobok/wisgets/card/profile_review.dart';
+import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,9 +60,27 @@ class _ListCardPdfState extends State<ListCardPdf> {
           shrinkWrap: true,
           itemCount: lengthPdf,
           itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(pdfs[index].listPdf[0]!.split('/').last),
-              onTap: () => {openPDF(File(pdfs[index].listPdf[0]))},
+            return Card(
+              child: ListTile(
+                leading: Icon(Icons.bookmark),
+                title: Text(pdfs[index].listPdf[0]!.split('/').last),
+                onTap: () => {openPDF(File(pdfs[index].listPdf[0]))},
+                trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return DeleteConfirmationModal(
+                                    item:
+                                        pdfs[index].listPdf[0]!.split('/').last,
+                                    onDelete: () => {
+                                          FirestoreMethods()
+                                              .deletePdf(pdfs[index].pdfsId)
+                                        });
+                              })
+                        }),
+              ),
             );
           },
         );

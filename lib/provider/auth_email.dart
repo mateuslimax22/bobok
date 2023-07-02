@@ -46,7 +46,6 @@ class AuthEmail extends ChangeNotifier {
         'following': [],
         'photoUrl': fileUrl,
       });
-      notifyListeners();
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(

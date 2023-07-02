@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/pdf.dart';
+import 'package:bobok/models/review.dart';
 import 'package:bobok/pages/view_pdf.dart';
 import 'package:bobok/provider/firestore_methods.dart';
-
+import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:bobok/wisgets/listCard/list_pdf_books.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf_render/pdf_render.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 
 class Books extends StatefulWidget {
@@ -22,6 +23,8 @@ class Books extends StatefulWidget {
 
 class _BooksState extends State<Books> {
   List<String> cards = ['Card 2', 'Card 1', 'Card 3'];
+  final List<Review> loadedReviewUser = dummyReviws;
+
   File? pdf;
   String filePath = '';
   int selectedIndex = 1;
@@ -30,10 +33,10 @@ class _BooksState extends State<Books> {
   @override
   void initState() {
     super.initState();
-    getListPdf();
+    getListPdf(0);
   }
 
-  void getListPdf() async {
+  void getListPdf(int index) async {
     var listPdfs = await FirebaseFirestore.instance
         .collection('pdfs')
         .where('uid', isEqualTo: widget.uid)
@@ -42,7 +45,9 @@ class _BooksState extends State<Books> {
 
     setState(() {
       listPdf = listPdfs.docs.length;
-      filePath = pdfs[0].listPdf[0];
+      if (pdfs.isNotEmpty) {
+        filePath = pdfs[index].listPdf[index];
+      }
     });
   }
 
@@ -98,7 +103,7 @@ class _BooksState extends State<Books> {
                             const BorderRadius.all(Radius.circular(10)),
                         child: SizedBox.fromSize(
                             size: const Size.fromRadius(48), // Image radius
-                            child: listPdf == null
+                            child: filePath.isEmpty
                                 ? IconButton(
                                     padding: const EdgeInsets.all(0),
                                     icon: Icon(
@@ -161,39 +166,35 @@ class _BooksState extends State<Books> {
                     child: Column(children: [
               SizedBox(height: 150, child: ListCardPdf())
             ])))
-          ])
+          ]),
+          Expanded(
+            flex: 7,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Column(
+                children: [
+                  const Text("Resenhas"),
+                  Expanded(
+                    child: SizedBox(
+                      child: GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: loadedReviewUser.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: (2.8 / 4),
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 2,
+                                  mainAxisSpacing: 2),
+                          itemBuilder: (ctx, i) =>
+                              ProfileReview(itemReview: loadedReviewUser[i])),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
-      //     body: Stack(
-      //   children: [
-      //     Positioned(top: 20, left: 0, child: buildCard(0, const Offset(-30, 0))),
-      //     Positioned(
-      //         top: 20,
-      //         left: deviceWidth - 150,
-      //         child: buildCard(2, const Offset(30, 0))),
-      //     Positioned(
-      //         top: 20,
-      //         left: deviceWidth * 0.3,
-      //         child: buildCard(1, const Offset(0, 0))),
-      //     Positioned(
-      //       top: 250,
-      //       child: SizedBox(
-      //         height: 200,
-      //         width: deviceWidth,
-      //         child: ListCardPdf(),
-      //         // child: ListView.builder(
-      //         //   itemCount: QuickAccessList().pdfFiles.length,
-      //         //   itemBuilder: (context, index) {
-      //         //     return ListTile(
-      //         //       title: Text(
-      //         //           QuickAccessList().pdfFiles[index].path.split('/').last),
-      //         //     );
-      //         //   },
-      //         // ),
-      //       ),
-      //     )
-      //   ],
-      // )
     );
   }
 

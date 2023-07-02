@@ -19,17 +19,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   int index = 1;
 
-  final pages = [
-    Books(
-      uid: FirebaseAuth.instance.currentUser!.uid,
-    ),
-    ListCard(),
-    const World(),
-    Profile(
-      uid: FirebaseAuth.instance.currentUser!.uid,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     void menuAppbar(String value) {
@@ -115,7 +104,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               color: Theme.of(context).colorScheme.primary,
             ),
           ],
-          index: 1,
+          index: index,
           onTap: (index) {
             setState(() => this.index = index);
           },
@@ -123,11 +112,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         body: IndexedStack(
           children: [
             Books(uid: FirebaseAuth.instance.currentUser!.uid),
-            ListCard(),
+            ListCard(onFunc: (int test) {
+              setState(() => index = test);
+            }),
             const World(),
             Profile(
-              uid: FirebaseAuth.instance.currentUser!.uid,
-            ),
+                uid: FirebaseAuth.instance.currentUser!.uid, currentUid: true),
           ],
           index: index,
         ));

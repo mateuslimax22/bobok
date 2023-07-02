@@ -12,19 +12,9 @@ class PDFViewerScreen extends StatefulWidget {
 }
 
 class _PDFViewerScreenState extends State<PDFViewerScreen> {
-  // @override
-  // void dispose() {
-  //   _pdfViewController
-  //       .dispose(); // Lembre-se de liberar o controller quando não for mais necessário.
-  //   super.dispose();
-  // }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('PDF Viewer'),
-      ),
+      appBar: null,
       body: PdfViewer.openFile(
         widget.pdfFile.path,
       ),

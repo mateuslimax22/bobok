@@ -14,11 +14,15 @@ import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
 
@@ -43,10 +47,14 @@ class MyApp extends StatelessWidget {
           AppRoutes.ADD_REVIEW: (ctx) => const AddReview(),
           AppRoutes.HOME: (ctx) => const Home(),
           AppRoutes.SEARCH: (ctx) => const Search(),
-          AppRoutes.LISTHOME: (ctx) => ListCard(),
+          AppRoutes.LISTHOME: (ctx) => ListCard(
+                onFunc: () => {},
+              ),
           AppRoutes.BOOK: (ctx) => const Text("livros"),
-          AppRoutes.PROFILE: (ctx) =>
-              Profile(uid: FirebaseAuth.instance.currentUser!.uid),
+          AppRoutes.PROFILE: (ctx) => Profile(
+                uid: FirebaseAuth.instance.currentUser!.uid,
+                currentUid: true,
+              ),
           AppRoutes.WORLD: (ctx) => const World(),
         },
       ),

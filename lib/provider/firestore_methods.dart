@@ -116,6 +116,14 @@ class FirestoreMethods {
     }
   }
 
+  Future<void> deletePdf(String? pdfId) async {
+    try {
+      await _firestore.collection('pdfs').doc(pdfId).delete();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> deleteReview(String? postId) async {
     try {
       await _firestore.collection('reviews').doc(postId).delete();
@@ -131,5 +139,34 @@ class FirestoreMethods {
         await _firestore.collection('users').doc(currentUser.uid).get();
 
     return UserData.fromSnap(documentSnapshot);
+  }
+
+  Future<void> followUser(String uid, String? followId) async {
+    try {
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
+
+      List following = (snap.data()! as dynamic)['following'];
+
+      if (following.contains(followId)) {
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayRemove([uid])
+        });
+
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayRemove([followId])
+        });
+      } else {
+        await _firestore.collection('users').doc(followId).update({
+          'followers': FieldValue.arrayUnion([uid])
+        });
+
+        await _firestore.collection('users').doc(uid).update({
+          'following': FieldValue.arrayUnion([followId])
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
