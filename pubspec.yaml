@@ -59,8 +59,8 @@ dependencies:
   image: ^4.0.17
   image_picker: ^0.8.7+5
   cached_network_image: ^3.2.3
-  pdf_render: ^1.4.0
   google_mobile_ads: ^3.0.0
+  pdf: ^3.10.4
 
 
 
@@ -85,6 +85,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  plugin:
+    platforms:
+      android:
+        package: com.example.read_pdf_text
+        pluginClass: ReadPdfTextPlugin
+      ios:
+        pluginClass: ReadPdfTextPlugin
 
   # To add assets to your application, add an assets section, like this:
   assets:

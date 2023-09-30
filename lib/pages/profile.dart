@@ -55,7 +55,7 @@ class _ProfileState extends State<Profile> {
 
       userData = userSnap.data()!;
 
-      // print(userData['uid']);
+      print(userData);
       // userData['uid'] ?? getUserName();
       // get post lENGTH
       var postSnap = await FirebaseFirestore.instance

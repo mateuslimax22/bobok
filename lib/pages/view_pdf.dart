@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:pdf_render/pdf_render_widgets.dart';
+
+import '../wisgets/pdf/pdf_render_widgets.dart';
 
 class PDFViewerScreen extends StatefulWidget {
   final File pdfFile;

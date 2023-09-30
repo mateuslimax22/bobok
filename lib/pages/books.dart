@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/pdf.dart';
@@ -8,10 +7,12 @@ import 'package:bobok/pages/view_pdf.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:bobok/wisgets/listCard/list_pdf_books.dart';
+import 'package:bobok/wisgets/pdf_txt/read_pdf_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf_render/pdf_render_widgets.dart';
+
+import '../wisgets/pdf/pdf_render_widgets.dart';
 
 class Books extends StatefulWidget {
   const Books({super.key, required this.uid});
@@ -24,7 +25,7 @@ class Books extends StatefulWidget {
 class _BooksState extends State<Books> {
   List<String> cards = ['Card 2', 'Card 1', 'Card 3'];
   final List<Review> loadedReviewUser = dummyReviws;
-
+  String pdfText = "";
   File? pdf;
   String filePath = '';
   int selectedIndex = 1;
@@ -59,8 +60,11 @@ class _BooksState extends State<Books> {
 
     if (result != null) {
       File pdfFile = File(result.files.single.path!);
-      openPDF(pdfFile);
-      FirestoreMethods().addListPdf(result.files.single.path!, listPdf);
+      pdfText = await ReadPdfText.getPDFtext(result.files.single.path!);
+      print(pdfText);
+
+      //openPDF(pdfFile);
+      //FirestoreMethods().addListPdf(result.files.single.path!, listPdf);
 
       // Faça algo com o arquivo PDF selecionado, como abrir ou salvar em uma lista de acesso rápido.
     } else {

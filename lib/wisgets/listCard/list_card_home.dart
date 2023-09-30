@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/models/review.dart';
+import 'package:bobok/wisgets/card/card_ads.dart';
 import 'package:bobok/wisgets/card/card_review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,6 +32,31 @@ class _ListCardState extends State<ListCard> {
     // TODO: implement initState
     super.initState();
     loadAd();
+  }
+
+  Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
+    // Obtendo o usuário atualmente autenticado
+    if (user == null) {
+      // Caso o usuário não esteja autenticado, retorne uma lista vazia ou trate de outra forma
+      return [];
+    }
+
+    // Obtendo a lista de amigos do usuário
+    var userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    List<dynamic> amigos = userSnapshot.data()!['followers'];
+
+    print(userSnapshot.data()!['followers']);
+
+    // Obtendo as reviews dos amigos
+    var reviewsSnapshot = await FirebaseFirestore.instance
+        .collection('reviews')
+        //.where('uid', whereIn: amigos)
+        .get();
+
+    return reviewsSnapshot.docs;
   }
 
   void loadAd() {
@@ -82,36 +108,27 @@ class _ListCardState extends State<ListCard> {
 
   @override
   Widget build(BuildContext context) {
-    final adcode = Container(
-      constraints: const BoxConstraints(
-        minWidth: 320, // minimum recommended width
-        minHeight: 320, // minimum recommended height
-        maxWidth: 400,
-        maxHeight: 400,
-      ),
-      child: AdWidget(ad: _nativeAd!),
-    );
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('reviews')
-          .orderBy("datePublish", descending: true)
-          .snapshots(),
-      builder: (context,
-          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    final adcode = CardAds(
+        colorback: Theme.of(context).colorScheme.primary,
+        ads: AdWidget(ad: _nativeAd!));
+
+    return StreamBuilder<List<QueryDocumentSnapshot>>(
+      stream: getReviewsAmigos().asStream(),
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
         return ListView.separated(
-          itemCount: snapshot.data!.docs.length,
+          itemCount: snapshot.data!.length,
           separatorBuilder: (context, index) {
             if (_nativeAdIsLoaded && index % 2 != 0 && index != 0)
               return adcode;
             return const SizedBox();
           },
           itemBuilder: (context, index) {
-            Review review = Review.fromSnap(snapshot.data!.docs[index]);
+            Review review = Review.fromSnap(snapshot.data![index]);
             return CardReview(
               colorback: review.spoiler == true
                   ? Theme.of(context).colorScheme.secondaryContainer

@@ -281,17 +281,33 @@ class _CardReviewState extends State<CardReview> {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: Text(
-                                            widget.review.review.toUpperCase(),
-                                            maxLines: 8,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary,
-                                                fontSize: 10,
-                                                letterSpacing: 1.5),
-                                          ),
+                                          child: widget.review.spoiler != true
+                                              ? Text(
+                                                  widget.review.review
+                                                      .toUpperCase(),
+                                                  maxLines: 8,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
+                                                      fontSize: 10,
+                                                      letterSpacing: 1.5),
+                                                )
+                                              : IconButton(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  iconSize: 50,
+                                                  onPressed: () {
+                                                    print("sdasd");
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons
+                                                        .visibility_off_rounded,
+                                                  ),
+                                                ),
                                         ),
                                       ],
                                     ),
@@ -304,7 +320,10 @@ class _CardReviewState extends State<CardReview> {
                                         minimumSize: const Size(50, 30),
                                       ),
                                       child: Text(
-                                        "ver mais.".toUpperCase(),
+                                        widget.review.spoiler != true
+                                            ? "ver mais.".toUpperCase()
+                                            : "A resenha contem spiller.Ver mais?"
+                                                .toUpperCase(),
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
