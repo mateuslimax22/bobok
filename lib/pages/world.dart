@@ -44,8 +44,11 @@ class _World extends State<World> {
                                               childAspectRatio: (2.8 / 4),
                                               crossAxisCount: 1,
                                               mainAxisSpacing: 2),
-                                      itemBuilder: (ctx, i) => ProfileReview(
-                                          itemReview: loadedReviewUser[i])),
+                                      itemBuilder: (ctx, i) => Text(
+                                          loadedReviewUser[i]
+                                              .title) //ProfileReview(
+                                      //     itemReview: loadedReviewUser[i])
+                                      ),
                                 ),
                               ),
                             ],
@@ -94,8 +97,10 @@ class _World extends State<World> {
                                             mainAxisSpacing: 2,
                                           ),
                                           itemBuilder: (ctx, i) {
-                                            return ProfileReview(
-                                                itemReview: reviews[i]);
+                                            Text(reviews[i].title);
+                                            // return ProfileReview(
+                                            //     itemReview: reviews[i]
+                                            //     );
                                           },
                                         ),
                                       ),

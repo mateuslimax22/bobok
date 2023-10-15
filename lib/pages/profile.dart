@@ -1,12 +1,9 @@
 // ignore_for_file: dead_code
-
-import 'package:bobok/data/dummy_data.dart';
-import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
-import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
+import 'package:bobok/wisgets/listCard/list_recom.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +39,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    // ignore: avoid_print
     print('******************************************************');
     getUserName();
   }
@@ -55,6 +53,7 @@ class _ProfileState extends State<Profile> {
 
       userData = userSnap.data()!;
 
+      // ignore: avoid_print
       print(userData);
       // userData['uid'] ?? getUserName();
       // get post lENGTH
@@ -77,7 +76,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Review> loadedReviewUser = dummyReviws;
     void menuAppbar(String value) {
       switch (value) {
         case 'Logout':
@@ -273,9 +271,9 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   widget.uid == user.uid
                                       ? ElevatedButtonTh(
-                                          label: 'Editar',
+                                          label: 'Config',
                                           target: onChangedEdit,
-                                          fontSize: 14,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           width: 260,
                                           height: 30,
@@ -341,24 +339,22 @@ class _ProfileState extends State<Profile> {
                       Expanded(
                         flex: 3,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          padding: const EdgeInsets.only(left: 8.0),
                           child: Column(
                             children: [
-                              const Text("Indicações"),
-                              Expanded(
-                                child: SizedBox(
-                                  child: GridView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: loadedReviewUser.length,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              childAspectRatio: (2.8 / 4),
-                                              crossAxisCount: 1,
-                                              mainAxisSpacing: 2),
-                                      itemBuilder: (ctx, i) => ProfileReview(
-                                          itemReview: loadedReviewUser[i])),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Indicações",
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14,
+                                      letterSpacing: 1.5),
                                 ),
                               ),
+                              ListCardRecommendation(
+                                  uid: widget.uid, userId: user.uid)
                             ],
                           ),
                         ),
@@ -369,10 +365,19 @@ class _ProfileState extends State<Profile> {
                           padding: const EdgeInsets.only(left: 8),
                           child: Column(
                             children: [
-                              Text("Resenhas"),
-                              ListCardProfile(
-                                uid: widget.uid,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Resenhas",
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontSize: 14,
+                                      letterSpacing: 1.5),
+                                ),
                               ),
+                              ListCardProfile(
+                                  uid: widget.uid, userId: user.uid),
                             ],
                           ),
                         ),

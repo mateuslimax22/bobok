@@ -199,48 +199,52 @@ class _CardReviewState extends State<CardReview> {
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.35),
-                                    spreadRadius: 1,
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: SizedBox.fromSize(
-                                  child: GestureDetector(
-                                    child: Image.network(widget.review.imageUrl,
-                                        width: 100,
-                                        height: 150,
-                                        fit: BoxFit.cover),
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                        AppRoutes.REVIEW_DETAIL,
-                                        arguments: {
-                                          'review': widget.review.review,
-                                          'title': widget.review.title,
-                                          'postId': widget.review.postId,
-                                          'imageUrl': widget.review.imageUrl,
-                                          'profileImg': widget.user.photoURL,
-                                          'userName': widget.review.username,
-                                          'userUid': widget.user.uid,
-                                          'isComment': false
-                                        },
-                                      );
-                                    },
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.35),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: SizedBox.fromSize(
+                                    child: GestureDetector(
+                                      child: Image.network(
+                                          widget.review.imageUrl,
+                                          width: 100,
+                                          height: 150,
+                                          fit: BoxFit.cover),
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                          AppRoutes.REVIEW_DETAIL,
+                                          arguments: {
+                                            'review': widget.review.review,
+                                            'title': widget.review.title,
+                                            'postId': widget.review.postId,
+                                            'imageUrl': widget.review.imageUrl,
+                                            'profileImg': widget.user.photoURL,
+                                            'userName': widget.review.username,
+                                            'userUid': widget.user.uid,
+                                            'isComment': false
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
@@ -278,7 +282,10 @@ class _CardReviewState extends State<CardReview> {
                                   ),
                                   SizedBox(
                                     width: deviceWidth * 0.6,
+                                    height: 100,
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
                                           child: widget.review.spoiler != true

@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:bobok/models/favorite.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -60,6 +61,35 @@ class FirestoreMethods {
       res = e.toString();
     }
     return res;
+  }
+
+  Future<String> addFavorite(String? reviewId) async {
+    try {
+      Favorite favorite = Favorite(reviewId: reviewId);
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('favorites')
+          .doc(reviewId)
+          .set(favorite.toJson());
+      return "Review adicionada aos favoritos!";
+    } catch (e) {
+      return "Erro ao adicionar aos favoritos: $e";
+    }
+  }
+
+  Future<String> removeFromFavorites(String? reviewId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('favorites')
+          .doc(reviewId)
+          .delete();
+      return 'Favorito removido com sucesso!';
+    } catch (e) {
+      return 'Erro ao remover favorito: $e';
+    }
   }
 
   Future<void> likePost(String? postId, String uid, List likes) async {

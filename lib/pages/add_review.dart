@@ -105,7 +105,6 @@ class _AddReviewState extends State<AddReview> {
           newReview.category,
           newReview.genres);
 
-      print(res);
       if (res != "sucess") {
         // ignore: use_build_context_synchronously
         showDialog<void>(

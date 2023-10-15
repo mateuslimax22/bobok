@@ -190,7 +190,9 @@ class _BooksState extends State<Books> {
                                   crossAxisSpacing: 2,
                                   mainAxisSpacing: 2),
                           itemBuilder: (ctx, i) =>
-                              ProfileReview(itemReview: loadedReviewUser[i])),
+                              Text(loadedReviewUser[i].title)
+                          //ProfileReview(itemReview: loadedReviewUser[i])
+                          ),
                     ),
                   ),
                 ],

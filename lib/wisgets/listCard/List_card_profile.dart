@@ -6,8 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ListCardProfile extends StatefulWidget {
-  const ListCardProfile({super.key, required this.uid});
+  const ListCardProfile({super.key, required this.uid, required this.userId});
   final String? uid;
+  final String? userId;
 
   @override
   State<ListCardProfile> createState() => _ListCardProfileState();
@@ -67,7 +68,10 @@ class _ListCardProfileState extends State<ListCardProfile> {
                       mainAxisSpacing: 2,
                     ),
                     itemBuilder: (ctx, i) {
-                      return ProfileReview(itemReview: reviews[i]);
+                      return ProfileReview(
+                          itemReview: reviews[i],
+                          userId: widget.userId,
+                          uid: widget.uid);
                     },
                   ),
           ),
