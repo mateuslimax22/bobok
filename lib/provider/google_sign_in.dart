@@ -1,4 +1,6 @@
+import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/provider/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,7 +23,7 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   GoogleSignInAccount get user => _user!;
 
-  Future googleLogin() async {
+  Future googleLogin(BuildContext context, UserProvider userProvider) async {
     final googleUser = await googleSignIn.signIn();
 
     if (googleUser == null) return;
@@ -36,30 +38,42 @@ class GoogleSignInProvider extends ChangeNotifier {
 
     await FirebaseAuth.instance.signInWithCredential(credential);
 
-    String? fileUrl;
-    List url = [googleSignIn.currentUser!.photoUrl];
+    // Verificar se o usuário já existe no banco de dados
+    DocumentReference userDocRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser!.uid);
+    DocumentSnapshot snap = await userDocRef.get();
 
-    final fileRef =
-        _storage.ref().child("profilePics").child(_auth.currentUser!.uid);
+    if (snap.exists) {
+      // ignore: use_build_context_synchronously
+      var userData = UserData.fromSnap(snap);
+      userProvider.setUser(userData);
+    } else {
+      String? fileUrl;
+      List url = [googleSignIn.currentUser!.photoUrl];
 
-    var response = await http.get(Uri.parse(url[0].toString()));
-    Directory documentDirectory = await getApplicationDocumentsDirectory();
-    File file = File(join(documentDirectory.path, 'imagetest.png'));
-    file.writeAsBytesSync(response.bodyBytes);
+      final fileRef =
+          _storage.ref().child("profilePics").child(_auth.currentUser!.uid);
 
-    await fileRef.putFile(file);
+      var response = await http.get(Uri.parse(url[0].toString()));
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      File file = File(join(documentDirectory.path, 'imagetest.png'));
+      file.writeAsBytesSync(response.bodyBytes);
 
-    fileUrl = await fileRef.getDownloadURL();
+      await fileRef.putFile(file);
 
-    //add user on database
-    await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
-      'username': googleSignIn.currentUser!.displayName,
-      'uid': _auth.currentUser!.uid,
-      'email': googleSignIn.currentUser!.email,
-      'followers': [],
-      'following': [],
-      'photoUrl': fileUrl,
-    });
+      fileUrl = await fileRef.getDownloadURL();
+
+      //add user on database
+      await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
+        'username': googleSignIn.currentUser!.displayName,
+        'uid': _auth.currentUser!.uid,
+        'email': googleSignIn.currentUser!.email,
+        'followers': [],
+        'following': [],
+        'photoUrl': fileUrl,
+      });
+    }
   }
 
   Future logout() async {

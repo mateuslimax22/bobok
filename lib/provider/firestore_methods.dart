@@ -1,8 +1,11 @@
 import 'package:bobok/models/review.dart';
 import 'package:bobok/models/user.dart';
+import 'package:bobok/provider/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -162,13 +165,35 @@ class FirestoreMethods {
     }
   }
 
-  Future<UserData> getUserDetails() async {
+  getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
-    DocumentSnapshot documentSnapshot =
+    DocumentSnapshot document =
         await _firestore.collection('users').doc(currentUser.uid).get();
 
-    return UserData.fromSnap(documentSnapshot);
+    var currentData = (document.data()! as dynamic);
+
+    return currentData;
+  }
+
+  Future<void> getUserDataFromFirestore(BuildContext context) async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot<Map<String, dynamic>> userDocument =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+    if (userDocument.exists) {
+      UserData user = UserData(
+        username: userDocument['username'],
+        uid: userDocument['uid'],
+        email: userDocument['email'],
+        followers: List<String>.from(userDocument['followers']),
+        following: List<String>.from(userDocument['following']),
+        avatar: userDocument['photoUrl'],
+      );
+
+      // ignore: use_build_context_synchronously
+      Provider.of<UserProvider>(context, listen: false).setUser(user);
+    }
   }
 
   Future<void> followUser(String uid, String? followId) async {

@@ -9,6 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/user.dart';
+import '../provider/user_provider.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -21,6 +24,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    UserData? userData = Provider.of<UserProvider>(context).user;
+    print("AKIPRINT O NOVO UsER");
+    print(userData?.username);
     void menuAppbar(String value) {
       switch (value) {
         case 'Logout':
@@ -111,7 +117,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
         body: IndexedStack(
           children: [
-            Books(uid: FirebaseAuth.instance.currentUser!.uid),
+            //Books(uid: FirebaseAuth.instance.currentUser!.uid),
+            Text('Bem-vindo, ${userData?.username}!'),
             ListCard(onFunc: (int test) {
               setState(() => index = test);
             }),

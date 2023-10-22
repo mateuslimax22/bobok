@@ -7,6 +7,7 @@ import 'package:bobok/pages/search.dart';
 import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/google_sign_in.dart';
+import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/themes/theme.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
@@ -14,7 +15,7 @@ import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart'; fullscreen
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await Firebase.initializeApp();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthEmail(context)),
         ChangeNotifierProvider(create: (context) => GoogleSignInProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: MaterialApp(
         theme: globalTheme,

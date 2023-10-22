@@ -22,6 +22,7 @@ class _ListCardState extends State<ListCard> {
   final user = FirebaseAuth.instance.currentUser!;
   NativeAd? _nativeAd;
   bool _nativeAdIsLoaded = false;
+  var userSnapshot;
 
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/2247696110'
@@ -42,14 +43,12 @@ class _ListCardState extends State<ListCard> {
     }
 
     // Obtendo a lista de amigos do usuário
-    var userSnapshot = await FirebaseFirestore.instance
+    userSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .get();
+
     List<dynamic> amigos = userSnapshot.data()!['followers'];
-
-    print(userSnapshot.data()!['followers']);
-
     // Obtendo as reviews dos amigos
     var reviewsSnapshot = await FirebaseFirestore.instance
         .collection('reviews')

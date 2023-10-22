@@ -40,7 +40,6 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     // ignore: avoid_print
-    print('******************************************************');
     getUserName();
   }
 
@@ -53,8 +52,6 @@ class _ProfileState extends State<Profile> {
 
       userData = userSnap.data()!;
 
-      // ignore: avoid_print
-      print(userData);
       // userData['uid'] ?? getUserName();
       // get post lENGTH
       var postSnap = await FirebaseFirestore.instance

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../provider/user_provider.dart';
 import '../../wisgets/btn/elevated.dart';
 
 class SignInConatiner extends StatefulWidget {
@@ -40,18 +41,11 @@ class _SignInConatiner extends State<SignInConatiner> {
         isLoadingRegister = true;
       });
 
-      final user = await AuthEmail(context).signInWithEmailAndPassword(
+      await AuthEmail(context).signInWithEmailAndPassword(
+        Provider.of<UserProvider>(context, listen: false),
         _formData["email"].toString(),
         _formData['senha'].toString(),
       );
-
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Onboarding()),
-        );
-      }
     }
 
     return Form(
@@ -228,7 +222,8 @@ class _SignInConatiner extends State<SignInConatiner> {
                   });
                   final provider =
                       Provider.of<GoogleSignInProvider>(context, listen: false);
-                  provider.googleLogin();
+                  provider.googleLogin(context,
+                      Provider.of<UserProvider>(context, listen: false));
                 },
               ),
             ),

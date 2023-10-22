@@ -1,4 +1,5 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
@@ -31,10 +32,13 @@ class _CardReviewState extends State<CardReview> {
   bool isLike = false;
   int countLikes = 0;
   int commentLen = 0;
+  // ignore: prefer_typing_uninitialized_variables
+  var currentUser = {};
   @override
   void initState() {
     super.initState();
     getComments();
+    getUser();
     setState(() {
       countLikes = widget.review.likes.length;
     });
@@ -42,6 +46,23 @@ class _CardReviewState extends State<CardReview> {
       setState(() {
         isLike = true;
       });
+    }
+  }
+
+  void getUser() async {
+    if (currentUser.isEmpty) {
+      try {
+        var userSnap = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.user.uid)
+            .get();
+
+        setState(() {
+          currentUser = userSnap.data()!;
+        });
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -55,6 +76,8 @@ class _CardReviewState extends State<CardReview> {
       setState(() {
         commentLen = snap.docs.length;
       });
+      print("**********************************");
+      print(currentUser);
     } catch (e) {
       print(e);
     }
@@ -237,10 +260,15 @@ class _CardReviewState extends State<CardReview> {
                                             'title': widget.review.title,
                                             'postId': widget.review.postId,
                                             'imageUrl': widget.review.imageUrl,
-                                            'profileImg': widget.user.photoURL,
+                                            'profileImg':
+                                                widget.review.profileImg,
                                             'userName': widget.review.username,
                                             'userUid': widget.user.uid,
-                                            'isComment': false
+                                            'isComment': false,
+                                            'currentUserName':
+                                                currentUser["username"],
+                                            'currentUserPhoto':
+                                                currentUser["photoURL"],
                                           },
                                         );
                                       },
@@ -346,10 +374,15 @@ class _CardReviewState extends State<CardReview> {
                                             'title': widget.review.title,
                                             'postId': widget.review.postId,
                                             'imageUrl': widget.review.imageUrl,
-                                            'profileImg': widget.user.photoURL,
+                                            'profileImg':
+                                                widget.review.profileImg,
                                             'userName': widget.review.username,
                                             'userUid': widget.user.uid,
-                                            'isComment': false
+                                            'isComment': false,
+                                            'currentUserName':
+                                                currentUser["username"],
+                                            'currentUserPhoto':
+                                                currentUser["photoURL"],
                                           },
                                         );
                                       },
@@ -419,9 +452,11 @@ class _CardReviewState extends State<CardReview> {
                               'postId': widget.review.postId,
                               'title': widget.review.title,
                               'imageUrl': widget.review.imageUrl,
-                              'profileImg': widget.user.photoURL,
+                              'profileImg': widget.review.profileImg,
                               'userName': widget.review.username,
                               'userUid': widget.user.uid,
+                              'currentUserName': currentUser["username"],
+                              'currentUserPhoto': currentUser["photoURL"],
                               'isComment': true
                             },
                           );
@@ -454,9 +489,11 @@ class _CardReviewState extends State<CardReview> {
                           'postId': widget.review.postId,
                           'title': widget.review.title,
                           'imageUrl': widget.review.imageUrl,
-                          'profileImg': widget.user.photoURL,
+                          'profileImg': widget.review.profileImg,
                           'userName': widget.review.username,
                           'userUid': widget.user.uid,
+                          'currentUserName': currentUser["username"],
+                          'currentUserPhoto': currentUser["photoURL"],
                           'isComment': true
                         },
                       );

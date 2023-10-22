@@ -1,5 +1,6 @@
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../card/card_comment.dart';
 
@@ -22,6 +23,7 @@ class CommentsCard extends StatefulWidget {
 
 class _CommentsCard extends State<CommentsCard> {
   TextEditingController _textEditingController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void dispose() {
@@ -118,7 +120,7 @@ class _CommentsCard extends State<CommentsCard> {
                       await FirestoreMethods().postComment(
                           widget.postId,
                           _textEditingController.text,
-                          widget.userUid,
+                          user.uid,
                           widget.userName,
                           widget.avatar!);
                       setState(() {

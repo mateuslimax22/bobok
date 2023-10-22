@@ -1,5 +1,6 @@
 import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 
 class ProfileReview extends StatefulWidget {
@@ -56,82 +57,103 @@ class _ProfileReviewState extends State<ProfileReview> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      height: 200,
-      child: Stack(
-        children: [
-          Image.network(
-            widget.itemReview.imageUrl,
-            width: 200,
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            width: 200,
-            height: 200,
-            color: Colors.black.withOpacity(0.7),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.itemReview.username,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize: 14,
-                            letterSpacing: 1.5),
-                      ),
-                      widget.uid == widget.userId
-                          ? PopupMenuButton(
-                              child: Container(
-                                height: 35,
-                                width: 40,
-                                alignment: Alignment.centerRight,
-                                child: Icon(
-                                  Icons.more_vert,
-                                  color:
-                                      Theme.of(context).colorScheme.background,
-                                ),
-                              ),
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  PopupMenuItem(
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title:
-                                          const Text('Adicionar aos Favoritos'),
-                                      onTap: () {
-                                        _submitForm();
-                                      },
-                                    ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          AppRoutes.REVIEW_DETAIL,
+          arguments: {
+            'review': widget.itemReview.review,
+            'title': widget.itemReview.title,
+            'postId': widget.itemReview.postId,
+            'imageUrl': widget.itemReview.imageUrl,
+            'profileImg': widget.itemReview.profileImg,
+            'userName': widget.itemReview.username,
+            'userUid': widget.userId,
+            'isComment': false
+          },
+        );
+      },
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: Stack(
+          children: [
+            Image.network(
+              widget.itemReview.imageUrl,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+            Container(
+              width: 200,
+              height: 200,
+              color: Colors.black.withOpacity(0.7),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            widget.itemReview.username,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.background,
+                                fontSize: 14,
+                                letterSpacing: 1.5),
+                          ),
+                        ),
+                        widget.uid == widget.userId
+                            ? PopupMenuButton(
+                                child: Container(
+                                  height: 35,
+                                  width: 20,
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
                                   ),
-                                ];
-                              })
-                          : const Spacer()
-                    ],
-                  ),
-                  const Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        widget.itemReview.title,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize: 15,
-                            letterSpacing: 1.5),
-                      ),
-                    ],
-                  ),
-                ],
+                                ),
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem(
+                                      child: ListTile(
+                                        contentPadding: EdgeInsets.zero,
+                                        title: const Text(
+                                            'Adicionar aos Favoritos'),
+                                        onTap: () {
+                                          _submitForm();
+                                        },
+                                      ),
+                                    ),
+                                  ];
+                                })
+                            : const Spacer()
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.itemReview.title,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background,
+                              fontSize: 15,
+                              letterSpacing: 1.5),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

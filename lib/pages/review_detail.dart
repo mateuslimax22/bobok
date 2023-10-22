@@ -240,10 +240,10 @@ class _ReviewDetailState extends State<ReviewDetail> {
                               )
                             : Expanded(
                                 child: CommentsCard(
-                                    avatar: arguments['profileImg'],
+                                    avatar: arguments['currentUserPhoto'],
                                     userUid: arguments['userUid'],
                                     postId: arguments['postId'],
-                                    userName: arguments['userName']),
+                                    userName: arguments['currentUserName']),
                               )
                       ],
                     ),
