@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/user_provider.dart';
@@ -12,6 +13,9 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+
+final userStore = UserStore();
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -25,6 +29,7 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   Future googleLogin(BuildContext context, UserProvider userProvider) async {
     final googleUser = await googleSignIn.signIn();
+    var userStore = Provider.of<UserStore>(context, listen: false);
 
     if (googleUser == null) return;
     _user = googleUser;
@@ -45,9 +50,10 @@ class GoogleSignInProvider extends ChangeNotifier {
     DocumentSnapshot snap = await userDocRef.get();
 
     if (snap.exists) {
-      // ignore: use_build_context_synchronously
-      var userData = UserData.fromSnap(snap);
-      userProvider.setUser(userData);
+      // var userData = UserData.fromSnap(snap);
+      // userStore.setUser(userData);
+      //userProvider.setUser(userData);
+      // userStore.setUser(userData);
     } else {
       String? fileUrl;
       List url = [googleSignIn.currentUser!.photoUrl];

@@ -13,9 +13,13 @@ class ListCardRecommendation extends StatefulWidget {
   State<ListCardRecommendation> createState() => _ListCardRecommendationState();
 }
 
-class _ListCardRecommendationState extends State<ListCardRecommendation> {
+class _ListCardRecommendationState extends State<ListCardRecommendation>
+    with AutomaticKeepAliveClientMixin<ListCardRecommendation> {
+  @override
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -24,16 +28,18 @@ class _ListCardRecommendationState extends State<ListCardRecommendation> {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Exibindo indicador de progresso enquanto os dados são carregados
+          return const CircularProgressIndicator(); // Exibindo indicador de progresso enquanto os dados são carregados
         }
         if (snapshot.hasError) {
           return Text('Erro: ${snapshot.error}');
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Text(
-            'Add Indicações',
-            textAlign: TextAlign.center,
-          );
+          return widget.uid == widget.userId
+              ? const Text(
+                  'Add Indicações',
+                  textAlign: TextAlign.center,
+                )
+              : const Text("Sem Indicações");
         }
 
         // Obtendo IDs de revisões favoritas do snapshot
@@ -51,7 +57,7 @@ class _ListCardRecommendationState extends State<ListCardRecommendation> {
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> reviewsSnapshot) {
             if (reviewsSnapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
             if (reviewsSnapshot.hasError) {
               return Text('Erro: ${reviewsSnapshot.error}');

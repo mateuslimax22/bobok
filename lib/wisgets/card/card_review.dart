@@ -1,27 +1,32 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/user_provider.dart';
 
 class CardReview extends StatefulWidget {
-  const CardReview({
-    Key? key,
-    required this.colorback,
-    required this.review,
-    required this.avatar,
-    required this.user,
-    required this.reviewUid,
-    required this.onFunc,
-  }) : super(key: key);
+  const CardReview(
+      {Key? key,
+      required this.colorback,
+      required this.review,
+      required this.avatar,
+      required this.user,
+      required this.reviewUid,
+      this.userStore})
+      : super(key: key);
   final Review review;
+  final UserStore? userStore;
   final Color colorback;
   final String? avatar;
   final String? reviewUid;
-  final Function onFunc;
   final user;
 
   @override
@@ -29,16 +34,18 @@ class CardReview extends StatefulWidget {
 }
 
 class _CardReviewState extends State<CardReview> {
+  late UserProvider _userProvider;
   bool isLike = false;
   int countLikes = 0;
   int commentLen = 0;
-  // ignore: prefer_typing_uninitialized_variables
-  var currentUser = {};
+  UserData? currentUser;
+  List<QueryDocumentSnapshot>? comments;
+
   @override
-  void initState() {
-    super.initState();
-    getComments();
-    getUser();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _userProvider = Provider.of<UserProvider>(context);
+    currentUser = _userProvider.user;
     setState(() {
       countLikes = widget.review.likes.length;
     });
@@ -49,21 +56,22 @@ class _CardReviewState extends State<CardReview> {
     }
   }
 
-  void getUser() async {
-    if (currentUser.isEmpty) {
-      try {
-        var userSnap = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.user.uid)
-            .get();
-
-        setState(() {
-          currentUser = userSnap.data()!;
-        });
-      } catch (e) {
-        print(e);
-      }
-    }
+  void navigateToReviewDetail(BuildContext context, bool isComment) {
+    Navigator.of(context).pushNamed(
+      AppRoutes.REVIEW_DETAIL,
+      arguments: {
+        'review': widget.review.review,
+        'title': widget.review.title,
+        'postId': widget.review.postId,
+        'imageUrl': widget.review.imageUrl,
+        'profileImg': widget.review.profileImg,
+        'userName': widget.review.username,
+        'userUid': widget.user.uid,
+        'isComment': isComment,
+        'currentUserName': currentUser?.username,
+        'currentUserPhoto': currentUser?.avatar,
+      },
+    );
   }
 
   void getComments() async {
@@ -73,12 +81,13 @@ class _CardReviewState extends State<CardReview> {
           .doc(widget.review.postId)
           .collection('comments')
           .get();
+
       setState(() {
-        commentLen = snap.docs.length;
+        comments = snap.docs;
+        commentLen = comments!.length;
       });
-      print("**********************************");
-      print(currentUser);
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -102,7 +111,7 @@ class _CardReviewState extends State<CardReview> {
       color: widget.colorback,
       child: SizedBox(
         width: deviceWidth,
-        height: 300,
+        height: 320,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
@@ -118,7 +127,7 @@ class _CardReviewState extends State<CardReview> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 5),
+                      padding: const EdgeInsets.fromLTRB(5, 5, 0, 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,8 +165,10 @@ class _CardReviewState extends State<CardReview> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => Profile(
-                                        uid: widget.reviewUid,
-                                        currentUid: false),
+                                      uid: widget.reviewUid,
+                                      currentUid: false,
+                                      userStore: widget.userStore,
+                                    ),
                                   ),
                                 )
                               },
@@ -176,7 +187,7 @@ class _CardReviewState extends State<CardReview> {
                     ),
                     SizedBox(
                         width: 40,
-                        height: 35,
+                        height: 40,
                         child: PopupMenuButton<String>(
                             onSelected: menuAppbar,
                             itemBuilder: (BuildContext context) {
@@ -211,7 +222,6 @@ class _CardReviewState extends State<CardReview> {
                   ],
                 ),
                 SizedBox(
-                  height: 180,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
@@ -221,7 +231,7 @@ class _CardReviewState extends State<CardReview> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Padding(
@@ -230,7 +240,7 @@ class _CardReviewState extends State<CardReview> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,
                                   borderRadius: const BorderRadius.all(
-                                      Radius.circular(10)),
+                                      Radius.circular(8)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Theme.of(context)
@@ -244,7 +254,7 @@ class _CardReviewState extends State<CardReview> {
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(8),
                                   child: SizedBox.fromSize(
                                     child: GestureDetector(
                                       child: Image.network(
@@ -253,24 +263,7 @@ class _CardReviewState extends State<CardReview> {
                                           height: 150,
                                           fit: BoxFit.cover),
                                       onTap: () {
-                                        Navigator.of(context).pushNamed(
-                                          AppRoutes.REVIEW_DETAIL,
-                                          arguments: {
-                                            'review': widget.review.review,
-                                            'title': widget.review.title,
-                                            'postId': widget.review.postId,
-                                            'imageUrl': widget.review.imageUrl,
-                                            'profileImg':
-                                                widget.review.profileImg,
-                                            'userName': widget.review.username,
-                                            'userUid': widget.user.uid,
-                                            'isComment': false,
-                                            'currentUserName':
-                                                currentUser["username"],
-                                            'currentUserPhoto':
-                                                currentUser["photoURL"],
-                                          },
-                                        );
+                                        navigateToReviewDetail(context, false);
                                       },
                                     ),
                                   ),
@@ -278,7 +271,7 @@ class _CardReviewState extends State<CardReview> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -313,7 +306,11 @@ class _CardReviewState extends State<CardReview> {
                                     height: 100,
                                     child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          widget.review.spoiler != true
+                                              ? CrossAxisAlignment.start
+                                              : CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: widget.review.spoiler != true
@@ -348,44 +345,51 @@ class _CardReviewState extends State<CardReview> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 20,
+                                    height: 40,
                                     child: TextButton(
                                       style: TextButton.styleFrom(
                                         padding: EdgeInsets.zero,
                                         minimumSize: const Size(50, 30),
                                       ),
-                                      child: Text(
-                                        widget.review.spoiler != true
-                                            ? "ver mais.".toUpperCase()
-                                            : "A resenha contem spiller.Ver mais?"
-                                                .toUpperCase(),
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            fontSize: 10,
-                                            letterSpacing: 1.5),
-                                      ),
                                       onPressed: () {
-                                        Navigator.of(context).pushNamed(
-                                          AppRoutes.REVIEW_DETAIL,
-                                          arguments: {
-                                            'review': widget.review.review,
-                                            'title': widget.review.title,
-                                            'postId': widget.review.postId,
-                                            'imageUrl': widget.review.imageUrl,
-                                            'profileImg':
-                                                widget.review.profileImg,
-                                            'userName': widget.review.username,
-                                            'userUid': widget.user.uid,
-                                            'isComment': false,
-                                            'currentUserName':
-                                                currentUser["username"],
-                                            'currentUserPhoto':
-                                                currentUser["photoURL"],
-                                          },
-                                        );
+                                        navigateToReviewDetail(context, false);
                                       },
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            widget.review.spoiler != true
+                                                ? "ver mais.".toUpperCase()
+                                                : "A resenha contém spoiler. "
+                                                    .toUpperCase(),
+                                            style: TextStyle(
+                                              color:
+                                                  widget.review.spoiler != true
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
+                                              fontSize: 10,
+                                              letterSpacing: 1.5,
+                                            ),
+                                          ),
+                                          Text(
+                                            widget.review.spoiler != true
+                                                ? ""
+                                                : "Ver mais?".toUpperCase(),
+                                            style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              fontSize: 10,
+                                              letterSpacing: 1.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -445,21 +449,7 @@ class _CardReviewState extends State<CardReview> {
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            AppRoutes.REVIEW_DETAIL,
-                            arguments: {
-                              'review': widget.review.review,
-                              'postId': widget.review.postId,
-                              'title': widget.review.title,
-                              'imageUrl': widget.review.imageUrl,
-                              'profileImg': widget.review.profileImg,
-                              'userName': widget.review.username,
-                              'userUid': widget.user.uid,
-                              'currentUserName': currentUser["username"],
-                              'currentUserPhoto': currentUser["photoURL"],
-                              'isComment': true
-                            },
-                          );
+                          navigateToReviewDetail(context, true);
                         },
                       ),
                     ),
@@ -482,24 +472,10 @@ class _CardReviewState extends State<CardReview> {
                   padding: const EdgeInsets.only(left: 10),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(
-                        AppRoutes.REVIEW_DETAIL,
-                        arguments: {
-                          'review': widget.review.review,
-                          'postId': widget.review.postId,
-                          'title': widget.review.title,
-                          'imageUrl': widget.review.imageUrl,
-                          'profileImg': widget.review.profileImg,
-                          'userName': widget.review.username,
-                          'userUid': widget.user.uid,
-                          'currentUserName': currentUser["username"],
-                          'currentUserPhoto': currentUser["photoURL"],
-                          'isComment': true
-                        },
-                      );
+                      navigateToReviewDetail(context, true);
                     },
                     child: Text(
-                      "Ver todos os $commentLen comentários",
+                      "Ver todos os comentários",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 13,

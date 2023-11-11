@@ -1,4 +1,5 @@
 // ignore_for_file: dead_code
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
@@ -8,10 +9,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
+import '../models/user.dart';
+import '../provider/user_provider.dart';
+
 class Profile extends StatefulWidget {
-  const Profile({super.key, required this.uid, required this.currentUid});
+  const Profile(
+      {super.key, required this.uid, required this.currentUid, this.userStore});
+  final UserStore? userStore;
   final String? uid;
   final bool? currentUid;
 
@@ -20,15 +27,27 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  //late UserStore userStore;
   bool isEdit = false;
+  List<dynamic>? addFollower = [];
+  List<dynamic>? removeFollower = [];
+
   final user = FirebaseAuth.instance.currentUser!;
   var userData = {};
   String userName = "";
+  String avatar = "";
   int postLen = 0;
   int followers = 0;
   int following = 0;
   bool isFollowing = false;
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Inicialize o userStore no initState
+  }
 
   void onChangedEdit() {
     setState(() {
@@ -37,33 +56,44 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    // ignore: avoid_print
-    getUserName();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.currentUid == false) {
+      addFollower = widget.userStore?.user?.following;
+      removeFollower = widget.userStore?.user?.following;
+      getUserNameReviwer();
+    } else {
+      getUserName();
+    }
   }
 
   void getUserName() async {
     try {
-      var userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.uid)
-          .get();
+      setState(() {
+        isFollowing = widget.userStore!.user!.followers!.contains(user.uid);
+      });
+    } catch (e) {
+      if (e.toString() == "Null check operator used on a null value") {
+        getUserName();
+      }
+    }
+  }
 
-      userData = userSnap.data()!;
+  void getUserNameReviwer() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userDocument =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.uid)
+              .get();
 
-      // userData['uid'] ?? getUserName();
-      // get post lENGTH
-      var postSnap = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('uid', isEqualTo: widget.uid)
-          .get();
-
-      postLen = postSnap.docs.length;
-      followers = userSnap.data()!['followers'].length;
-      following = userSnap.data()!['following'].length;
-      isFollowing = userSnap.data()!['followers'].contains(user.uid);
-      setState(() {});
+      setState(() {
+        followers = userDocument['followers'].length;
+        following = userDocument['following'].length;
+        isFollowing = userDocument['followers'].contains(user.uid);
+        userName = userDocument['username'].toString();
+        avatar = userDocument['photoUrl'].toString();
+      });
     } catch (e) {
       if (e.toString() == "Null check operator used on a null value") {
         getUserName();
@@ -139,15 +169,21 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 14,
                                         letterSpacing: 1.5),
                                   ),
-                                  Text(
-                                    followers.toString(),
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontSize: 20,
-                                        letterSpacing: 1.5),
-                                  ),
+                                  Observer(builder: (_) {
+                                    return Text(
+                                      widget.currentUid != false
+                                          ? widget.userStore!.user!.following!
+                                              .length
+                                              .toString()
+                                          : following.toString(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 20,
+                                          letterSpacing: 1.5),
+                                    );
+                                  }),
                                 ],
                               ),
                               Column(
@@ -163,15 +199,21 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 14,
                                         letterSpacing: 1.5),
                                   ),
-                                  Text(
-                                    following.toString(),
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontSize: 20,
-                                        letterSpacing: 1.5),
-                                  ),
+                                  Observer(builder: (_) {
+                                    return Text(
+                                      widget.currentUid != false
+                                          ? widget.userStore!.user!.followers!
+                                              .length
+                                              .toString()
+                                          : followers.toString(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 20,
+                                          letterSpacing: 1.5),
+                                    );
+                                  }),
                                 ],
                               ),
                             ],
@@ -197,34 +239,64 @@ class _ProfileState extends State<Profile> {
                                         Radius.circular(10)),
                                   ),
                                   child: SizedBox(
-                                    child: ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                      child: SizedBox.fromSize(
-                                          size: const Size.fromRadius(
-                                              48), // Image radius
-                                          child: userData['photoUrl'] == null
-                                              ? IconButton(
-                                                  padding:
-                                                      const EdgeInsets.all(0),
-                                                  icon: Icon(
-                                                    Icons.person,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .background,
-                                                    size: 80,
-                                                  ),
-                                                  onPressed: () {},
-                                                )
-                                              : Image(
-                                                  fit: BoxFit.cover,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                    userData['photoUrl'],
-                                                    maxHeight: 150,
-                                                    maxWidth: 110,
-                                                  ))),
-                                    ),
+                                    child: Observer(builder: (_) {
+                                      return ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        child: SizedBox.fromSize(
+                                            size: const Size.fromRadius(
+                                                48), // Image radius
+                                            child: widget.currentUid == false &&
+                                                    avatar == ''
+                                                ? IconButton(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    icon: Icon(
+                                                      Icons.person,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .background,
+                                                      size: 80,
+                                                    ),
+                                                    onPressed: () {},
+                                                  )
+                                                : widget.currentUid != false &&
+                                                        widget.userStore!.user!
+                                                                .avatar
+                                                                .toString() ==
+                                                            ''
+                                                    ? IconButton(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(0),
+                                                        icon: Icon(
+                                                          Icons.person,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background,
+                                                          size: 80,
+                                                        ),
+                                                        onPressed: () {},
+                                                      )
+                                                    : Image(
+                                                        fit: BoxFit.cover,
+                                                        image:
+                                                            CachedNetworkImageProvider(
+                                                          widget.currentUid !=
+                                                                  false
+                                                              ? widget
+                                                                  .userStore!
+                                                                  .user!
+                                                                  .avatar
+                                                                  .toString()
+                                                              : avatar
+                                                                  .toString(),
+                                                          maxHeight: 150,
+                                                          maxWidth: 110,
+                                                        ))),
+                                      );
+                                    }),
                                   ),
                                 ),
                               ),
@@ -269,12 +341,16 @@ class _ProfileState extends State<Profile> {
                                   widget.uid == user.uid
                                       ? ElevatedButtonTh(
                                           label: 'Config',
-                                          target: onChangedEdit,
+                                          //target: onChangedEdit,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           width: 260,
                                           height: 30,
-                                        )
+                                          target: () {
+                                            var userData = UserData(
+                                                username: 'mateus7', email: '');
+                                            widget.userStore?.setUser(userData);
+                                          })
                                       : isFollowing
                                           ? ElevatedButtonTh(
                                               label: 'Remover',
@@ -282,6 +358,28 @@ class _ProfileState extends State<Profile> {
                                                 await FirestoreMethods()
                                                     .followUser(
                                                         user.uid, widget.uid);
+
+                                                removeFollower?.remove(
+                                                    widget.uid.toString());
+                                                widget.userStore?.setUser(
+                                                  UserData(
+                                                      username: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .username,
+                                                      uid: widget
+                                                          .userStore!.user!.uid,
+                                                      email: widget.userStore!
+                                                          .user!.email,
+                                                      avatar: widget.userStore!
+                                                          .user!.avatar,
+                                                      followers: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .followers,
+                                                      following:
+                                                          removeFollower),
+                                                );
 
                                                 setState(() {
                                                   isFollowing = false;
@@ -299,6 +397,25 @@ class _ProfileState extends State<Profile> {
                                                 await FirestoreMethods()
                                                     .followUser(
                                                         user.uid, widget.uid);
+
+                                                addFollower?.add(
+                                                    widget.uid.toString());
+                                                widget.userStore?.setUser(
+                                                  UserData(
+                                                    username: widget.userStore!
+                                                        .user!.username,
+                                                    uid: widget
+                                                        .userStore!.user!.uid,
+                                                    email: widget
+                                                        .userStore!.user!.email,
+                                                    avatar: widget.userStore!
+                                                        .user!.avatar,
+                                                    followers: widget.userStore!
+                                                        .user!.followers,
+                                                    following: addFollower,
+                                                  ),
+                                                );
+
                                                 setState(() {
                                                   isFollowing = true;
                                                   followers++;
@@ -313,14 +430,13 @@ class _ProfileState extends State<Profile> {
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 0, 0, 0),
                                     child: SizedBox(
-                                      child: Text(
-                                        userData['username'].toString(),
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontSize: 20,
-                                            letterSpacing: 1.5),
+                                      child: Observer(
+                                        builder: (_) {
+                                          return Text(widget.currentUid != false
+                                              ? widget.userStore!.user!.username
+                                                  .toString()
+                                              : userName);
+                                        },
                                       ),
                                     ),
                                   ),

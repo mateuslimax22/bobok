@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/pages/add_review.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboarding.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthEmail(context)),
         ChangeNotifierProvider(create: (context) => GoogleSignInProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => UserStore()),
       ],
       child: MaterialApp(
         theme: globalTheme,
@@ -49,9 +51,6 @@ class MyApp extends StatelessWidget {
           AppRoutes.ADD_REVIEW: (ctx) => const AddReview(),
           AppRoutes.HOME: (ctx) => const Home(),
           AppRoutes.SEARCH: (ctx) => const Search(),
-          AppRoutes.LISTHOME: (ctx) => ListCard(
-                onFunc: () => {},
-              ),
           AppRoutes.BOOK: (ctx) => const Text("livros"),
           AppRoutes.PROFILE: (ctx) => Profile(
                 uid: FirebaseAuth.instance.currentUser!.uid,

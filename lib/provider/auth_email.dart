@@ -49,13 +49,6 @@ class AuthEmail extends ChangeNotifier {
         'photoUrl': fileUrl,
       });
 
-      DocumentReference userDocRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(_auth.currentUser!.uid);
-      DocumentSnapshot snap = await userDocRef.get();
-      var userData = UserData.fromSnap(snap);
-      UserProvider().setUser(userData);
-
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(

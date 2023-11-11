@@ -56,43 +56,48 @@ class _CardFavoriteState extends State<CardFavorite> {
 
   @override
   Widget build(BuildContext context) {
-    Widget listCard = SizedBox(
-      width: 200,
-      height: 200,
-      child: Stack(
-        children: [
-          Image.network(
-            widget.itemReview.imageUrl,
-            width: 200,
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            width: 200,
-            height: 200,
-            color: Colors.black.withOpacity(0.7),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const Spacer(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        widget.itemReview.title,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.background,
-                            fontSize: 15,
-                            letterSpacing: 1.5),
-                      ),
-                    ],
-                  ),
-                ],
+    Widget listCard = ClipRRect(
+      borderRadius: BorderRadius.circular(8.0),
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: Stack(
+          children: [
+            Image.network(
+              widget.itemReview.imageUrl,
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+            Container(
+              width: 200,
+              height: 200,
+              color: Colors.black.withOpacity(0.7),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.itemReview.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background,
+                              fontSize: 15,
+                              letterSpacing: 1.5),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
     return widget.uid == widget.userId
@@ -100,8 +105,8 @@ class _CardFavoriteState extends State<CardFavorite> {
             key: UniqueKey(),
             background: Container(
               color: Colors.red,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
+              child: const Padding(
+                padding: EdgeInsets.all(10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -118,16 +123,16 @@ class _CardFavoriteState extends State<CardFavorite> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Deseja remover esta indicação?'),
+                    title: const Text('Deseja remover esta indicação?'),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Cancelar'),
+                        child: const Text('Cancelar'),
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                       ),
                       TextButton(
-                        child: Text('Remover'),
+                        child: const Text('Remover'),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },

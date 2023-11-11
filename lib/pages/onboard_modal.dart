@@ -36,7 +36,6 @@ class _OnboardModal extends State<OnboardModal> {
                   Provider.of<GoogleSignInProvider>(context, listen: false);
               provider.googleLogin(
                   context, Provider.of<UserProvider>(context, listen: false));
-              ;
               Navigator.pop(context);
             },
           ),

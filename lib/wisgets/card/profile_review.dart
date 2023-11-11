@@ -1,7 +1,11 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
+import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileReview extends StatefulWidget {
   const ProfileReview({
@@ -20,6 +24,16 @@ class ProfileReview extends StatefulWidget {
 }
 
 class _ProfileReviewState extends State<ProfileReview> {
+  late UserProvider _userProvider;
+  UserData? currentUser;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _userProvider = Provider.of<UserProvider>(context);
+    currentUser = _userProvider.user;
+  }
+
   Future<void> _submitForm() async {
     try {
       String res =
@@ -40,6 +54,7 @@ class _ProfileReviewState extends State<ProfileReview> {
                 ));
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       showDialog<void>(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -57,6 +72,7 @@ class _ProfileReviewState extends State<ProfileReview> {
 
   @override
   Widget build(BuildContext context) {
+    double cardSizeWidth = deviceWidth;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(
@@ -69,90 +85,96 @@ class _ProfileReviewState extends State<ProfileReview> {
             'profileImg': widget.itemReview.profileImg,
             'userName': widget.itemReview.username,
             'userUid': widget.userId,
-            'isComment': false
+            'isComment': false,
+            'currentUserName': currentUser?.username,
+            'currentUserPhoto': currentUser?.avatar,
           },
         );
       },
-      child: SizedBox(
-        width: 200,
-        height: 200,
-        child: Stack(
-          children: [
-            Image.network(
-              widget.itemReview.imageUrl,
-              width: 200,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-            Container(
-              width: 200,
-              height: 200,
-              color: Colors.black.withOpacity(0.7),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          child: Text(
-                            widget.itemReview.username,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: SizedBox(
+          width: cardSizeWidth * 0.5,
+          height: 200,
+          child: Stack(
+            children: [
+              Image.network(
+                widget.itemReview.imageUrl,
+                width: cardSizeWidth * 0.5,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                width: cardSizeWidth * 0.5,
+                height: 200,
+                color: Colors.black.withOpacity(0.7),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: cardSizeWidth * 0.2,
+                            child: Text(
+                              widget.itemReview.username,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                  fontSize: 14,
+                                  letterSpacing: 1.5),
+                            ),
+                          ),
+                          widget.uid == widget.userId
+                              ? PopupMenuButton(
+                                  child: Container(
+                                    height: 35,
+                                    width: 20,
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.more_vert,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                    ),
+                                  ),
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: const Text(
+                                              'Adicionar aos Favoritos'),
+                                          onTap: () {
+                                            _submitForm();
+                                          },
+                                        ),
+                                      ),
+                                    ];
+                                  })
+                              : const Spacer()
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.itemReview.title,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.background,
-                                fontSize: 14,
+                                fontSize: 15,
                                 letterSpacing: 1.5),
                           ),
-                        ),
-                        widget.uid == widget.userId
-                            ? PopupMenuButton(
-                                child: Container(
-                                  height: 35,
-                                  width: 20,
-                                  alignment: Alignment.centerRight,
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                  ),
-                                ),
-                                itemBuilder: (BuildContext context) {
-                                  return [
-                                    PopupMenuItem(
-                                      child: ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        title: const Text(
-                                            'Adicionar aos Favoritos'),
-                                        onTap: () {
-                                          _submitForm();
-                                        },
-                                      ),
-                                    ),
-                                  ];
-                                })
-                            : const Spacer()
-                      ],
-                    ),
-                    const Spacer(),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.itemReview.title,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.background,
-                              fontSize: 15,
-                              letterSpacing: 1.5),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
