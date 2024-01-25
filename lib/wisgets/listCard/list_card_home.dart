@@ -10,10 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
-
-import '../../models/user.dart';
-import '../../provider/user_provider.dart';
 
 class ListCard extends StatefulWidget {
   const ListCard({super.key, required this.userStore});
@@ -27,13 +23,10 @@ class _ListCardState extends State<ListCard>
   @override
   bool get wantKeepAlive => true;
   final List<Review> loadReviews = dummyReviws;
-  late Future<List<QueryDocumentSnapshot>> _reviewsAmigosFuture;
-  late UserProvider _userProvider;
 
   final user = FirebaseAuth.instance.currentUser!;
   NativeAd? _nativeAd;
   bool _nativeAdIsLoaded = false;
-  var userSnapshot;
 
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/2247696110'
@@ -89,15 +82,6 @@ class _ListCardState extends State<ListCard>
     _nativeAd?.load();
   }
 
-  Future<void> _refreshData() async {
-    try {
-      getReviewsAmigos();
-    } catch (error) {
-      // Trate os erros, se houver, aqui.
-      print("Erro ao atualizar dados: $error");
-    }
-  }
-
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo o usuário atualmente autenticado
     if (widget.userStore.user == null) {
@@ -128,9 +112,8 @@ class _ListCardState extends State<ListCard>
     return Center(
       child: Observer(
         builder: (_) {
-          print(widget.userStore.user?.following);
           if (widget.userStore.user?.username == null) {
-            return Text('Username: $widget.userStore.user?.username');
+            return const Center(child: CircularProgressIndicator());
           } else {
             return StreamBuilder<List<QueryDocumentSnapshot>>(
               stream: getReviewsAmigos().asStream(),

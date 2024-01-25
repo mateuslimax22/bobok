@@ -95,9 +95,9 @@ class FirestoreMethods {
     }
   }
 
-  Future<void> likePost(String? postId, String uid, List likes) async {
+  Future<void> likePost(String? postId, String uid, bool likes) async {
     try {
-      if (likes.contains(uid)) {
+      if (!likes) {
         await _firestore.collection('reviews').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid])
         });

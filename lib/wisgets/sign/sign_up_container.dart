@@ -228,9 +228,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Email",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -267,9 +274,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     decoration: InputDecoration(
                       labelText: "Usuário",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -306,10 +320,17 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: "Senha",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -457,10 +478,17 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     controller: _confirmPasswordController,
                     decoration: InputDecoration(
                       labelText: "Confirmar senha",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:

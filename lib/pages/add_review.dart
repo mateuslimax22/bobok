@@ -245,7 +245,15 @@ class _AddReviewState extends State<AddReview> {
                                     items: items.map((String items) {
                                       return DropdownMenuItem(
                                         value: items,
-                                        child: Text(items),
+                                        child: Text(
+                                          items,
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                              fontSize: 15,
+                                              letterSpacing: 1.5),
+                                        ),
                                       );
                                     }).toList(),
                                     // After selecting the desired option,it will
@@ -274,6 +282,11 @@ class _AddReviewState extends State<AddReview> {
                                     Theme.of(context).colorScheme.onPrimary,
                                 child: TextFormField(
                                   focusNode: myFocusNodeTitle,
+                                  style: TextStyle(
+                                    letterSpacing: 0.5,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
                                   decoration: InputDecoration(
                                     labelText: "Título",
                                     labelStyle: TextStyle(
@@ -319,11 +332,22 @@ class _AddReviewState extends State<AddReview> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.65,
                             child: SwitchListTile(
+                              inactiveThumbColor:
+                                  Theme.of(context).colorScheme.primary,
+                              inactiveTrackColor:
+                                  Theme.of(context).colorScheme.secondary,
                               contentPadding:
                                   const EdgeInsets.fromLTRB(0, 0, 0, 0),
                               activeColor:
                                   Theme.of(context).colorScheme.primary,
-                              title: const Text('Contém Spoiler?'),
+                              title: Text(
+                                'Contém Spoiler?',
+                                style: TextStyle(
+                                  letterSpacing: 0.5,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
                               value: spoiler,
                               onChanged: (bool value) {
                                 setState(() {
@@ -333,6 +357,7 @@ class _AddReviewState extends State<AddReview> {
                               secondary: const Icon(
                                 Icons.warning_rounded,
                                 color: Colors.red,
+                                size: 30,
                               ),
                             ),
                           ),
@@ -464,6 +489,10 @@ class _AddReviewState extends State<AddReview> {
                         shadowColor: Theme.of(context).colorScheme.onPrimary,
                         child: TextFormField(
                           focusNode: myFocusNodeReview,
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                           maxLines: 2000,
                           decoration: InputDecoration(
                             labelText: "Resenha",

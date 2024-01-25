@@ -187,13 +187,22 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                         width: 40,
                         height: 40,
                         child: PopupMenuButton<String>(
+                            color: Theme.of(context).colorScheme.background,
                             onSelected: menuAppbar,
                             itemBuilder: (BuildContext context) {
                               if (widget.user.uid == widget.review.uid) {
                                 return {'Delete resenha'}.map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
-                                    child: Text(choice),
+                                    child: Text(
+                                      choice,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 15,
+                                          letterSpacing: 1.5),
+                                    ),
                                   );
                                 }).toList();
                               } else {
@@ -201,7 +210,15 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                     .map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
-                                    child: Text(choice),
+                                    child: Text(
+                                      choice,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 15,
+                                          letterSpacing: 1.5),
+                                    ),
                                   );
                                 }).toList();
                               }
@@ -303,7 +320,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                   ),
                                   SizedBox(
                                     width: deviceWidth * 0.3,
-                                    height: 100,
+                                    height: deviceHeight * 0.1,
                                     child: Row(
                                       crossAxisAlignment:
                                           widget.review.spoiler != true
@@ -360,10 +377,11 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                         children: [
                                           SizedBox(
                                             width: deviceWidth * 0.3,
+                                            height: deviceHeight * 0.02,
                                             child: Text(
                                               widget.review.spoiler != true
                                                   ? "ver mais.".toUpperCase()
-                                                  : "A resenha contém spoiler. "
+                                                  : "Contém spoiler. "
                                                       .toUpperCase(),
                                               style: TextStyle(
                                                 color: widget.review.spoiler !=

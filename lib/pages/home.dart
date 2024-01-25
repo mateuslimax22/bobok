@@ -1,6 +1,7 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/books.dart';
+import 'package:bobok/pages/my_list.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/google_sign_in.dart';
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     _pageController = PageController(initialPage: _currentIndex);
     _pages = [
-      Books(uid: FirebaseAuth.instance.currentUser!.uid),
+      MyList(),
       ListCard(userStore: userStore),
       World(
         userStore: userStore,

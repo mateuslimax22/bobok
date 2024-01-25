@@ -128,6 +128,8 @@ class _ProfileReviewState extends State<ProfileReview> {
                           ),
                           widget.uid == widget.userId
                               ? PopupMenuButton(
+                                  color:
+                                      Theme.of(context).colorScheme.background,
                                   child: Container(
                                     height: 35,
                                     width: 20,
@@ -144,8 +146,15 @@ class _ProfileReviewState extends State<ProfileReview> {
                                       PopupMenuItem(
                                         child: ListTile(
                                           contentPadding: EdgeInsets.zero,
-                                          title: const Text(
-                                              'Adicionar aos Favoritos'),
+                                          title: Text(
+                                            'Adicionar aos Favoritos',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                                fontSize: 15,
+                                                letterSpacing: 1.5),
+                                          ),
                                           onTap: () {
                                             _submitForm();
                                           },

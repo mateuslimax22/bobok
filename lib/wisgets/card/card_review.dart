@@ -34,18 +34,14 @@ class CardReview extends StatefulWidget {
 }
 
 class _CardReviewState extends State<CardReview> {
-  late UserProvider _userProvider;
   bool isLike = false;
   int countLikes = 0;
   int commentLen = 0;
-  UserData? currentUser;
   List<QueryDocumentSnapshot>? comments;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _userProvider = Provider.of<UserProvider>(context);
-    currentUser = _userProvider.user;
     setState(() {
       countLikes = widget.review.likes.length;
     });
@@ -68,8 +64,8 @@ class _CardReviewState extends State<CardReview> {
         'userName': widget.review.username,
         'userUid': widget.user.uid,
         'isComment': isComment,
-        'currentUserName': currentUser?.username,
-        'currentUserPhoto': currentUser?.avatar,
+        'currentUserName': widget.userStore!.user?.username,
+        'currentUserPhoto': widget.userStore!.user?.avatar,
       },
     );
   }
@@ -189,13 +185,22 @@ class _CardReviewState extends State<CardReview> {
                         width: 40,
                         height: 40,
                         child: PopupMenuButton<String>(
+                            color: Theme.of(context).colorScheme.background,
                             onSelected: menuAppbar,
                             itemBuilder: (BuildContext context) {
                               if (widget.user.uid == widget.review.uid) {
                                 return {'Delete resenha'}.map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
-                                    child: Text(choice),
+                                    child: Text(
+                                      choice,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 15,
+                                          letterSpacing: 1.5),
+                                    ),
                                   );
                                 }).toList();
                               } else {
@@ -203,7 +208,15 @@ class _CardReviewState extends State<CardReview> {
                                     .map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
-                                    child: Text(choice),
+                                    child: Text(
+                                      choice,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 15,
+                                          letterSpacing: 1.5),
+                                    ),
                                   );
                                 }).toList();
                               }
@@ -418,14 +431,13 @@ class _CardReviewState extends State<CardReview> {
                           setState(() {
                             isLike = !isLike;
                           });
-                          await FirestoreMethods().likePost(
-                              widget.review.postId,
-                              widget.user.uid,
-                              widget.review.likes);
-
                           setState(() {
-                            countLikes = widget.review.likes.length;
+                            isLike
+                                ? countLikes = ++countLikes
+                                : countLikes = --countLikes;
                           });
+                          await FirestoreMethods().likePost(
+                              widget.review.postId, widget.user.uid, isLike);
                         },
                       ),
                     ),
@@ -443,9 +455,10 @@ class _CardReviewState extends State<CardReview> {
                       height: 40,
                       width: 30,
                       child: IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.messenger_outline,
                           size: 20,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
@@ -456,9 +469,10 @@ class _CardReviewState extends State<CardReview> {
                     SizedBox(
                       height: 40,
                       child: IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.share,
                           size: 20,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
