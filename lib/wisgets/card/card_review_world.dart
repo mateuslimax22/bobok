@@ -37,14 +37,11 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
   bool isLike = false;
   int countLikes = 0;
   int commentLen = 0;
-  UserData? currentUser;
   List<QueryDocumentSnapshot>? comments;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _userProvider = Provider.of<UserProvider>(context);
-    currentUser = _userProvider.user;
     setState(() {
       countLikes = widget.review.likes.length;
     });
@@ -67,8 +64,8 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
         'userName': widget.review.username,
         'userUid': widget.user.uid,
         'isComment': isComment,
-        'currentUserName': currentUser?.username,
-        'currentUserPhoto': currentUser?.avatar,
+        'currentUserName': widget.userStore!.user?.username,
+        'currentUserPhoto': widget.userStore!.user?.avatar,
       },
     );
   }
@@ -98,7 +95,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
           break;
-        case 'Ocutar resenhas desse usuário':
+        case 'Colocar na minha lista':
           break;
       }
     }
@@ -206,7 +203,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                   );
                                 }).toList();
                               } else {
-                                return {'Ocutar resenhas desse usuário'}
+                                return {'Colocar na minha lista'}
                                     .map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,
@@ -439,14 +436,13 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                           setState(() {
                             isLike = !isLike;
                           });
-                          await FirestoreMethods().likePost(
-                              widget.review.postId,
-                              widget.user.uid,
-                              widget.review.likes);
-
                           setState(() {
-                            countLikes = widget.review.likes.length;
+                            isLike
+                                ? countLikes = ++countLikes
+                                : countLikes = --countLikes;
                           });
+                          await FirestoreMethods().likePost(
+                              widget.review.postId, widget.user.uid, isLike);
                         },
                       ),
                     ),

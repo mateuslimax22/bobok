@@ -95,7 +95,7 @@ class _CardReviewState extends State<CardReview> {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
           break;
-        case 'Ocutar resenhas desse usuário':
+        case 'Colocar na minha lista':
           break;
       }
     }
@@ -204,7 +204,7 @@ class _CardReviewState extends State<CardReview> {
                                   );
                                 }).toList();
                               } else {
-                                return {'Ocutar resenhas desse usuário'}
+                                return {'Colocar na minha lista'}
                                     .map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: choice,

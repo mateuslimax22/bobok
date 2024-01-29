@@ -4,13 +4,15 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
+import 'package:bobok/wisgets/listCard/list_card_top5.dart';
 import 'package:bobok/wisgets/listCard/list_card_world.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class World extends StatefulWidget {
-  const World({super.key, this.userStore});
+  const World({super.key, this.userStore, this.uid});
   final UserStore? userStore;
+  final String? uid;
 
   @override
   State<World> createState() => _World();
@@ -19,8 +21,6 @@ class World extends StatefulWidget {
 class _World extends State<World> {
   @override
   Widget build(BuildContext context) {
-    final List<Review> loadedReviewUser = dummyReviws;
-
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Stack(
@@ -39,20 +39,10 @@ class _World extends State<World> {
                               const Text("Indicações"),
                               Expanded(
                                 child: SizedBox(
-                                  child: GridView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: loadedReviewUser.length,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              childAspectRatio: (2.8 / 4),
-                                              crossAxisCount: 1,
-                                              mainAxisSpacing: 2),
-                                      itemBuilder: (ctx, i) => Text(
-                                          loadedReviewUser[i]
-                                              .title) //ProfileReview(
-                                      //     itemReview: loadedReviewUser[i])
-                                      ),
-                                ),
+                                    child: ListCardTop5(
+                                  uid: widget.uid,
+                                  userId: widget.uid,
+                                )),
                               ),
                             ],
                           ),

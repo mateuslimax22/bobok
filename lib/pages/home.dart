@@ -38,6 +38,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       MyList(),
       ListCard(userStore: userStore),
       World(
+        uid: FirebaseAuth.instance.currentUser!.uid,
         userStore: userStore,
       ),
       Profile(

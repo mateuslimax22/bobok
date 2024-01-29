@@ -198,9 +198,12 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                   SizedBox(
                                     height: 35,
                                     child: IconButton(
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.star_border_rounded,
                                         size: 25,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
                                       ),
                                       tooltip: 'Show Snackbar',
                                       onPressed: () {
@@ -211,9 +214,12 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                   SizedBox(
                                     height: 40,
                                     child: IconButton(
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.messenger_outline,
                                         size: 20,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
                                       ),
                                       tooltip: 'Show Snackbar',
                                       onPressed: () {
@@ -226,9 +232,12 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                   SizedBox(
                                     height: 40,
                                     child: IconButton(
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.share,
                                         size: 20,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
                                       ),
                                       tooltip: 'Show Snackbar',
                                       onPressed: () {

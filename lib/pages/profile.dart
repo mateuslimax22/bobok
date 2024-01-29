@@ -13,7 +13,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
-import '../provider/user_provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile(
