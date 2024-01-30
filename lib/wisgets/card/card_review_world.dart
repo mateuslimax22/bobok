@@ -13,14 +13,13 @@ import '../../provider/user_provider.dart';
 
 class CardReviewWorld extends StatefulWidget {
   const CardReviewWorld(
-      {Key? key,
+      {super.key,
       required this.colorback,
       required this.review,
       required this.avatar,
       required this.user,
       required this.reviewUid,
-      this.userStore})
-      : super(key: key);
+      this.userStore});
   final Review review;
   final UserStore? userStore;
   final Color colorback;
@@ -33,7 +32,6 @@ class CardReviewWorld extends StatefulWidget {
 }
 
 class _CardReviewWorldState extends State<CardReviewWorld> {
-  late UserProvider _userProvider;
   bool isLike = false;
   int countLikes = 0;
   int commentLen = 0;
@@ -101,19 +99,19 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
     }
 
     return Card(
-      margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+      margin: const EdgeInsets.fromLTRB(0, 5, 5, 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1,
       color: widget.colorback,
       child: SizedBox(
         width: deviceWidth,
-        height: 320,
+        height: 326,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background.withOpacity(0.8),
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +152,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 5),
+                            padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                             child: GestureDetector(
                               onTap: () => {
                                 Navigator.push(
@@ -252,7 +250,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,
                                   borderRadius: const BorderRadius.all(
-                                      Radius.circular(8)),
+                                      Radius.circular(10)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Theme.of(context)

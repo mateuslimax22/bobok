@@ -1,4 +1,5 @@
 import 'package:bobok/models/review.dart';
+import 'package:bobok/wisgets/card/card_top5.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -38,23 +39,26 @@ class _ListCardTop5State extends State<ListCardTop5> {
         final top5Reviews = reviews.take(5).toList();
 
         return Expanded(
-          child: SizedBox(
-            child: GridView.builder(
-              shrinkWrap: true,
-              itemCount: top5Reviews.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: (2.8 / 4),
-                crossAxisCount: 1,
-                crossAxisSpacing: 2,
-                mainAxisSpacing: 2,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+            child: SizedBox(
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: top5Reviews.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: (2.8 / 4),
+                  crossAxisCount: 1,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: (ctx, i) {
+                  return CardTop5(
+                    itemReview: top5Reviews[i],
+                    userId: widget.userId,
+                    uid: widget.uid,
+                  );
+                },
               ),
-              itemBuilder: (ctx, i) {
-                return ProfileReview(
-                  itemReview: top5Reviews[i],
-                  userId: widget.userId,
-                  uid: widget.uid,
-                );
-              },
             ),
           ),
         );

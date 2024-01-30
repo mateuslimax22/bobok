@@ -32,29 +32,42 @@ class _World extends State<World> {
                     children: [
                       Expanded(
                         flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: Column(
-                            children: [
-                              const Text("Indicações"),
-                              Expanded(
-                                child: SizedBox(
-                                    child: ListCardTop5(
-                                  uid: widget.uid,
-                                  userId: widget.uid,
-                                )),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Top 5",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                letterSpacing: 0.5,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
                               ),
-                            ],
-                          ),
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                  child: ListCardTop5(
+                                uid: widget.uid,
+                                userId: widget.uid,
+                              )),
+                            ),
+                          ],
                         ),
                       ),
                       Expanded(
                         flex: 7,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.only(left: 5),
                           child: Column(
                             children: [
-                              const Text("Resenhas"),
+                              Text(
+                                "Mundo",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
                               Expanded(
                                 child: SizedBox(
                                     child: ListCardWorld(
