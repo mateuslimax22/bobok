@@ -28,6 +28,8 @@ void main() async {
   runApp(const MyApp());
 }
 
+ThemeData globalTheme = darkTheme;
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

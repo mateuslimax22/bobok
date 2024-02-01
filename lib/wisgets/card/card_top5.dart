@@ -119,7 +119,7 @@ class _CardTop5State extends State<CardTop5> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 14,
                               letterSpacing: 1.5),
                         ),
@@ -131,7 +131,7 @@ class _CardTop5State extends State<CardTop5> {
                           Text(
                             widget.itemReview.title,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.background,
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 15,
                                 letterSpacing: 1.5),
                           ),

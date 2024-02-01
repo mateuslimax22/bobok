@@ -35,7 +35,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     _pageController = PageController(initialPage: _currentIndex);
     _pages = [
-      MyList(),
+      MyList(
+        userStore: userStore,
+      ),
       ListCard(userStore: userStore),
       World(
         uid: FirebaseAuth.instance.currentUser!.uid,
