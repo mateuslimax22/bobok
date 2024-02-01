@@ -188,11 +188,22 @@ class FirestoreMethods {
         email: userDocument['email'],
         followers: List<String>.from(userDocument['followers']),
         following: List<String>.from(userDocument['following']),
+        myfav: List<Map<String, dynamic>>.from(userDocument['myfav']),
         avatar: userDocument['photoUrl'],
       );
 
       // ignore: use_build_context_synchronously
       Provider.of<UserProvider>(context, listen: false).setUser(user);
+    }
+  }
+
+  Future<void> addFav(String? uid, List<dynamic>? myfav) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'myfav': FieldValue.arrayUnion([myfav![0]])
+      });
+    } catch (e) {
+      print(e.toString());
     }
   }
 

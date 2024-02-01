@@ -77,6 +77,7 @@ class GoogleSignInProvider extends ChangeNotifier {
         'email': googleSignIn.currentUser!.email,
         'followers': [],
         'following': [],
+        'myfav': [],
         'photoUrl': fileUrl,
       });
     }

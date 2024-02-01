@@ -88,12 +88,33 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
 
   @override
   Widget build(BuildContext context) {
+    void setFav(List<dynamic> myfav) {
+      FirestoreMethods().addFav(widget.userStore!.user!.uid, myfav);
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            myfav: myfav),
+      );
+    }
+
     void menuAppbar(String value) {
       switch (value) {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
           break;
         case 'Colocar na minha lista':
+          setFav([
+            {
+              "title": widget.review.title,
+              "category": widget.review.category,
+              "imageUrl": widget.review.imageUrl
+            }
+          ]);
           break;
       }
     }

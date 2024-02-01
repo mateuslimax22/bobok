@@ -43,12 +43,9 @@ class _World extends State<World> {
                                 fontSize: 20,
                               ),
                             ),
-                            Expanded(
-                              child: SizedBox(
-                                  child: ListCardTop5(
-                                uid: widget.uid,
-                                userId: widget.uid,
-                              )),
+                            ListCardTop5(
+                              uid: widget.uid,
+                              userId: widget.uid,
                             ),
                           ],
                         ),

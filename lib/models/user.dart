@@ -7,15 +7,16 @@ class UserData {
   final String? email;
   final List? followers;
   final List? following;
+  final List<dynamic>? myfav;
 
-  UserData({
-    this.uid,
-    this.avatar,
-    required this.username,
-    required this.email,
-    this.followers,
-    this.following,
-  });
+  UserData(
+      {this.uid,
+      this.avatar,
+      required this.username,
+      required this.email,
+      this.followers,
+      this.following,
+      this.myfav});
 
   static UserData fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
@@ -27,6 +28,7 @@ class UserData {
       avatar: snapshot["photoUrl"],
       followers: snapshot["followers"],
       following: snapshot["following"],
+      myfav: snapshot["myfav"],
     );
   }
 
@@ -37,5 +39,6 @@ class UserData {
         "avatar": avatar,
         "followers": followers,
         "following": following,
+        "myfav": myfav
       };
 }

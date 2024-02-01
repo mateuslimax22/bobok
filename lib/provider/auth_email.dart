@@ -46,6 +46,7 @@ class AuthEmail extends ChangeNotifier {
         'email': email,
         'followers': [],
         'following': [],
+        'myfav': [],
         'photoUrl': fileUrl,
       });
 
