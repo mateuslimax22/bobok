@@ -107,7 +107,7 @@ class _CardTop5State extends State<CardTop5> {
               Container(
                 width: cardSizeWidth * 0.5,
                 height: 200,
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withOpacity(0.6),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -119,7 +119,7 @@ class _CardTop5State extends State<CardTop5> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: Theme.of(context).colorScheme.tertiary,
                               fontSize: 14,
                               letterSpacing: 1.5),
                         ),
@@ -131,7 +131,7 @@ class _CardTop5State extends State<CardTop5> {
                           Text(
                             widget.itemReview.title,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: Theme.of(context).colorScheme.tertiary,
                                 fontSize: 15,
                                 letterSpacing: 1.5),
                           ),

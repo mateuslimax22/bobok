@@ -24,6 +24,7 @@ TextTheme _buildDarkTextTheme() {
 }
 
 ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
   primaryColor: Colors.indigo,
   textTheme: _buildLightTextTheme().apply(
     fontFamily: GoogleFonts.actor().fontFamily,
@@ -33,12 +34,13 @@ ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     error: Colors.red,
     onBackground: Colors.transparent,
-    onError: Colors.white,
+    onError: Color.fromARGB(255, 236, 233, 255),
     onPrimary: Colors.black,
     onSecondary: Colors.transparent,
     onSurface: Colors.transparent,
     primary: Color.fromARGB(255, 93, 63, 211),
     secondary: Color.fromARGB(255, 190, 190, 190),
+    tertiary: Colors.white,
     surface: Colors.transparent,
     inverseSurface: Color.fromARGB(255, 223, 215, 250),
     primaryContainer: Color.fromARGB(255, 181, 251, 187),
@@ -47,22 +49,24 @@ ThemeData lightTheme = ThemeData(
 );
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
+  brightness: Brightness.dark,
   primaryColor: Colors.indigo,
   textTheme: _buildDarkTextTheme().apply(
     fontFamily: GoogleFonts.actor().fontFamily,
   ),
   colorScheme: const ColorScheme(
     // Update your dark mode colors here
-    background: Colors.black,
+    background: Color.fromARGB(255, 35, 33, 57),
     brightness: Brightness.dark,
     error: Colors.red,
     onBackground: Colors.white,
-    onError: Colors.black,
+    onError: Color.fromARGB(255, 36, 33, 40),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: Colors.white,
-    primary: Color.fromARGB(255, 93, 63, 211),
+    primary: Color.fromARGB(255, 127, 121, 230),
     secondary: Color.fromARGB(255, 190, 190, 190),
+    tertiary: Colors.white,
     surface: Colors.grey,
     inverseSurface: Color.fromARGB(255, 223, 215, 250),
     primaryContainer: Color.fromARGB(84, 181, 251, 187),

@@ -36,15 +36,14 @@ class _CommentsCard extends State<CommentsCard> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Theme.of(context).colorScheme.background,
-              Theme.of(context).colorScheme.inverseSurface,
-            ],
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 3.0,
+            ),
           ),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+          borderRadius: BorderRadius.circular(8),
+          color: Theme.of(context).colorScheme.onError),
       duration: const Duration(milliseconds: 800),
       curve: Curves.easeInOut,
       child: Padding(

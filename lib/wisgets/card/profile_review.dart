@@ -107,7 +107,7 @@ class _ProfileReviewState extends State<ProfileReview> {
               Container(
                 width: cardSizeWidth * 0.5,
                 height: 200,
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withOpacity(0.6),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -120,16 +120,14 @@ class _ProfileReviewState extends State<ProfileReview> {
                             child: Text(
                               widget.itemReview.username,
                               style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.background,
+                                  color: Theme.of(context).colorScheme.tertiary,
                                   fontSize: 14,
                                   letterSpacing: 1.5),
                             ),
                           ),
                           widget.uid == widget.userId
                               ? PopupMenuButton(
-                                  color:
-                                      Theme.of(context).colorScheme.background,
+                                  color: Theme.of(context).colorScheme.tertiary,
                                   child: Container(
                                     height: 35,
                                     width: 20,
@@ -138,7 +136,7 @@ class _ProfileReviewState extends State<ProfileReview> {
                                       Icons.more_vert,
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .background,
+                                          .tertiary,
                                     ),
                                   ),
                                   itemBuilder: (BuildContext context) {
@@ -172,7 +170,7 @@ class _ProfileReviewState extends State<ProfileReview> {
                           Text(
                             widget.itemReview.title,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.background,
+                                color: Theme.of(context).colorScheme.tertiary,
                                 fontSize: 15,
                                 letterSpacing: 1.5),
                           ),

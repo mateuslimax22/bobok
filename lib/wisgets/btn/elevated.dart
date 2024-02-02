@@ -37,7 +37,7 @@ class _ElevatedButtonThState extends State<ElevatedButtonTh> {
         child: Text(
           widget.label,
           style: TextStyle(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.tertiary,
               fontSize: widget.fontSize,
               fontWeight: widget.fontWeight,
               letterSpacing: 1.5),

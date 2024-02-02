@@ -1,33 +1,54 @@
-import 'package:bobok/models/review.dart';
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/user_provider.dart';
-import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CardMyFav extends StatefulWidget {
-  const CardMyFav({
-    Key? key,
-    required this.fav,
-  }) : super(key: key);
+  const CardMyFav(
+      {super.key,
+      required this.fav,
+      required this.userStore,
+      required this.myfav,
+      required this.getFilteredMyFav});
 
   final Map<String, dynamic> fav;
+  final UserStore? userStore;
+  final List<dynamic>? myfav;
+  final List<dynamic> Function() getFilteredMyFav;
 
   @override
   State<CardMyFav> createState() => _CardMyFavState();
 }
 
 class _CardMyFavState extends State<CardMyFav> {
-  late UserProvider _userProvider;
-  UserData? currentUser;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _userProvider = Provider.of<UserProvider>(context);
-    currentUser = _userProvider.user;
+  }
+
+  void removeFav(List<dynamic>? myfav, Map<String, dynamic> fav) async {
+    myfav?.removeWhere((item) => item == fav);
+
+    widget.getFilteredMyFav();
+    await FirestoreMethods().removeFav(widget.userStore!.user!.uid, fav);
+    widget.userStore?.setUser(
+      UserData(
+          username: widget.userStore!.user!.username,
+          uid: widget.userStore!.user!.uid,
+          email: widget.userStore!.user!.email,
+          avatar: widget.userStore!.user!.avatar,
+          followers: widget.userStore!.user!.followers,
+          following: widget.userStore!.user!.following,
+          myfav: myfav),
+    );
+  }
+
+  void fecharPopupMenu() {
+    // Chame hideMenu para fechar o PopupMenu
+    Navigator.of(context).pop();
   }
 
   @override
@@ -51,11 +72,62 @@ class _CardMyFavState extends State<CardMyFav> {
               Container(
                 width: cardSizeWidth * 0.5,
                 height: 200,
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withOpacity(0.6),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
+                      Row(
+                        children: [
+                          const Spacer(),
+                          PopupMenuButton(
+                              color: Theme.of(context).colorScheme.onError,
+                              child: Container(
+                                height: 35,
+                                width: 20,
+                                alignment: Alignment.centerRight,
+                                child: Icon(
+                                  Icons.more_vert,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                ),
+                              ),
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                      title: Text(
+                                        'Remover',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 15,
+                                            letterSpacing: 1.5),
+                                      ),
+                                      onTap: () {
+                                        removeFav(widget.myfav, widget.fav);
+                                        fecharPopupMenu();
+                                      },
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                      title: Text(
+                                        'Marcar como já visto',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 15,
+                                            letterSpacing: 1.5),
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ];
+                              })
+                        ],
+                      ),
                       const Spacer(),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +135,7 @@ class _CardMyFavState extends State<CardMyFav> {
                           Text(
                             widget.fav['title'],
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: Theme.of(context).colorScheme.tertiary,
                                 fontSize: 15,
                                 letterSpacing: 1.5),
                           ),

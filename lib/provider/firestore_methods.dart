@@ -199,8 +199,25 @@ class FirestoreMethods {
 
   Future<void> addFav(String? uid, List<dynamic>? myfav) async {
     try {
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
+
+      List myfavCheck = (snap.data()! as dynamic)['myfav'];
+
+      if (myfavCheck.contains(myfav) != true) {
+        await _firestore.collection('users').doc(uid).update({
+          'myfav': FieldValue.arrayUnion([myfav![0]])
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> removeFav(String? uid, Map<String, dynamic>? myfav) async {
+    try {
       await _firestore.collection('users').doc(uid).update({
-        'myfav': FieldValue.arrayUnion([myfav![0]])
+        'myfav': FieldValue.arrayRemove([myfav])
       });
     } catch (e) {
       print(e.toString());

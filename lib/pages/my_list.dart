@@ -31,7 +31,10 @@ class _MyListState extends State<MyList> {
     if (widget.userStore?.user?.myfav == null) {
       return [];
     }
-
+    //WidgetsBinding.instance.addPostFrameCallback((_) {
+    //  setState(() {
+    //  });
+    // });
     return widget.userStore!.user!.myfav!.where((item) {
       return item['category'] == selectedTab;
     }).toList();
@@ -80,20 +83,29 @@ class _MyListState extends State<MyList> {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: getFilteredMyFav().length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: (2.8 / 4),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 2,
+                    border: Border(
+                      top: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 3.0,
+                      ),
                     ),
-                    itemBuilder: (ctx, i) =>
-                        CardMyFav(fav: getFilteredMyFav()[i])),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.onError),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: getFilteredMyFav().length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: (2.8 / 4),
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 2,
+                  ),
+                  itemBuilder: (ctx, i) => CardMyFav(
+                    fav: getFilteredMyFav()[i],
+                    myfav: widget.userStore?.user?.myfav,
+                    userStore: widget.userStore,
+                    getFilteredMyFav: getFilteredMyFav,
+                  ),
+                ),
               ),
             ),
           ],

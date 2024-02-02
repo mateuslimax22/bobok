@@ -5,13 +5,16 @@ class Appbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Brightness currentBrightness = Theme.of(context).brightness;
+    String imagePath = currentBrightness == Brightness.light
+        ? 'images/logoLight.png'
+        : 'images/logoDark.png';
     return AppBar(
       elevation: 0,
       backgroundColor: Theme.of(context).colorScheme.background,
       foregroundColor: Theme.of(context).colorScheme.primary,
       titleSpacing: 5,
-      title: Image.asset('images/logoName.png',
-          width: 138, height: 31, fit: BoxFit.fill),
+      title: Image.asset(imagePath, width: 138, height: 31, fit: BoxFit.fill),
       actions: [
         IconButton(
           icon: const Icon(

@@ -114,6 +114,11 @@ class _ProfileState extends State<Profile> {
       }
     }
 
+    Brightness currentBrightness = Theme.of(context).brightness;
+    String imagePath = currentBrightness == Brightness.light
+        ? 'images/logoLight.png'
+        : 'images/logoDark.png';
+
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: widget.currentUid == false
@@ -122,8 +127,8 @@ class _ProfileState extends State<Profile> {
                 backgroundColor: Theme.of(context).colorScheme.background,
                 foregroundColor: Theme.of(context).colorScheme.primary,
                 titleSpacing: 5,
-                title: Image.asset('images/logoName.png',
-                    width: 138, height: 31, fit: BoxFit.fill),
+                title: Image.asset(imagePath,
+                    width: 133, height: 45, fit: BoxFit.fill),
                 actions: [
                     PopupMenuButton<String>(
                         onSelected: menuAppbar,
@@ -164,7 +169,7 @@ class _ProfileState extends State<Profile> {
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .primary,
+                                            .onPrimary,
                                         fontSize: 14,
                                         letterSpacing: 1.5),
                                   ),
@@ -178,7 +183,7 @@ class _ProfileState extends State<Profile> {
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primary,
+                                              .onPrimary,
                                           fontSize: 20,
                                           letterSpacing: 1.5),
                                     );
@@ -194,7 +199,7 @@ class _ProfileState extends State<Profile> {
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .primary,
+                                            .onPrimary,
                                         fontSize: 14,
                                         letterSpacing: 1.5),
                                   ),
@@ -208,7 +213,7 @@ class _ProfileState extends State<Profile> {
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primary,
+                                              .onPrimary,
                                           fontSize: 20,
                                           letterSpacing: 1.5),
                                     );
@@ -319,7 +324,7 @@ class _ProfileState extends State<Profile> {
                                           Icons.camera_alt_outlined,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primary,
+                                              .onPrimary,
                                         ),
                                       ),
                                     ))
@@ -431,10 +436,19 @@ class _ProfileState extends State<Profile> {
                                     child: SizedBox(
                                       child: Observer(
                                         builder: (_) {
-                                          return Text(widget.currentUid != false
-                                              ? widget.userStore!.user!.username
-                                                  .toString()
-                                              : userName);
+                                          return Text(
+                                            widget.currentUid != false
+                                                ? widget
+                                                    .userStore!.user!.username
+                                                    .toString()
+                                                : userName,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                                fontSize: 20,
+                                                letterSpacing: 1.5),
+                                          );
                                         },
                                       ),
                                     ),
@@ -444,57 +458,69 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                const Divider(),
                 Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Indicações",
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 14,
-                                      letterSpacing: 1.5),
-                                ),
-                              ),
-                              ListCardRecommendation(
-                                  uid: widget.uid, userId: user.uid)
-                            ],
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 3.0,
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 7,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Resenhas",
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 14,
-                                      letterSpacing: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).colorScheme.onError),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Indicações",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
                                 ),
-                              ),
-                              ListCardProfile(
-                                  uid: widget.uid, userId: user.uid),
-                            ],
+                                ListCardRecommendation(
+                                    uid: widget.uid, userId: user.uid)
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          flex: 7,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Resenhas",
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
+                                ),
+                                ListCardProfile(
+                                    uid: widget.uid, userId: user.uid),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
