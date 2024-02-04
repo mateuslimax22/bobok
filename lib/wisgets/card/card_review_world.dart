@@ -7,9 +7,6 @@ import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../provider/user_provider.dart';
 
 class CardReviewWorld extends StatefulWidget {
   const CardReviewWorld(
@@ -33,6 +30,7 @@ class CardReviewWorld extends StatefulWidget {
 
 class _CardReviewWorldState extends State<CardReviewWorld> {
   bool isLike = false;
+  bool isSave = false;
   int countLikes = 0;
   int commentLen = 0;
   List<QueryDocumentSnapshot>? comments;
@@ -46,6 +44,13 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
     if (widget.review.likes.contains(widget.user.uid)) {
       setState(() {
         isLike = true;
+      });
+    }
+
+    if (widget.userStore!.user!.myfav!
+        .any((map) => map['imageUrl'] == widget.review.imageUrl)) {
+      setState(() {
+        isSave = true;
       });
     }
   }
@@ -65,6 +70,22 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
         'currentUserName': widget.userStore!.user?.username,
         'currentUserPhoto': widget.userStore!.user?.avatar,
       },
+    );
+  }
+
+  void removeFav(List<dynamic>? myfav, Map<String, dynamic> fav) async {
+    myfav?.removeWhere((item) => item['imageUrl'] == fav['imageUrl']);
+
+    await FirestoreMethods().removeFav(widget.userStore!.user!.uid, fav);
+    widget.userStore?.setUser(
+      UserData(
+          username: widget.userStore!.user!.username,
+          uid: widget.userStore!.user!.uid,
+          email: widget.userStore!.user!.email,
+          avatar: widget.userStore!.user!.avatar,
+          followers: widget.userStore!.user!.followers,
+          following: widget.userStore!.user!.following,
+          myfav: myfav),
     );
   }
 
@@ -88,8 +109,10 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
 
   @override
   Widget build(BuildContext context) {
-    void setFav(List<dynamic> myfav) {
-      FirestoreMethods().addFav(widget.userStore!.user!.uid, myfav);
+    void setFav(Map<String, dynamic> fav) {
+      FirestoreMethods().addFav(widget.userStore!.user!.uid, [fav]);
+      widget.userStore!.user!.myfav?.add(fav);
+
       widget.userStore?.setUser(
         UserData(
             username: widget.userStore!.user!.username,
@@ -98,7 +121,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
             avatar: widget.userStore!.user!.avatar,
             followers: widget.userStore!.user!.followers,
             following: widget.userStore!.user!.following,
-            myfav: myfav),
+            myfav: widget.userStore!.user!.myfav),
       );
     }
 
@@ -108,13 +131,11 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
           FirestoreMethods().deleteReview(widget.review.postId);
           break;
         case 'Colocar na minha lista':
-          setFav([
-            {
-              "title": widget.review.title,
-              "category": widget.review.category,
-              "imageUrl": widget.review.imageUrl
-            }
-          ]);
+          setFav({
+            "title": widget.review.title,
+            "category": widget.review.category,
+            "imageUrl": widget.review.imageUrl
+          });
           break;
       }
     }
@@ -441,33 +462,36 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 35,
-                      width: 25,
-                      child: IconButton(
-                        icon: Icon(Icons.star_border_rounded,
-                            size: 25,
-                            color: isLike
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onPrimary),
-                        tooltip: 'Show Snackbar',
-                        onPressed: () async {
-                          setState(() {
-                            isLike = !isLike;
-                          });
-                          setState(() {
-                            isLike
-                                ? countLikes = ++countLikes
-                                : countLikes = --countLikes;
-                          });
-                          await FirestoreMethods().likePost(
-                              widget.review.postId, widget.user.uid, isLike);
-                        },
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3.0),
+                      child: SizedBox(
+                        height: 35,
+                        width: 25,
+                        child: IconButton(
+                          icon: Icon(Icons.star_border_rounded,
+                              size: 25,
+                              color: isLike
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onPrimary),
+                          tooltip: 'Show Snackbar',
+                          onPressed: () async {
+                            setState(() {
+                              isLike = !isLike;
+                            });
+                            setState(() {
+                              isLike
+                                  ? countLikes = ++countLikes
+                                  : countLikes = --countLikes;
+                            });
+                            await FirestoreMethods().likePost(
+                                widget.review.postId, widget.user.uid, isLike);
+                          },
+                        ),
                       ),
                     ),
                     SizedBox(
                         height: 40,
-                        width: 10,
+                        width: 40,
                         child: Text(
                           countLikes.toString(),
                           style: TextStyle(
@@ -475,31 +499,56 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.onPrimary),
                         )),
-                    SizedBox(
-                      height: 40,
-                      width: 30,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.messenger_outline,
-                          size: 20,
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: SizedBox(
+                        height: 40,
+                        width: 30,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.messenger_outline,
+                            size: 20,
+                          ),
+                          tooltip: 'Show Snackbar',
+                          onPressed: () {
+                            navigateToReviewDetail(context, true);
+                          },
                         ),
-                        tooltip: 'Show Snackbar',
-                        onPressed: () {
-                          navigateToReviewDetail(context, true);
-                        },
                       ),
                     ),
-                    SizedBox(
-                      height: 40,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.share,
-                          size: 20,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: SizedBox(
+                        height: 40,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.bookmark_add,
+                            color: isSave
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onPrimary,
+                            size: 20,
+                          ),
+                          tooltip: 'Show Snackbar',
+                          onPressed: () {
+                            setState(() {
+                              isSave = !isSave;
+                            });
+                            setState(() {
+                              isSave
+                                  ? setFav({
+                                      "title": widget.review.title,
+                                      "category": widget.review.category,
+                                      "imageUrl": widget.review.imageUrl
+                                    })
+                                  : removeFav(widget.userStore!.user!.myfav, {
+                                      "title": widget.review.title,
+                                      "category": widget.review.category,
+                                      "imageUrl": widget.review.imageUrl
+                                    });
+                            });
+                          },
                         ),
-                        tooltip: 'Show Snackbar',
-                        onPressed: () {
-                          print("sdasd");
-                        },
                       ),
                     )
                   ],

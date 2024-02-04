@@ -72,7 +72,7 @@ class _CardFavoriteState extends State<CardFavorite> {
             Container(
               width: 200,
               height: 200,
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withOpacity(0.6),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -86,7 +86,7 @@ class _CardFavoriteState extends State<CardFavorite> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.tertiary,
                               fontSize: 15,
                               letterSpacing: 1.5),
                         ),

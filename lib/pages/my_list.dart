@@ -8,6 +8,7 @@ class MyList extends StatefulWidget {
   final UserStore? userStore;
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyListState createState() => _MyListState();
 }
 
@@ -23,18 +24,17 @@ class _MyListState extends State<MyList> {
           Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
       axis: Axis.horizontal,
     );
+  }
 
-    print(widget.userStore?.user?.myfav);
+  void attList() {
+    setState(() {});
   }
 
   List getFilteredMyFav() {
     if (widget.userStore?.user?.myfav == null) {
       return [];
     }
-    //WidgetsBinding.instance.addPostFrameCallback((_) {
-    //  setState(() {
-    //  });
-    // });
+    print(widget.userStore?.user?.myfav);
     return widget.userStore!.user!.myfav!.where((item) {
       return item['category'] == selectedTab;
     }).toList();
@@ -64,15 +64,15 @@ class _MyListState extends State<MyList> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
               height: 40,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   buildTab('Livro', index: 0),
-                  buildTab('Manga', index: 1),
+                  buildTab('Mangá', index: 1),
                   buildTab('HQ', index: 2),
                   buildTab('Filme', index: 3),
                   buildTab('Série', index: 4),
@@ -103,7 +103,7 @@ class _MyListState extends State<MyList> {
                     fav: getFilteredMyFav()[i],
                     myfav: widget.userStore?.user?.myfav,
                     userStore: widget.userStore,
-                    getFilteredMyFav: getFilteredMyFav,
+                    attList: attList,
                   ),
                 ),
               ),
@@ -128,15 +128,15 @@ class _MyListState extends State<MyList> {
               preferPosition: AutoScrollPosition.begin);
         },
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          margin: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+          margin: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
             color: isSelected
                 ? Theme.of(context).colorScheme.primary
                 : Colors.transparent,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+              topLeft: const Radius.circular(12),
+              topRight: const Radius.circular(12),
               bottomLeft: Radius.circular(isSelected ? 0 : 12),
               bottomRight: Radius.circular(isSelected ? 0 : 12),
             ),

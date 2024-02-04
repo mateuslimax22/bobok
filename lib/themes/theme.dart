@@ -67,7 +67,7 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
     primary: Color.fromARGB(255, 127, 121, 230),
     secondary: Color.fromARGB(255, 190, 190, 190),
     tertiary: Colors.white,
-    surface: Colors.grey,
+    surface: Color.fromARGB(255, 36, 33, 40),
     inverseSurface: Color.fromARGB(255, 223, 215, 250),
     primaryContainer: Color.fromARGB(84, 181, 251, 187),
     secondaryContainer: Color.fromARGB(107, 255, 144, 124),

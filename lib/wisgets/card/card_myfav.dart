@@ -1,10 +1,8 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
-import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CardMyFav extends StatefulWidget {
   const CardMyFav(
@@ -12,12 +10,12 @@ class CardMyFav extends StatefulWidget {
       required this.fav,
       required this.userStore,
       required this.myfav,
-      required this.getFilteredMyFav});
+      required this.attList});
 
   final Map<String, dynamic> fav;
   final UserStore? userStore;
   final List<dynamic>? myfav;
-  final List<dynamic> Function() getFilteredMyFav;
+  final Function() attList;
 
   @override
   State<CardMyFav> createState() => _CardMyFavState();
@@ -32,7 +30,6 @@ class _CardMyFavState extends State<CardMyFav> {
   void removeFav(List<dynamic>? myfav, Map<String, dynamic> fav) async {
     myfav?.removeWhere((item) => item == fav);
 
-    widget.getFilteredMyFav();
     await FirestoreMethods().removeFav(widget.userStore!.user!.uid, fav);
     widget.userStore?.setUser(
       UserData(
@@ -44,6 +41,8 @@ class _CardMyFavState extends State<CardMyFav> {
           following: widget.userStore!.user!.following,
           myfav: myfav),
     );
+
+    widget.attList();
   }
 
   void fecharPopupMenu() {

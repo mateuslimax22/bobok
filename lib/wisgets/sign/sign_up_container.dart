@@ -387,7 +387,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Flexible(child: Text("Letra maiúscula"))
+                        Flexible(
+                            child: Text(
+                          "Letra maiúscula",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ))
                       ],
                     ),
                     Row(
@@ -399,7 +408,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Flexible(child: Text("Números"))
+                        Flexible(
+                            child: Text(
+                          "Números",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ))
                       ],
                     ),
                     Row(
@@ -412,7 +430,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Flexible(child: Text("Caracteres especiais"))
+                        Flexible(
+                            child: Text(
+                          "Caracteres especiais",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ))
                       ],
                     ),
                     Row(
@@ -425,7 +452,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Flexible(child: Text("Mais de 6 dígitos"))
+                        Flexible(
+                            child: Text(
+                          "Mais de 6 dígitos",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ))
                       ],
                     ),
                   ],

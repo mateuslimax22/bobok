@@ -66,6 +66,7 @@ dependencies:
   mobx: ^2.2.1
   mobx_codegen: ^2.4.0
   scroll_to_index: ^3.0.1
+  flutter_launcher_icons: ^0.13.1
 
 
 
@@ -80,6 +81,14 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
   build_runner: ^2.4.6
+
+flutter_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "lib/assets/icon/logoIcon.png"
+  remove_alpha_ios: true
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
