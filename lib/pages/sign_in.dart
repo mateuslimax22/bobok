@@ -71,6 +71,11 @@ class _SignIn extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness currentBrightness = Theme.of(context).brightness;
+    String imagePath = currentBrightness == Brightness.light
+        ? 'images/backZoo.png'
+        : 'images/backDark.png';
+
     Widget showContent = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -113,9 +118,9 @@ class _SignIn extends State<SignIn> {
         child: Container(
           height: deviceHeight,
           width: deviceWidth,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/backZoo.png"), fit: BoxFit.cover),
+                image: AssetImage(imagePath), fit: BoxFit.cover),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -136,7 +141,7 @@ class _SignIn extends State<SignIn> {
                             decoration: const BoxDecoration(
                               image: DecorationImage(
                                   alignment: Alignment.centerLeft,
-                                  image: AssetImage("images/logoWhite.png"),
+                                  image: AssetImage("images/logoD.png"),
                                   fit: BoxFit.contain),
                             ),
                             duration: const Duration(milliseconds: 300),

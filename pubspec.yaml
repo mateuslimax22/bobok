@@ -67,6 +67,7 @@ dependencies:
   mobx_codegen: ^2.4.0
   scroll_to_index: ^3.0.1
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.10
 
 
 
@@ -87,6 +88,22 @@ flutter_icons:
   ios: true
   image_path: "lib/assets/icon/logoIcon.png"
   remove_alpha_ios: true
+# flutter_native_splash-development.yaml
+flutter_native_splash:
+  color: "#ffffff"
+  image: images/backZoo.png
+  branding: images/logoW.png
+  color_dark: "#222238"
+  image_dark: images/backDark.png
+  branding_dark: images/logoD.png
+
+  android_12:
+    image: images/splashLight.png
+    icon_background_color: "#ffffff"
+    image_dark: images/splashDark.png
+    icon_background_color_dark: "#222238"
+
+  web: false
 
 
 
