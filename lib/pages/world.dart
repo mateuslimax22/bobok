@@ -46,6 +46,7 @@ class _World extends State<World> {
                             ListCardTop5(
                               uid: widget.uid,
                               userId: widget.uid,
+                              userStore: widget.userStore,
                             ),
                           ],
                         ),

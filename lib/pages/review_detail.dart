@@ -192,60 +192,74 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                 ],
                               ),
                         arguments['isComment'] == false
-                            ? Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 35,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.star_border_rounded,
-                                        size: 25,
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onPrimary,
+                                            .primary,
+                                        width: 3.0,
                                       ),
-                                      tooltip: 'Show Snackbar',
-                                      onPressed: () {
-                                        print("sdasd");
-                                      },
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 40,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.messenger_outline,
-                                        size: 20,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                    borderRadius: BorderRadius.circular(8),
+                                    color:
+                                        Theme.of(context).colorScheme.onError),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 35,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.star_border_rounded,
+                                          size: 25,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                        tooltip: 'Show Snackbar',
+                                        onPressed: () {
+                                          print("sdasd");
+                                        },
                                       ),
-                                      tooltip: 'Show Snackbar',
-                                      onPressed: () {
-                                        setState(() {
-                                          arguments['isComment'] = true;
-                                        });
-                                      },
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 40,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        Icons.share,
-                                        size: 20,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                    SizedBox(
+                                      height: 40,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.messenger_outline,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                        tooltip: 'Show Snackbar',
+                                        onPressed: () {
+                                          setState(() {
+                                            arguments['isComment'] = true;
+                                          });
+                                        },
                                       ),
-                                      tooltip: 'Show Snackbar',
-                                      onPressed: () {
-                                        print("sdasd");
-                                      },
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 40,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.share,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                        ),
+                                        tooltip: 'Show Snackbar',
+                                        onPressed: () {
+                                          print("sdasd");
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               )
                             : Expanded(
                                 child: CommentsCard(

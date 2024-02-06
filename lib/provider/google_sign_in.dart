@@ -29,7 +29,6 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   Future googleLogin(BuildContext context, UserProvider userProvider) async {
     final googleUser = await googleSignIn.signIn();
-    var userStore = Provider.of<UserStore>(context, listen: false);
 
     if (googleUser == null) return;
     _user = googleUser;
@@ -50,10 +49,11 @@ class GoogleSignInProvider extends ChangeNotifier {
     DocumentSnapshot snap = await userDocRef.get();
 
     if (snap.exists) {
-      // var userData = UserData.fromSnap(snap);
-      // userStore.setUser(userData);
-      //userProvider.setUser(userData);
-      // userStore.setUser(userData);
+      var userData = UserData.fromSnap(snap);
+      print(
+          '*****************************************************************************');
+      print(userData);
+      userProvider.setUser(userData);
     } else {
       String? fileUrl;
       List url = [googleSignIn.currentUser!.photoUrl];
@@ -80,6 +80,16 @@ class GoogleSignInProvider extends ChangeNotifier {
         'myfav': [],
         'photoUrl': fileUrl,
       });
+
+      userProvider.setUser({
+        'username': googleSignIn.currentUser!.displayName,
+        'uid': _auth.currentUser!.uid,
+        'email': googleSignIn.currentUser!.email,
+        'followers': [],
+        'following': [],
+        'myfav': [],
+        'photoUrl': fileUrl,
+      } as UserData);
     }
   }
 

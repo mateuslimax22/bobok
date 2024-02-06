@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
-import '../pages/onboarding.dart';
 
 class AuthEmail extends ChangeNotifier {
   AuthEmail(this._context);
@@ -20,7 +19,12 @@ class AuthEmail extends ChangeNotifier {
   late final BuildContext _context;
 
   Future<UserData?> createUserWithEmailAndPassword(
-      String userName, String email, String password, File? avatar) async {
+    String userName,
+    String email,
+    String password,
+    File? avatar,
+    UserProvider userProvider,
+  ) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -50,6 +54,16 @@ class AuthEmail extends ChangeNotifier {
         'photoUrl': fileUrl,
       });
 
+      userProvider.setUser({
+        'username': userName,
+        'uid': credential.user!.uid,
+        'email': email,
+        'followers': [],
+        'following': [],
+        'myfav': [],
+        'photoUrl': fileUrl,
+      } as UserData);
+
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(
@@ -65,15 +79,11 @@ class AuthEmail extends ChangeNotifier {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      print("pEGANDO O UID DO USER NO LOGIN COM EMAIL");
-      print(_auth.currentUser!.uid);
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(_auth.currentUser!.uid);
       DocumentSnapshot snap = await userDocRef.get();
       var userData = UserData.fromSnap(snap);
-      print("AKi é o resutado do user data");
-      print(userData);
       userProvider.setUser(userData);
 
       return UserData(

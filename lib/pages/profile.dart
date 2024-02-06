@@ -480,17 +480,21 @@ class _ProfileState extends State<Profile> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "Indicações",
+                                    'Indicações',
                                     style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        letterSpacing: 1.5),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 ListCardRecommendation(
-                                    uid: widget.uid, userId: user.uid)
+                                  uid: widget.uid,
+                                  userId: user.uid,
+                                  userStore: widget.userStore,
+                                )
                               ],
                             ),
                           ),
@@ -504,17 +508,21 @@ class _ProfileState extends State<Profile> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "Resenhas",
+                                    'Resenhas',
                                     style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        letterSpacing: 1.5),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                                 ListCardProfile(
-                                    uid: widget.uid, userId: user.uid),
+                                  uid: widget.uid,
+                                  userId: user.uid,
+                                  userStore: widget.userStore,
+                                ),
                               ],
                             ),
                           ),

@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
@@ -8,16 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfileReview extends StatefulWidget {
-  const ProfileReview({
-    Key? key,
-    required this.itemReview,
-    required this.userId,
-    required this.uid,
-  }) : super(key: key);
+  const ProfileReview(
+      {Key? key,
+      required this.itemReview,
+      required this.userId,
+      required this.uid,
+      required this.userStore})
+      : super(key: key);
 
   final Review itemReview;
   final String? userId;
   final String? uid;
+  final UserStore? userStore;
 
   @override
   State<ProfileReview> createState() => _ProfileReviewState();
@@ -32,6 +35,11 @@ class _ProfileReviewState extends State<ProfileReview> {
     super.didChangeDependencies();
     _userProvider = Provider.of<UserProvider>(context);
     currentUser = _userProvider.user;
+  }
+
+  void fecharPopupMenu() {
+    // Chame hideMenu para fechar o PopupMenu
+    Navigator.of(context).pop();
   }
 
   Future<void> _submitForm() async {
@@ -86,8 +94,8 @@ class _ProfileReviewState extends State<ProfileReview> {
             'userName': widget.itemReview.username,
             'userUid': widget.userId,
             'isComment': false,
-            'currentUserName': currentUser?.username,
-            'currentUserPhoto': currentUser?.avatar,
+            'currentUserName': widget.userStore!.user?.username,
+            'currentUserPhoto': widget.userStore!.user?.avatar,
           },
         );
       },
@@ -127,7 +135,7 @@ class _ProfileReviewState extends State<ProfileReview> {
                           ),
                           widget.uid == widget.userId
                               ? PopupMenuButton(
-                                  color: Theme.of(context).colorScheme.tertiary,
+                                  color: Theme.of(context).colorScheme.onError,
                                   child: Container(
                                     height: 35,
                                     width: 20,
@@ -145,16 +153,17 @@ class _ProfileReviewState extends State<ProfileReview> {
                                         child: ListTile(
                                           contentPadding: EdgeInsets.zero,
                                           title: Text(
-                                            'Adicionar aos Favoritos',
+                                            'Adicionar aos Indicados',
                                             style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .onPrimary,
+                                                    .primary,
                                                 fontSize: 15,
                                                 letterSpacing: 1.5),
                                           ),
                                           onTap: () {
                                             _submitForm();
+                                            fecharPopupMenu();
                                           },
                                         ),
                                       ),

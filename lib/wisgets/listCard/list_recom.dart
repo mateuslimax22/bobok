@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_fav.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,9 +6,13 @@ import 'package:flutter/material.dart';
 
 class ListCardRecommendation extends StatefulWidget {
   const ListCardRecommendation(
-      {super.key, required this.uid, required this.userId});
+      {super.key,
+      required this.uid,
+      required this.userId,
+      required this.userStore});
   final String? uid;
   final String? userId;
+  final UserStore? userStore;
 
   @override
   State<ListCardRecommendation> createState() => _ListCardRecommendationState();
@@ -77,17 +82,21 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
             return GridView.builder(
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: (2.8 / 4),
-                    crossAxisCount: 1,
-                    mainAxisSpacing: 2),
+                  childAspectRatio: (2.8 / 4),
+                  crossAxisCount: 1,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 7,
+                ),
                 itemCount: reviews.length,
                 itemBuilder: (context, index) {
                   // Construa os itens da lista com base nos documentos de revisão favoritos
 
                   return CardFavorite(
-                      itemReview: reviews[index],
-                      userId: widget.userId,
-                      uid: widget.uid);
+                    itemReview: reviews[index],
+                    userId: widget.userId,
+                    uid: widget.uid,
+                    userStore: widget.userStore,
+                  );
                 });
           },
         );

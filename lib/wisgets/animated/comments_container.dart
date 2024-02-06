@@ -64,10 +64,19 @@ class _CommentsCard extends State<CommentsCard> {
                         );
                       }
 
+                      if (snapshot.data!.docs.isEmpty) {
+                        return Text(
+                          "Nenhum comentário",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.tertiary,
+                              fontSize: 14,
+                              letterSpacing: 1.5),
+                        );
+                      }
+
                       return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
-                          print(snapshot.data!.docs[index].data());
                           return CardComment(
                             snap: snapshot.data!.docs[index],
                           );
@@ -104,7 +113,7 @@ class _CommentsCard extends State<CommentsCard> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: TextField(
                         controller: _textEditingController,
                         decoration: const InputDecoration(

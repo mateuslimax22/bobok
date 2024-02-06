@@ -19,7 +19,7 @@ class _CardAdsState extends State<CardAds> {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1,
       color: widget.colorback,
       child: SizedBox(

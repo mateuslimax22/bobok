@@ -109,20 +109,6 @@ class _CardMyFavState extends State<CardMyFav> {
                                       },
                                     ),
                                   ),
-                                  PopupMenuItem(
-                                    child: ListTile(
-                                      title: Text(
-                                        'Marcar como já visto',
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontSize: 15,
-                                            letterSpacing: 1.5),
-                                      ),
-                                      onTap: () {},
-                                    ),
-                                  ),
                                 ];
                               })
                         ],

@@ -4,16 +4,11 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_ads.dart';
-import 'package:bobok/wisgets/card/card_review.dart';
 import 'package:bobok/wisgets/card/card_review_world.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
-
-import '../../models/user.dart';
-import '../../provider/user_provider.dart';
 
 class ListCardWorld extends StatefulWidget {
   const ListCardWorld({super.key, this.userStore});
@@ -28,12 +23,10 @@ class _ListCardWorldState extends State<ListCardWorld>
   bool get wantKeepAlive => true;
   final List<Review> loadReviews = dummyReviws;
   late Future<List<QueryDocumentSnapshot>> _reviewsAmigosFuture;
-  late UserProvider _userProvider;
 
   final user = FirebaseAuth.instance.currentUser!;
   NativeAd? _nativeAd;
   bool _nativeAdIsLoaded = false;
-  var userSnapshot;
 
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/2247696110'
@@ -91,16 +84,10 @@ class _ListCardWorldState extends State<ListCardWorld>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _userProvider = Provider.of<UserProvider>(context);
     _reviewsAmigosFuture = getReviewsAmigos();
   }
 
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
-    // Obtendo o usuário atualmente autenticado
-    if (user == null) {
-      // Caso o usuário não esteja autenticado, retorne uma lista vazia ou trate de outra forma
-      return [];
-    }
     // Obtendo as reviews dos amigos
     var reviewsSnapshot =
         await FirebaseFirestore.instance.collection('reviews').get();

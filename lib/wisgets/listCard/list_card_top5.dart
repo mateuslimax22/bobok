@@ -1,13 +1,15 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_top5.dart';
-import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ListCardTop5 extends StatefulWidget {
-  const ListCardTop5({super.key, required this.uid, required this.userId});
+  const ListCardTop5(
+      {super.key, required this.uid, this.userStore, required this.userId});
   final String? uid;
   final String? userId;
+  final UserStore? userStore;
 
   @override
   State<ListCardTop5> createState() => _ListCardTop5State();
@@ -56,6 +58,7 @@ class _ListCardTop5State extends State<ListCardTop5> {
                     itemReview: top5Reviews[i],
                     userId: widget.userId,
                     uid: widget.uid,
+                    userStore: widget.userStore,
                   );
                 },
               ),

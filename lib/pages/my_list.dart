@@ -1,3 +1,4 @@
+import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/card/card_myfav.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -34,7 +35,6 @@ class _MyListState extends State<MyList> {
     if (widget.userStore?.user?.myfav == null) {
       return [];
     }
-    print(widget.userStore?.user?.myfav);
     return widget.userStore!.user!.myfav!.where((item) {
       return item['category'] == selectedTab;
     }).toList();
@@ -91,21 +91,41 @@ class _MyListState extends State<MyList> {
                     ),
                     borderRadius: BorderRadius.circular(8),
                     color: Theme.of(context).colorScheme.onError),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: getFilteredMyFav().length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: (2.8 / 4),
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 2,
-                  ),
-                  itemBuilder: (ctx, i) => CardMyFav(
-                    fav: getFilteredMyFav()[i],
-                    myfav: widget.userStore?.user?.myfav,
-                    userStore: widget.userStore,
-                    attList: attList,
-                  ),
-                ),
+                child: getFilteredMyFav().isEmpty
+                    ? SizedBox(
+                        width: deviceWidth,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "Lista Vazia",
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    fontSize: 18,
+                                    letterSpacing: 1.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: getFilteredMyFav().length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: (2.8 / 4),
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 2,
+                        ),
+                        itemBuilder: (ctx, i) => CardMyFav(
+                          fav: getFilteredMyFav()[i],
+                          myfav: widget.userStore?.user?.myfav,
+                          userStore: widget.userStore,
+                          attList: attList,
+                        ),
+                      ),
               ),
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
@@ -13,11 +14,13 @@ class CardTop5 extends StatefulWidget {
     required this.itemReview,
     required this.userId,
     required this.uid,
+    required this.userStore,
   }) : super(key: key);
 
   final Review itemReview;
   final String? userId;
   final String? uid;
+  final UserStore? userStore;
 
   @override
   State<CardTop5> createState() => _CardTop5State();
@@ -32,42 +35,6 @@ class _CardTop5State extends State<CardTop5> {
     super.didChangeDependencies();
     _userProvider = Provider.of<UserProvider>(context);
     currentUser = _userProvider.user;
-  }
-
-  Future<void> _submitForm() async {
-    try {
-      String res =
-          await FirestoreMethods().addFavorite(widget.itemReview.postId);
-      if (res != "Review adicionada aos favoritos!") {
-        // ignore: use_build_context_synchronously
-        showDialog<void>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text("Ocorreu um erro!"),
-                  content:
-                      const Text("Não foi possivel adicionar sua indicação ;("),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text("OK"))
-                  ],
-                ));
-      }
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      showDialog<void>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: const Text("Ocorreu um erro!"),
-                content:
-                    const Text("Não foi possivel adicionar sua indicação ;("),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text("OK"))
-                ],
-              ));
-    }
   }
 
   @override
@@ -86,8 +53,8 @@ class _CardTop5State extends State<CardTop5> {
             'userName': widget.itemReview.username,
             'userUid': widget.userId,
             'isComment': false,
-            'currentUserName': currentUser?.username,
-            'currentUserPhoto': currentUser?.avatar,
+            'currentUserName': widget.userStore!.user?.username,
+            'currentUserPhoto': widget.userStore!.user?.avatar,
           },
         );
       },
