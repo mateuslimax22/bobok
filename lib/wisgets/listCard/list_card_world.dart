@@ -4,6 +4,7 @@ import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_ads.dart';
+import 'package:bobok/wisgets/card/card_ads_word.dart';
 import 'package:bobok/wisgets/card/card_review_world.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,7 +55,7 @@ class _ListCardWorldState extends State<ListCardWorld>
         // Styling
         nativeTemplateStyle: NativeTemplateStyle(
             // Required: Choose a template.
-            templateType: TemplateType.medium,
+            templateType: TemplateType.small,
             // Optional: Customize the ad's style.
             mainBackgroundColor: Colors.purple,
             cornerRadius: 10.0,
@@ -98,7 +99,7 @@ class _ListCardWorldState extends State<ListCardWorld>
   Widget build(BuildContext context) {
     super.build(context);
     final adcode = _nativeAdIsLoaded
-        ? CardAds(
+        ? CardAdsWord(
             colorback: Theme.of(context).colorScheme.primary,
             ads: AdWidget(ad: _nativeAd!))
         : const SizedBox();

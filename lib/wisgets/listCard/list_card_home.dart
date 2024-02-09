@@ -57,7 +57,7 @@ class _ListCardState extends State<ListCard>
             // Required: Choose a template.
             templateType: TemplateType.medium,
             // Optional: Customize the ad's style.
-            mainBackgroundColor: Colors.purple,
+            mainBackgroundColor: const Color.fromARGB(255, 35, 33, 57),
             cornerRadius: 10.0,
             callToActionTextStyle: NativeTemplateTextStyle(
                 textColor: Colors.cyan,

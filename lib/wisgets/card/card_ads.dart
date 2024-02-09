@@ -18,7 +18,7 @@ class _CardAdsState extends State<CardAds> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(0),
+      margin: const EdgeInsets.fromLTRB(5, 5, 5, 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1,
       color: widget.colorback,
@@ -95,7 +95,7 @@ class _CardAdsState extends State<CardAds> {
                   ],
                 ),
                 SizedBox(
-                  height: 200,
+                  height: 240,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
@@ -112,8 +112,8 @@ class _CardAdsState extends State<CardAds> {
                               constraints: BoxConstraints(
                                 minHeight: 180,
                                 minWidth: deviceWidth * 0.5,
-                                maxWidth: deviceWidth * 0.95,
-                                maxHeight: 200,
+                                maxWidth: deviceWidth * 0.9,
+                                maxHeight: 215,
                               ),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.primary,
