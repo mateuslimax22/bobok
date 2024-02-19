@@ -32,6 +32,18 @@ class UserData {
     );
   }
 
+  static UserData fromMap(Map<String, dynamic> map) {
+    return UserData(
+      username: map['username'],
+      uid: map['uid'],
+      email: map['email'],
+      avatar: map['photoUrl'],
+      followers: List<dynamic>.from(map['followers']),
+      following: List<dynamic>.from(map['following']),
+      myfav: List<dynamic>.from(map['myfav']),
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         "username": username,
         "uid": uid,

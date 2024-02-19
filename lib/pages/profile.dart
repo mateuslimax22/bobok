@@ -88,7 +88,7 @@ class _ProfileState extends State<Profile> {
 
       setState(() {
         followers = userDocument['followers'].length;
-        following = userDocument['following'].length;
+        following = userDocument['following'].length - 1;
         isFollowing = userDocument['followers'].contains(user.uid);
         userName = userDocument['username'].toString();
         avatar = userDocument['photoUrl'].toString();
@@ -350,14 +350,13 @@ class _ProfileState extends State<Profile> {
                                           fontWeight: FontWeight.w500,
                                           width: 260,
                                           height: 30,
-                                          target: () {
-                                            var userData = UserData(
-                                                username: 'mateus7', email: '');
-                                            widget.userStore?.setUser(userData);
-                                          })
+                                          progress: false,
+                                          target: () {})
                                       : isFollowing
                                           ? ElevatedButtonTh(
                                               label: 'Remover',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
                                               target: () async {
                                                 await FirestoreMethods()
                                                     .followUser(
@@ -381,8 +380,9 @@ class _ProfileState extends State<Profile> {
                                                           .userStore!
                                                           .user!
                                                           .followers,
-                                                      following:
-                                                          removeFollower),
+                                                      following: removeFollower,
+                                                      myfav: widget.userStore!
+                                                          .user!.myfav),
                                                 );
 
                                                 setState(() {
@@ -390,10 +390,9 @@ class _ProfileState extends State<Profile> {
                                                   followers--;
                                                 });
                                               },
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
                                               width: 260,
                                               height: 30,
+                                              progress: false,
                                             )
                                           : ElevatedButtonTh(
                                               label: 'Adicionar',
@@ -406,18 +405,23 @@ class _ProfileState extends State<Profile> {
                                                     widget.uid.toString());
                                                 widget.userStore?.setUser(
                                                   UserData(
-                                                    username: widget.userStore!
-                                                        .user!.username,
-                                                    uid: widget
-                                                        .userStore!.user!.uid,
-                                                    email: widget
-                                                        .userStore!.user!.email,
-                                                    avatar: widget.userStore!
-                                                        .user!.avatar,
-                                                    followers: widget.userStore!
-                                                        .user!.followers,
-                                                    following: addFollower,
-                                                  ),
+                                                      username: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .username,
+                                                      uid: widget
+                                                          .userStore!.user!.uid,
+                                                      email: widget.userStore!
+                                                          .user!.email,
+                                                      avatar: widget.userStore!
+                                                          .user!.avatar,
+                                                      followers: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .followers,
+                                                      following: addFollower,
+                                                      myfav: widget.userStore!
+                                                          .user!.myfav),
                                                 );
 
                                                 setState(() {
@@ -425,10 +429,11 @@ class _ProfileState extends State<Profile> {
                                                   followers++;
                                                 });
                                               },
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               width: 260,
                                               height: 30,
+                                              progress: false,
                                             ),
                                   Padding(
                                     padding:
@@ -486,7 +491,7 @@ class _ProfileState extends State<Profile> {
                                           Theme.of(context).colorScheme.primary,
                                       letterSpacing: 0.5,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
@@ -514,7 +519,7 @@ class _ProfileState extends State<Profile> {
                                           Theme.of(context).colorScheme.primary,
                                       letterSpacing: 0.5,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),

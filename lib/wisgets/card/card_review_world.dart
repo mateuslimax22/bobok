@@ -47,11 +47,13 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
       });
     }
 
-    if (widget.userStore!.user!.myfav!
-        .any((map) => map['imageUrl'] == widget.review.imageUrl)) {
-      setState(() {
-        isSave = true;
-      });
+    if (widget.userStore != null) {
+      if (widget.userStore!.user!.myfav!
+          .any((map) => map['imageUrl'] == widget.review.imageUrl)) {
+        setState(() {
+          isSave = true;
+        });
+      }
     }
   }
 

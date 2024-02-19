@@ -50,9 +50,6 @@ class GoogleSignInProvider extends ChangeNotifier {
 
     if (snap.exists) {
       var userData = UserData.fromSnap(snap);
-      print(
-          '*****************************************************************************');
-      print(userData);
       userProvider.setUser(userData);
     } else {
       String? fileUrl;
@@ -81,7 +78,7 @@ class GoogleSignInProvider extends ChangeNotifier {
         'photoUrl': fileUrl,
       });
 
-      userProvider.setUser({
+      var userData = UserData.fromMap({
         'username': googleSignIn.currentUser!.displayName,
         'uid': _auth.currentUser!.uid,
         'email': googleSignIn.currentUser!.email,
@@ -89,7 +86,9 @@ class GoogleSignInProvider extends ChangeNotifier {
         'following': [],
         'myfav': [],
         'photoUrl': fileUrl,
-      } as UserData);
+      });
+
+      userProvider.setUser(userData);
     }
   }
 

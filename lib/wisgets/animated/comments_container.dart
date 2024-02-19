@@ -68,8 +68,9 @@ class _CommentsCard extends State<CommentsCard> {
                         return Text(
                           "Nenhum comentário",
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.tertiary,
-                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 1.5),
                         );
                       }

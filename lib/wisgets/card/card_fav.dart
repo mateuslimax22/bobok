@@ -146,7 +146,13 @@ class _CardFavoriteState extends State<CardFavorite> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('Deseja remover esta indicação?'),
+                    title: Text(
+                      'Deseja remover esta indicação?',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 20,
+                          letterSpacing: 1.5),
+                    ),
                     actions: <Widget>[
                       TextButton(
                         child: const Text('Cancelar'),
@@ -155,7 +161,11 @@ class _CardFavoriteState extends State<CardFavorite> {
                         },
                       ),
                       TextButton(
-                        child: const Text('Remover'),
+                        child: Text('Remover',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontSize: 15,
+                                letterSpacing: 1.5)),
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },

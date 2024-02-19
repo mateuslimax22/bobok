@@ -579,6 +579,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
+                progress: true,
               ),
             ),
           ],

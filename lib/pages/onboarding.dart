@@ -1,14 +1,11 @@
 import 'package:bobok/mobx/user_store.dart';
+import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/sign_in.dart';
 import 'package:bobok/provider/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../models/user.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({Key? key}) : super(key: key);
@@ -30,9 +27,27 @@ class OnboardingState extends State<Onboarding> {
             child: Text('Algo deu errado ;( '),
           );
         } else if (snapshot.hasData) {
-          return const Home();
+          final userProvider = Provider.of<UserProvider>(context);
+          final UserData? user = userProvider.user;
+          if (user != null) {
+            return Home(
+              userData: UserData(
+                uid: user.uid,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar,
+                followers: user.followers,
+                following: user.following,
+                myfav: user.myfav,
+              ),
+            ); // Se o usuário estiver autenticado e os dados do usuário estiverem disponíveis, vá para a tela inicial
+          } else {
+            return const Center(
+                child:
+                    CircularProgressIndicator()); // Caso contrário, exiba um indicador de progresso enquanto os dados do usuário estão sendo carregados
+          }
         } else {
-          // O UserStore não está preenchido, provavelmente o usuário precisa fazer login
+          // O usuário não está autenticado, provavelmente precisa fazer login
           return const SignIn();
         }
       },

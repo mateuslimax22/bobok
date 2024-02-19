@@ -90,8 +90,12 @@ class _ListCardState extends State<ListCard>
 
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo a lista de amigos do usuário
-    List? amigos = widget.userStore.user?.following;
-    amigos?.add(widget.userStore.user?.uid);
+    List<String> amigos =
+        List<String>.from(widget.userStore.user?.following ?? []);
+    final String? userUid = widget.userStore.user?.uid;
+    if (userUid != null && !amigos.contains(userUid)) {
+      amigos.add(userUid);
+    }
 
     // Obtendo as reviews dos amigos
     var reviewsSnapshot = await FirebaseFirestore.instance
@@ -108,64 +112,69 @@ class _ListCardState extends State<ListCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final adcode = _nativeAdIsLoaded
-        ? CardAds(
-            colorback: Theme.of(context).colorScheme.primary,
-            ads: AdWidget(ad: _nativeAd!))
-        : const SizedBox();
+    return Observer(builder: (context) {
+      final user = widget.userStore.user;
+      _reviewsAmigosFuture =
+          getReviewsAmigos(); // Atualiza a lista de reviews sempre que o usuário for atualizado
+      final adcode = _nativeAdIsLoaded
+          ? CardAds(
+              colorback: Theme.of(context).colorScheme.primary,
+              ads: AdWidget(ad: _nativeAd!))
+          : const SizedBox();
 
-    return Center(
-        child: StreamBuilder<List<QueryDocumentSnapshot>>(
-      stream: _reviewsAmigosFuture.asStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.data!.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Adicione uma nova resenha ou siga um avaliador.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  letterSpacing: 0.5,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+      return Center(
+          child: StreamBuilder<List<QueryDocumentSnapshot>>(
+        stream: _reviewsAmigosFuture.asStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Adicione uma nova resenha ou siga um avaliador.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
                 ),
               ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: attList,
+            child: ListView.separated(
+              itemCount: snapshot.data!.length,
+              separatorBuilder: (context, index) {
+                if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
+                  return adcode;
+                }
+                return const SizedBox();
+              },
+              itemBuilder: (context, index) {
+                Review review = Review.fromSnap(snapshot.data![index]);
+                return Observer(builder: (context) {
+                  return CardReview(
+                    colorback: review.spoiler == true
+                        ? Theme.of(context).colorScheme.secondaryContainer
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    review: review,
+                    avatar: review.profileImg,
+                    user: user,
+                    reviewUid: review.uid,
+                    userStore: widget.userStore,
+                  );
+                });
+              },
             ),
           );
-        }
-        return RefreshIndicator(
-          onRefresh: attList,
-          child: ListView.separated(
-            itemCount: snapshot.data!.length,
-            separatorBuilder: (context, index) {
-              if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
-                return adcode;
-              }
-              return const SizedBox();
-            },
-            itemBuilder: (context, index) {
-              Review review = Review.fromSnap(snapshot.data![index]);
-              return Observer(builder: (context) {
-                return CardReview(
-                  colorback: review.spoiler == true
-                      ? Theme.of(context).colorScheme.secondaryContainer
-                      : Theme.of(context).colorScheme.primaryContainer,
-                  review: review,
-                  avatar: review.profileImg,
-                  user: user,
-                  reviewUid: review.uid,
-                  userStore: widget.userStore,
-                );
-              });
-            },
-          ),
-        );
-      },
-    ));
+        },
+      ));
+    });
   }
 }

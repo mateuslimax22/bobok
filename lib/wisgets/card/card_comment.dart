@@ -16,8 +16,8 @@ class CardComment extends StatefulWidget {
 class _CardCommentState extends State<CardComment> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+    return SizedBox(
+      height: 45,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,7 +49,7 @@ class _CardCommentState extends State<CardComment> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: RichText(
                     text: TextSpan(children: [
                       TextSpan(
@@ -77,8 +77,9 @@ class _CardCommentState extends State<CardComment> {
                         fontWeight: FontWeight.w400,
                         color: Theme.of(context).colorScheme.onPrimary,
                       )),
-                )
-              ])
+                ),
+              ]),
+          const Spacer(),
         ],
       ),
     );

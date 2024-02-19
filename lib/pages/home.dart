@@ -15,9 +15,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
+  const Home({super.key, this.userData});
+  final UserData? userData;
   @override
+  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
@@ -31,7 +32,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     userStore = UserStore();
-    _getUser();
+
+    userStore.setUser(widget.userData!);
 
     _pageController = PageController(initialPage: _currentIndex);
     _pages = [
@@ -97,12 +99,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           actions: [
             _currentIndex == 3
                 ? PopupMenuButton<String>(
+                    color: Theme.of(context).colorScheme.onError,
                     onSelected: menuAppbar,
                     itemBuilder: (BuildContext context) {
                       return {'Logout', 'Settings'}.map((String choice) {
                         return PopupMenuItem<String>(
                           value: choice,
-                          child: Text(choice),
+                          child: Text(
+                            choice,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 15,
+                                letterSpacing: 1.5),
+                          ),
                         );
                       }).toList();
                     })

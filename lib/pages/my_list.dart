@@ -102,8 +102,9 @@ class _MyListState extends State<MyList> {
                                 "Lista Vazia",
                                 style: TextStyle(
                                     color:
-                                        Theme.of(context).colorScheme.tertiary,
+                                        Theme.of(context).colorScheme.primary,
                                     fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5),
                               ),
                             ),

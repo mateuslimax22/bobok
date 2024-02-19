@@ -58,10 +58,10 @@ class _SignInConatiner extends State<SignInConatiner> {
           children: [
             Text('Bem vindo ao BoBok',
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium!
-                    .copyWith(letterSpacing: 0.5)),
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    letterSpacing: 0.5,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500)),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: SizedBox(
@@ -176,6 +176,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
+                progress: true,
               ),
             ),
             Row(children: <Widget>[

@@ -57,10 +57,22 @@ class _AddReviewState extends State<AddReview> {
     myFocusNodeTitle.addListener(() {
       setState(() {});
     });
-
+    myFocusNodeTitle.addListener(_onTitleFocusChange);
     myFocusNodeReview.addListener(() {
       setState(() {});
     });
+  }
+
+  @override
+  void dispose() {
+    myFocusNodeTitle.removeListener(_onTitleFocusChange);
+    super.dispose();
+  }
+
+  void _onTitleFocusChange() {
+    if (!myFocusNodeTitle.hasFocus) {
+      _getImage();
+    }
   }
 
   Future<void> _submitForm() async {
@@ -448,7 +460,6 @@ class _AddReviewState extends State<AddReview> {
                                     : Theme.of(context).colorScheme.background,
                               ),
                               onPressed: () {
-                                _getImage();
                                 setState(() {
                                   if (genresSelect.contains(genres[index])) {
                                     genresSelect.remove(genres[index]);

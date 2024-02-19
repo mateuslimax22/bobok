@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,8 +35,10 @@ class AuthEmail extends ChangeNotifier {
       String? fileUrl;
 
       if (avatar != null) {
-        final fileRef =
-            _storage.ref().child("profilePics").child(credential.user!.uid);
+        final fileRef = _storage
+            .ref()
+            .child("profilePics")
+            .child('${credential.user!.uid}.jpg');
 
         await fileRef.putFile(avatar);
 
@@ -54,7 +57,7 @@ class AuthEmail extends ChangeNotifier {
         'photoUrl': fileUrl,
       });
 
-      userProvider.setUser({
+      var userData = UserData.fromMap({
         'username': userName,
         'uid': credential.user!.uid,
         'email': email,
@@ -62,7 +65,9 @@ class AuthEmail extends ChangeNotifier {
         'following': [],
         'myfav': [],
         'photoUrl': fileUrl,
-      } as UserData);
+      });
+
+      userProvider.setUser(userData);
 
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {
@@ -74,7 +79,7 @@ class AuthEmail extends ChangeNotifier {
     return null;
   }
 
-  Future<UserData?> signInWithEmailAndPassword(
+  Future signInWithEmailAndPassword(
       UserProvider userProvider, String email, String password) async {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
@@ -85,11 +90,6 @@ class AuthEmail extends ChangeNotifier {
       DocumentSnapshot snap = await userDocRef.get();
       var userData = UserData.fromSnap(snap);
       userProvider.setUser(userData);
-
-      return UserData(
-          avatar: credential.user?.photoURL,
-          username: credential.user?.displayName,
-          email: credential.user?.email);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(
         SnackBar(content: Text(e.message ?? "Ocorreu um erro desconhecido!")),

@@ -28,7 +28,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-ThemeData globalTheme = darkTheme;
+//ThemeData globalTheme = darkTheme;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -36,6 +36,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
+    bool isDarkMode = systemBrightness == Brightness.dark;
     deviceWidth = MediaQuery.of(context).size.width;
     deviceHeight = MediaQuery.of(context).size.height;
     return MultiProvider(
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserStore()),
       ],
       child: MaterialApp(
-        theme: globalTheme,
+        theme: isDarkMode ? darkTheme : lightTheme,
         home: const Onboarding(),
         routes: {
           AppRoutes.REVIEW_DETAIL: (ctx) => const ReviewDetail(),

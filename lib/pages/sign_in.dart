@@ -76,6 +76,10 @@ class _SignIn extends State<SignIn> {
         ? 'images/backZoo.png'
         : 'images/backDark.png';
 
+    String imageLogo = currentBrightness == Brightness.light
+        ? 'images/logoW.png'
+        : 'images/logoD.png';
+
     Widget showContent = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -138,10 +142,10 @@ class _SignIn extends State<SignIn> {
                                 _imageHeight,
                             width: MediaQuery.of(context).size.width *
                                 _imageHeight,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
                                   alignment: Alignment.centerLeft,
-                                  image: AssetImage("images/logoD.png"),
+                                  image: AssetImage(imageLogo),
                                   fit: BoxFit.contain),
                             ),
                             duration: const Duration(milliseconds: 300),

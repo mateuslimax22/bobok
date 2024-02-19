@@ -14,7 +14,13 @@ class DeleteConfirmationModal extends StatelessWidget {
       children: [
         // Modal de confirmação
         AlertDialog(
-          content: Text('Deseja excluir o item "$item"?'),
+          content: Text(
+            'Deseja excluir o item "$item"?',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 15,
+                letterSpacing: 1.5),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

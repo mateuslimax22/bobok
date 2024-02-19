@@ -47,19 +47,16 @@ class _ListCardProfileState extends State<ListCardProfile> {
             child: reviews.isEmpty
                 ? Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Nenhuma resenha encontrada.'),
-                      ),
                       ElevatedButtonTh(
                         label: 'Add Resenha',
                         target: () {
                           Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
                         },
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        width: 260,
+                        width: 200,
                         height: 45,
+                        progress: false,
                       ),
                     ],
                   )

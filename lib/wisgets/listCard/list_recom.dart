@@ -40,9 +40,15 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return widget.uid == widget.userId
-              ? const Text(
+              ? Text(
                   'Add Indicações',
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 )
               : const Text("Sem Indicações");
         }
