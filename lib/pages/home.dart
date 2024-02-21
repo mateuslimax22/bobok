@@ -1,6 +1,5 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
-import 'package:bobok/pages/books.dart';
 import 'package:bobok/pages/my_list.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/world.dart';
@@ -70,12 +69,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    void logout() async {
+      await userStore.clearUserFromCache();
+      // ignore: use_build_context_synchronously
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.clearUser();
+      final provider =
+          // ignore: use_build_context_synchronously
+          Provider.of<GoogleSignInProvider>(context, listen: false);
+      provider.logout();
+    }
+
     void menuAppbar(String value) {
       switch (value) {
         case 'Logout':
-          final provider =
-              Provider.of<GoogleSignInProvider>(context, listen: false);
-          provider.logout();
+          logout();
+
           break;
         case 'Settings':
           break;

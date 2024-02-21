@@ -156,16 +156,18 @@ class _AddReviewState extends State<AddReview> {
   }
 
   Future<void> _getImage() async {
-    final webScraper = WebScraper('https://www.google.com.br/');
-    if (await webScraper.loadWebPage(
-        'search?q=$titleFolder+capa&tbm=isch&ved=2ahUKEwiA5-mJ5Oj-AhUOObkGHVTDA40Q2-cCegQIABAA&oq=harry+po&gs_lcp=CgNpbWcQARgBMgQIIxAnMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIHCAAQigUQQzIHCAAQigUQQzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzoKCAAQigUQsQMQQ1AAWLYCYKYQaABwAHgAgAGEAYgBhgOSAQMwLjOYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&sclient=img&ei=nIVaZICpC47y5OUP1IaP6Ag&authuser=0&bih=912&biw=1447&hl=pt-BR')) {
-      var tiktokProfilePictureURL = webScraper.getElement('img', ['src']);
-      var result = tiktokProfilePictureURL.map((item) {
-        return item;
-      }).toList();
-      setState(() {
-        img = (result[1]["attributes"]["src"]);
-      });
+    if (titleFolder != '') {
+      final webScraper = WebScraper('https://www.google.com.br/');
+      if (await webScraper.loadWebPage(
+          'search?q=$titleFolder+capa&tbm=isch&ved=2ahUKEwiA5-mJ5Oj-AhUOObkGHVTDA40Q2-cCegQIABAA&oq=harry+po&gs_lcp=CgNpbWcQARgBMgQIIxAnMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIHCAAQigUQQzIHCAAQigUQQzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzoKCAAQigUQsQMQQ1AAWLYCYKYQaABwAHgAgAGEAYgBhgOSAQMwLjOYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&sclient=img&ei=nIVaZICpC47y5OUP1IaP6Ag&authuser=0&bih=912&biw=1447&hl=pt-BR')) {
+        var tiktokProfilePictureURL = webScraper.getElement('img', ['src']);
+        var result = tiktokProfilePictureURL.map((item) {
+          return item;
+        }).toList();
+        setState(() {
+          img = (result[1]["attributes"]["src"]);
+        });
+      }
     }
   }
 

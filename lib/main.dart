@@ -12,7 +12,6 @@ import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/themes/theme.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
-import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

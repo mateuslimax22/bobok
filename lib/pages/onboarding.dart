@@ -29,6 +29,7 @@ class OnboardingState extends State<Onboarding> {
         } else if (snapshot.hasData) {
           final userProvider = Provider.of<UserProvider>(context);
           final UserData? user = userProvider.user;
+
           if (user != null) {
             return Home(
               userData: UserData(
@@ -42,6 +43,7 @@ class OnboardingState extends State<Onboarding> {
               ),
             ); // Se o usuário estiver autenticado e os dados do usuário estiverem disponíveis, vá para a tela inicial
           } else {
+            UserStore().loadUserFromCache(userProvider);
             return const Center(
                 child:
                     CircularProgressIndicator()); // Caso contrário, exiba um indicador de progresso enquanto os dados do usuário estão sendo carregados

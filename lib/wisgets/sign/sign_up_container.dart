@@ -503,7 +503,26 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               child: SizedBox(
                 width: deviceWidth * 0.8,
                 child: Row(
-                  children: [const Text("Nivel: "), Text(levelPassword)],
+                  children: [
+                    Text(
+                      "Nivel: ",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      levelPassword,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),

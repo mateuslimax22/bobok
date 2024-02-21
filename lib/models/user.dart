@@ -32,12 +32,24 @@ class UserData {
     );
   }
 
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    return UserData(
+      username: json['username'],
+      uid: json['uid'],
+      email: json['email'],
+      avatar: json['avatar'],
+      followers: List<dynamic>.from(json['followers']),
+      following: List<dynamic>.from(json['following']),
+      myfav: List<dynamic>.from(json['myfav']),
+    );
+  }
+
   static UserData fromMap(Map<String, dynamic> map) {
     return UserData(
       username: map['username'],
       uid: map['uid'],
       email: map['email'],
-      avatar: map['photoUrl'],
+      avatar: map['avatar'],
       followers: List<dynamic>.from(map['followers']),
       following: List<dynamic>.from(map['following']),
       myfav: List<dynamic>.from(map['myfav']),

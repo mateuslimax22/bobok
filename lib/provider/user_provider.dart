@@ -10,4 +10,9 @@ class UserProvider extends ChangeNotifier {
     _user = userData;
     notifyListeners();
   }
+
+  void clearUser() {
+    _user = null;
+    notifyListeners();
+  }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_ads.dart';
@@ -22,7 +21,6 @@ class _ListCardState extends State<ListCard>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  final List<Review> loadReviews = dummyReviws;
   late Future<List<QueryDocumentSnapshot>> _reviewsAmigosFuture;
   final user = FirebaseAuth.instance.currentUser!;
   NativeAd? _nativeAd;
@@ -158,18 +156,16 @@ class _ListCardState extends State<ListCard>
               },
               itemBuilder: (context, index) {
                 Review review = Review.fromSnap(snapshot.data![index]);
-                return Observer(builder: (context) {
-                  return CardReview(
-                    colorback: review.spoiler == true
-                        ? Theme.of(context).colorScheme.secondaryContainer
-                        : Theme.of(context).colorScheme.primaryContainer,
-                    review: review,
-                    avatar: review.profileImg,
-                    user: user,
-                    reviewUid: review.uid,
-                    userStore: widget.userStore,
-                  );
-                });
+                return CardReview(
+                  colorback: review.spoiler == true
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : Theme.of(context).colorScheme.primaryContainer,
+                  review: review,
+                  avatar: review.profileImg,
+                  user: user,
+                  reviewUid: review.uid,
+                  userStore: widget.userStore,
+                );
               },
             ),
           );

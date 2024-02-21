@@ -76,16 +76,11 @@ class _CardReviewState extends State<CardReview> {
     myfav?.removeWhere((item) => item['imageUrl'] == fav['imageUrl']);
 
     await FirestoreMethods().removeFav(widget.userStore!.user!.uid, fav);
-    widget.userStore?.setUser(
-      UserData(
-          username: widget.userStore!.user!.username,
-          uid: widget.userStore!.user!.uid,
-          email: widget.userStore!.user!.email,
-          avatar: widget.userStore!.user!.avatar,
-          followers: widget.userStore!.user!.followers,
-          following: widget.userStore!.user!.following,
-          myfav: myfav),
-    );
+  }
+
+  void setFav(Map<String, dynamic> fav) {
+    FirestoreMethods().addFav(widget.userStore!.user!.uid, [fav]);
+    widget.userStore!.user!.myfav?.add(fav);
   }
 
   void getComments() async {
@@ -108,22 +103,6 @@ class _CardReviewState extends State<CardReview> {
 
   @override
   Widget build(BuildContext context) {
-    void setFav(Map<String, dynamic> fav) {
-      FirestoreMethods().addFav(widget.userStore!.user!.uid, [fav]);
-      widget.userStore!.user!.myfav?.add(fav);
-
-      widget.userStore?.setUser(
-        UserData(
-            username: widget.userStore!.user!.username,
-            uid: widget.userStore!.user!.uid,
-            email: widget.userStore!.user!.email,
-            avatar: widget.userStore!.user!.avatar,
-            followers: widget.userStore!.user!.followers,
-            following: widget.userStore!.user!.following,
-            myfav: widget.userStore!.user!.myfav),
-      );
-    }
-
     void menuAppbar(String value) {
       switch (value) {
         case 'Delete resenha':

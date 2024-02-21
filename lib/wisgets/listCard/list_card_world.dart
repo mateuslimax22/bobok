@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:bobok/data/dummy_data.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
-import 'package:bobok/wisgets/card/card_ads.dart';
 import 'package:bobok/wisgets/card/card_ads_word.dart';
 import 'package:bobok/wisgets/card/card_review_world.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,7 +20,6 @@ class _ListCardWorldState extends State<ListCardWorld>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  final List<Review> loadReviews = dummyReviws;
   late Future<List<QueryDocumentSnapshot>> _reviewsAmigosFuture;
 
   final user = FirebaseAuth.instance.currentUser!;

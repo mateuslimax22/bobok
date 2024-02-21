@@ -46,6 +46,11 @@ class _ElevatedButtonThState extends State<ElevatedButtonTh> {
                       true; // Ativa o progresso quando o botão for clicado
                 });
                 widget.target();
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    _loading = false;
+                  });
+                });
               }
             : widget.target,
         child: _loading // Verifica se o progresso está ativo
