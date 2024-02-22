@@ -508,8 +508,9 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                         height: 40,
                         width: 30,
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.messenger_outline,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             size: 20,
                           ),
                           tooltip: 'Show Snackbar',
@@ -525,7 +526,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                         height: 40,
                         child: IconButton(
                           icon: Icon(
-                            Icons.bookmark_add,
+                            Icons.bookmark_add_outlined,
                             color: isSave
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.onPrimary,

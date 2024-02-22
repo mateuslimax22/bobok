@@ -107,6 +107,7 @@ class _CardReviewState extends State<CardReview> {
       switch (value) {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
+          setState(() {});
           break;
         case 'Colocar na minha lista':
           break;
@@ -492,7 +493,7 @@ class _CardReviewState extends State<CardReview> {
                         height: 40,
                         child: IconButton(
                           icon: Icon(
-                            Icons.bookmark_add,
+                            Icons.bookmark_add_outlined,
                             size: 20,
                             color: isSave
                                 ? Theme.of(context).colorScheme.primary

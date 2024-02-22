@@ -87,9 +87,15 @@ class _ListCardWorldState extends State<ListCardWorld>
 
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo as reviews dos amigos
-    var reviewsSnapshot =
-        await FirebaseFirestore.instance.collection('reviews').get();
+    var reviewsSnapshot = await FirebaseFirestore.instance
+        .collection('reviews')
+        .orderBy('uid', descending: true)
+        .get();
     return reviewsSnapshot.docs;
+  }
+
+  Future<void> attList() async {
+    setState(() {});
   }
 
   @override
@@ -107,28 +113,30 @@ class _ListCardWorldState extends State<ListCardWorld>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ListView.separated(
-          itemCount: snapshot.data!.length,
-          separatorBuilder: (context, index) {
-            if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
-              return adcode;
-            }
-            return const SizedBox();
-          },
-          itemBuilder: (context, index) {
-            Review review = Review.fromSnap(snapshot.data![index]);
-            return CardReviewWorld(
-              colorback: review.spoiler == true
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer,
-              review: review,
-              avatar: review.profileImg,
-              user: user,
-              reviewUid: review.uid,
-              userStore: widget.userStore,
-            );
-          },
-        );
+        return RefreshIndicator(
+            onRefresh: attList,
+            child: ListView.separated(
+              itemCount: snapshot.data!.length,
+              separatorBuilder: (context, index) {
+                if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
+                  return adcode;
+                }
+                return const SizedBox();
+              },
+              itemBuilder: (context, index) {
+                Review review = Review.fromSnap(snapshot.data![index]);
+                return CardReviewWorld(
+                  colorback: review.spoiler == true
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : Theme.of(context).colorScheme.primaryContainer,
+                  review: review,
+                  avatar: review.profileImg,
+                  user: user,
+                  reviewUid: review.uid,
+                  userStore: widget.userStore,
+                );
+              },
+            ));
       },
     );
   }

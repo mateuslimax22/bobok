@@ -117,14 +117,22 @@ class _CommentsCard extends State<CommentsCard> {
                       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: TextField(
                         controller: _textEditingController,
-                        decoration: const InputDecoration(
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 16,
+                            letterSpacing: 1.5),
+                        decoration: InputDecoration(
                             hintText: "Adicione um comentário",
+                            fillColor: Theme.of(context).colorScheme.primary,
                             border: InputBorder.none),
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.chevron_right_outlined),
+                    icon: Icon(
+                      Icons.chevron_right_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     onPressed: () async {
                       await FirestoreMethods().postComment(
                           widget.postId,

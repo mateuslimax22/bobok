@@ -99,6 +99,7 @@ class _ListCardState extends State<ListCard>
     var reviewsSnapshot = await FirebaseFirestore.instance
         .collection('reviews')
         .where('uid', whereIn: amigos)
+        .orderBy('uid', descending: true)
         .get();
     return reviewsSnapshot.docs;
   }

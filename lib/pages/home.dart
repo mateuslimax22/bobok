@@ -84,9 +84,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       switch (value) {
         case 'Logout':
           logout();
-
           break;
-        case 'Settings':
+        case 'Configuração':
           break;
       }
     }
@@ -111,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     color: Theme.of(context).colorScheme.onError,
                     onSelected: menuAppbar,
                     itemBuilder: (BuildContext context) {
-                      return {'Logout', 'Settings'}.map((String choice) {
+                      return {'Logout', 'Configuração'}.map((String choice) {
                         return PopupMenuItem<String>(
                           value: choice,
                           child: Text(
