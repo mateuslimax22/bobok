@@ -16,6 +16,7 @@ class CardReview extends StatefulWidget {
       required this.avatar,
       required this.user,
       required this.reviewUid,
+      required this.attList,
       this.userStore});
   final Review review;
   final UserStore? userStore;
@@ -23,6 +24,7 @@ class CardReview extends StatefulWidget {
   final String? avatar;
   final String? reviewUid;
   final user;
+  final Function() attList;
 
   @override
   State<CardReview> createState() => _CardReviewState();
@@ -107,7 +109,7 @@ class _CardReviewState extends State<CardReview> {
       switch (value) {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
-          setState(() {});
+          widget.attList();
           break;
         case 'Colocar na minha lista':
           break;

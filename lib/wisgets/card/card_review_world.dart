@@ -16,7 +16,9 @@ class CardReviewWorld extends StatefulWidget {
       required this.avatar,
       required this.user,
       required this.reviewUid,
+      required this.attList,
       this.userStore});
+  final Function() attList;
   final Review review;
   final UserStore? userStore;
   final Color colorback;
@@ -131,6 +133,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
       switch (value) {
         case 'Delete resenha':
           FirestoreMethods().deleteReview(widget.review.postId);
+          widget.attList();
           break;
         case 'Colocar na minha lista':
           setFav({

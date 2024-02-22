@@ -89,7 +89,7 @@ class _ListCardWorldState extends State<ListCardWorld>
     // Obtendo as reviews dos amigos
     var reviewsSnapshot = await FirebaseFirestore.instance
         .collection('reviews')
-        .orderBy('uid', descending: true)
+        .orderBy("datePublish", descending: true)
         .get();
     return reviewsSnapshot.docs;
   }
@@ -101,43 +101,49 @@ class _ListCardWorldState extends State<ListCardWorld>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final user = widget.userStore!.user;
+    _reviewsAmigosFuture =
+        getReviewsAmigos(); // Atualiza a lista de reviews sempre que o usuário for atualizado
     final adcode = _nativeAdIsLoaded
         ? CardAdsWord(
             colorback: Theme.of(context).colorScheme.primary,
             ads: AdWidget(ad: _nativeAd!))
         : const SizedBox();
 
-    return StreamBuilder<List<QueryDocumentSnapshot>>(
-      stream: _reviewsAmigosFuture.asStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        return RefreshIndicator(
-            onRefresh: attList,
-            child: ListView.separated(
-              itemCount: snapshot.data!.length,
-              separatorBuilder: (context, index) {
-                if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
-                  return adcode;
-                }
-                return const SizedBox();
-              },
-              itemBuilder: (context, index) {
-                Review review = Review.fromSnap(snapshot.data![index]);
-                return CardReviewWorld(
-                  colorback: review.spoiler == true
-                      ? Theme.of(context).colorScheme.secondaryContainer
-                      : Theme.of(context).colorScheme.primaryContainer,
-                  review: review,
-                  avatar: review.profileImg,
-                  user: user,
-                  reviewUid: review.uid,
-                  userStore: widget.userStore,
-                );
-              },
-            ));
-      },
+    return Center(
+      child: StreamBuilder<List<QueryDocumentSnapshot>>(
+        stream: _reviewsAmigosFuture.asStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return RefreshIndicator(
+              onRefresh: attList,
+              child: ListView.separated(
+                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, index) {
+                  if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
+                    return adcode;
+                  }
+                  return const SizedBox();
+                },
+                itemBuilder: (context, index) {
+                  Review review = Review.fromSnap(snapshot.data![index]);
+                  return CardReviewWorld(
+                    colorback: review.spoiler == true
+                        ? Theme.of(context).colorScheme.secondaryContainer
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    review: review,
+                    avatar: review.profileImg,
+                    user: user,
+                    reviewUid: review.uid,
+                    userStore: widget.userStore,
+                    attList: attList,
+                  );
+                },
+              ));
+        },
+      ),
     );
   }
 }
