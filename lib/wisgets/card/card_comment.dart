@@ -34,7 +34,7 @@ class _CardCommentState extends State<CardComment> {
                         padding: const EdgeInsets.all(0),
                         icon: Icon(
                           Icons.person,
-                          color: Theme.of(context).colorScheme.background,
+                          color: Theme.of(context).colorScheme.primary,
                           size: 40,
                         ),
                         onPressed: () {},

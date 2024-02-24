@@ -188,8 +188,8 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                           Icons.person,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .background,
-                                          size: 80,
+                                              .primary,
+                                          size: 25,
                                         ),
                                         onPressed: () {},
                                       )

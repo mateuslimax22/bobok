@@ -27,9 +27,9 @@ class _CommentsCard extends State<CommentsCard> {
 
   @override
   void dispose() {
+    super.dispose();
     _textEditingController
         .dispose(); // Lembre-se de liberar o controller quando não for mais necessário.
-    super.dispose();
   }
 
   @override
@@ -102,8 +102,7 @@ class _CommentsCard extends State<CommentsCard> {
                                 padding: const EdgeInsets.all(0),
                                 icon: Icon(
                                   Icons.person,
-                                  color:
-                                      Theme.of(context).colorScheme.background,
+                                  color: Theme.of(context).colorScheme.primary,
                                   size: 40,
                                 ),
                                 onPressed: () {},
@@ -139,7 +138,7 @@ class _CommentsCard extends State<CommentsCard> {
                           _textEditingController.text,
                           user.uid,
                           widget.userName,
-                          widget.avatar!);
+                          widget.avatar);
                       setState(() {
                         _textEditingController.text = '';
                       });

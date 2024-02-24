@@ -49,7 +49,7 @@ class FirestoreMethods {
         title: title,
         review: review,
         imageUrl: fileUrl,
-        profileImg: _auth.currentUser!.photoURL!,
+        profileImg: _auth.currentUser?.photoURL,
         postId: postId,
         likes: [],
         datePublish: DateTime.now(),
@@ -112,7 +112,7 @@ class FirestoreMethods {
   }
 
   Future<void> postComment(String postid, String text, String uid, String name,
-      String profileImg) async {
+      String? profileImg) async {
     try {
       if (text.isNotEmpty) {
         String commentId = const Uuid().v1();

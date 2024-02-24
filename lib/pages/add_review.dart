@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,7 @@ class _AddReviewState extends State<AddReview> {
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
+  late UserStore userStore;
 
   bool spoiler = false;
   bool msgError = false;
@@ -141,6 +143,7 @@ class _AddReviewState extends State<AddReview> {
         Navigator.of(context).pop();
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       showDialog<void>(
           context: context,
           builder: (ctx) => AlertDialog(

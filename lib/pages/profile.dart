@@ -85,13 +85,14 @@ class _ProfileState extends State<Profile> {
               .collection('users')
               .doc(widget.uid)
               .get();
-
       setState(() {
         followers = userDocument['followers'].length;
-        following = userDocument['following'].length - 1;
+        following = userDocument['following'].length;
         isFollowing = userDocument['followers'].contains(user.uid);
         userName = userDocument['username'].toString();
-        avatar = userDocument['photoUrl'].toString();
+        avatar = userDocument['photoUrl'] == null
+            ? ''
+            : userDocument['photoUrl'].toString();
       });
     } catch (e) {
       if (e.toString() == "Null check operator used on a null value") {
@@ -268,7 +269,7 @@ class _ProfileState extends State<Profile> {
                                                         widget.userStore!.user!
                                                                 .avatar
                                                                 .toString() ==
-                                                            ''
+                                                            'null'
                                                     ? IconButton(
                                                         padding:
                                                             const EdgeInsets
