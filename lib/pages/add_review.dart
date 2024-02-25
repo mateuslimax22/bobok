@@ -25,6 +25,7 @@ class _AddReviewState extends State<AddReview> {
   bool msgError = false;
   bool notValid = false;
   bool isLoading = false;
+  bool mature = false;
   String titleFolder = '';
 
   List<String> genresSelect = [];
@@ -164,12 +165,20 @@ class _AddReviewState extends State<AddReview> {
       if (await webScraper.loadWebPage(
           'search?q=$titleFolder+capa&tbm=isch&ved=2ahUKEwiA5-mJ5Oj-AhUOObkGHVTDA40Q2-cCegQIABAA&oq=harry+po&gs_lcp=CgNpbWcQARgBMgQIIxAnMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIHCAAQigUQQzIHCAAQigUQQzIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzoKCAAQigUQsQMQQ1AAWLYCYKYQaABwAHgAgAGEAYgBhgOSAQMwLjOYAQCgAQGqAQtnd3Mtd2l6LWltZ8ABAQ&sclient=img&ei=nIVaZICpC47y5OUP1IaP6Ag&authuser=0&bih=912&biw=1447&hl=pt-BR')) {
         var tiktokProfilePictureURL = webScraper.getElement('img', ['src']);
+
         var result = tiktokProfilePictureURL.map((item) {
           return item;
         }).toList();
-        setState(() {
-          img = (result[1]["attributes"]["src"]);
-        });
+        if (result[1]["attributes"]["src"].contains("visibility_off")) {
+          setState(() {
+            mature = true;
+          });
+        } else {
+          setState(() {
+            img = (result[1]["attributes"]["src"]);
+            mature = false;
+          });
+        }
       }
     }
   }
@@ -315,6 +324,16 @@ class _AddReviewState extends State<AddReview> {
                                                 .colorScheme
                                                 .onPrimary),
                                     border: InputBorder.none,
+                                    errorStyle: const TextStyle(
+                                      height:
+                                          1, // Definir a altura do texto de erro
+                                    ),
+                                    errorMaxLines: 3,
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide:
+                                          const BorderSide(color: Colors.red),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
                                     focusedBorder: OutlineInputBorder(
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(5.0)),
@@ -339,9 +358,16 @@ class _AddReviewState extends State<AddReview> {
                                       return 'Título obrigatório.';
                                     }
 
+                                    if (title.trim().length <= 3) {
+                                      return 'Se o título for menor que 3 caracter coloque o seu ano de lançamento junto com o título.';
+                                    }
+
+                                    if (mature == true) {
+                                      return 'A capa deste título contém imagens impróprias para menores de idade.';
+                                    }
+
                                     return null;
                                   },
-                                  onTap: () {},
                                 ),
                               ),
                             ),
@@ -536,6 +562,10 @@ class _AddReviewState extends State<AddReview> {
 
                             if (review.trim().isEmpty) {
                               return 'Cadê a resenha ????';
+                            }
+
+                            if (review.trim().length <= 5) {
+                              return 'Sua resenha é uma palavra???? melhore.';
                             }
 
                             return null;
