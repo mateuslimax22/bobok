@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "432378802396-m63cvasj9qi4vjeq9hodh2u9ifr7gji9.apps.googleusercontent.com",
+          "client_id": "432378802396-bi3c4cke4dl6qk4s9h3u7499faite4i3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.bobok",
-            "certificate_hash": "8d397e47ec28f1c9b40f839b0e346f23bb2c7335"
+            "certificate_hash": "509064603ece7eb078c3f58a90982c87bc2a766a"
           }
         },
         {
