@@ -117,6 +117,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
     // ignore: no_leading_underscores_for_local_identifiers
     void _submitForm() async {
+      _formKey.currentState?.save();
       final isValid = _formKey.currentState?.validate() ?? false;
 
       if (!isValid) {
@@ -124,18 +125,16 @@ class _SignUpConatiner extends State<SignUpConatiner> {
         return;
       }
 
-      _formKey.currentState?.save();
-
       setState(() {
         isLoadingRegister = true;
       });
 
-      await AuthEmail(context).createUserWithEmailAndPassword(
-          _formData["user"].toString(),
-          _formData["email"].toString(),
-          _formData['senha'].toString(),
-          _avatar,
-          Provider.of<UserProvider>(context, listen: false));
+      // await AuthEmail(context).createUserWithEmailAndPassword(
+      //     _formData["user"].toString(),
+      //     _formData["email"].toString(),
+      //     _formData['senha'].toString(),
+      //     _avatar,
+      //     Provider.of<UserProvider>(context, listen: false));
     }
 
     return Form(
@@ -348,9 +347,11 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                               passwordVisible = !passwordVisible;
                             });
                           },
-                          child: Icon(passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off)),
+                          child: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).colorScheme.primary)),
                     ),
                     onChanged: (value) {
                       _validatePassword(_passwordController.text);
@@ -375,7 +376,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
             ),
             SizedBox(
                 width: deviceWidth * 0.8,
-                height: 80,
+                height: 90,
                 child: GridView.count(
                   padding: const EdgeInsets.all(0),
                   crossAxisCount: 2,
@@ -561,9 +562,12 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                               confirmPasswordVisible = !confirmPasswordVisible;
                             });
                           },
-                          child: Icon(confirmPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off)),
+                          child: Icon(
+                            confirmPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
                     ),
                     keyboardType: TextInputType.text,
                     obscureText: !confirmPasswordVisible,
@@ -572,14 +576,14 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     },
                     validator: (confirmaSenha) {
                       final title = confirmaSenha ?? '';
+                      print(_formData['senha'].toString());
 
                       if (title.trim().isEmpty) {
                         return 'Confirmar a senha obrigatório.';
+                      } else if (title.trim().toString() !=
+                          _formData['senha'].toString()) {
+                        return 'Senhas diferentes';
                       }
-                      // } else if (title.trim() !=
-                      //     _formData['senha'].toString()) {
-                      //   return 'Senhas diferentes';
-                      // }
 
                       return null;
                     },

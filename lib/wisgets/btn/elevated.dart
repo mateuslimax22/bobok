@@ -13,7 +13,7 @@ class ElevatedButtonTh extends StatefulWidget {
   });
 
   final String label;
-  final Function() target;
+  final Function()? target;
   final double fontSize;
   final FontWeight fontWeight;
   final double width;
@@ -39,13 +39,13 @@ class _ElevatedButtonThState extends State<ElevatedButtonTh> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           minimumSize: Size(widget.width, widget.height),
         ),
-        onPressed: widget.progress
+        onPressed: widget.target != null && widget.progress
             ? () {
                 setState(() {
                   _loading =
                       true; // Ativa o progresso quando o botão for clicado
                 });
-                widget.target();
+                widget.target != null ? widget.target!() : null;
                 Future.delayed(const Duration(milliseconds: 500), () {
                   setState(() {
                     _loading = false;
