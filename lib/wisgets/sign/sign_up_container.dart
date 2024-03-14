@@ -129,12 +129,12 @@ class _SignUpConatiner extends State<SignUpConatiner> {
         isLoadingRegister = true;
       });
 
-      // await AuthEmail(context).createUserWithEmailAndPassword(
-      //     _formData["user"].toString(),
-      //     _formData["email"].toString(),
-      //     _formData['senha'].toString(),
-      //     _avatar,
-      //     Provider.of<UserProvider>(context, listen: false));
+      await AuthEmail(context).createUserWithEmailAndPassword(
+          _formData["user"].toString(),
+          _formData["email"].toString(),
+          _formData['senha'].toString(),
+          _avatar,
+          Provider.of<UserProvider>(context, listen: false));
     }
 
     return Form(
@@ -191,6 +191,17 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         ),
                       ),
                     ),
+                    Positioned(
+                        bottom: 0,
+                        left: 0,
+                        child: SizedBox(
+                            child: Text(
+                          "Escolha sua foto",
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Theme.of(context).colorScheme.onError,
+                          ),
+                        ))),
                     Positioned(
                         bottom: 0,
                         right: 0,
@@ -258,6 +269,13 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
                       if (title.trim().isEmpty) {
                         return 'Email obrigatório.';
+                      }
+                      // Expressão regular para verificar se o e-mail possui o formato correto
+                      final emailRegex =
+                          RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                      if (!emailRegex.hasMatch(title)) {
+                        return 'Por favor, insira um email válido.';
                       }
 
                       return null;
@@ -366,6 +384,9 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
                       if (title.trim().isEmpty) {
                         return 'Senha obrigatória.';
+                      } else if (levelPassword == "Fraca" ||
+                          levelPassword == "Média") {
+                        return 'Senha tem que ser forte.';
                       }
 
                       return null;
