@@ -2,6 +2,7 @@ import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/my_list.dart';
 import 'package:bobok/pages/profile.dart';
+import 'package:bobok/pages/settings.dart';
 import 'package:bobok/pages/world.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/provider/user_provider.dart';
@@ -80,6 +81,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       provider.logout();
     }
 
+    void _openDrawer(BuildContext context) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return const SettingsMenu();
+        },
+      );
+    }
+
     void menuAppbar(String value) {
       switch (value) {
         case 'Logout':
@@ -106,23 +118,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               Image.asset(imagePath, width: 133, height: 45, fit: BoxFit.fill),
           actions: [
             _currentIndex == 3
-                ? PopupMenuButton<String>(
-                    color: Theme.of(context).colorScheme.onError,
-                    onSelected: menuAppbar,
-                    itemBuilder: (BuildContext context) {
-                      return {'Logout', 'Configuração'}.map((String choice) {
-                        return PopupMenuItem<String>(
-                          value: choice,
-                          child: Text(
-                            choice,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 15,
-                                letterSpacing: 1.5),
-                          ),
-                        );
-                      }).toList();
-                    })
+                ? IconButton(
+                    icon: Icon(Icons.more_vert),
+                    onPressed: () => _openDrawer(context),
+                  )
                 : _currentIndex == 2
                     ? IconButton(
                         icon: const Icon(

@@ -8,4 +8,5 @@ class AppRoutes {
   static const PROFILE = '/profile';
   static const WORLD = '/world';
   static const BOOK = '/book';
+  static const EDITPROFILE = '/edit-profile';
 }

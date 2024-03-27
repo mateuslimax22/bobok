@@ -146,7 +146,125 @@ class _ProfileState extends State<Profile> {
         body: Stack(
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                      child: SizedBox(
+                        child: Observer(
+                          builder: (_) {
+                            return Text(
+                              widget.currentUid != false
+                                  ? widget.userStore!.user!.username.toString()
+                                  : userName,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  letterSpacing: 1.5),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            widget.uid == user.uid
+                                ? ElevatedButtonTh(
+                                    label: 'Remover',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    target: () => {},
+                                    width: 120,
+                                    height: 30,
+                                    progress: false,
+                                  )
+                                : isFollowing
+                                    ? ElevatedButtonTh(
+                                        label: 'Remover',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        target: () async {
+                                          await FirestoreMethods()
+                                              .followUser(user.uid, widget.uid);
+
+                                          removeFollower
+                                              ?.remove(widget.uid.toString());
+                                          widget.userStore?.setUser(
+                                            UserData(
+                                                username: widget
+                                                    .userStore!.user!.username,
+                                                uid:
+                                                    widget.userStore!.user!.uid,
+                                                email: widget
+                                                    .userStore!.user!.email,
+                                                avatar: widget
+                                                    .userStore!.user!.avatar,
+                                                followers: widget
+                                                    .userStore!.user!.followers,
+                                                following: removeFollower,
+                                                myfav: widget
+                                                    .userStore!.user!.myfav),
+                                          );
+
+                                          setState(() {
+                                            isFollowing = false;
+                                            followers--;
+                                          });
+                                        },
+                                        width: 120,
+                                        height: 30,
+                                        progress: false,
+                                      )
+                                    : ElevatedButtonTh(
+                                        label: 'Adicionar',
+                                        target: () async {
+                                          await FirestoreMethods()
+                                              .followUser(user.uid, widget.uid);
+
+                                          addFollower
+                                              ?.add(widget.uid.toString());
+                                          widget.userStore?.setUser(
+                                            UserData(
+                                                username: widget
+                                                    .userStore!.user!.username,
+                                                uid:
+                                                    widget.userStore!.user!.uid,
+                                                email: widget
+                                                    .userStore!.user!.email,
+                                                avatar: widget
+                                                    .userStore!.user!.avatar,
+                                                followers: widget
+                                                    .userStore!.user!.followers,
+                                                following: addFollower,
+                                                myfav: widget
+                                                    .userStore!.user!.myfav),
+                                          );
+
+                                          setState(() {
+                                            isFollowing = true;
+                                            followers++;
+                                          });
+                                        },
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        width: 120,
+                                        height: 30,
+                                        progress: false,
+                                      ),
+                          ]),
+                    )
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Row(
@@ -305,162 +423,10 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                               ),
-                              if (isEdit)
-                                Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: RawMaterialButton(
-                                        onPressed: () {},
-                                        elevation: 2.0,
-                                        fillColor: Theme.of(context)
-                                            .colorScheme
-                                            .background,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5))),
-                                        child: Icon(
-                                          Icons.camera_alt_outlined,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                        ),
-                                      ),
-                                    ))
-                              else
-                                const SizedBox()
                             ],
                           ),
                         ),
                       ),
-                      Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  widget.uid == user.uid
-                                      ? ElevatedButtonTh(
-                                          label: 'Config',
-                                          //target: onChangedEdit,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          width: 260,
-                                          height: 30,
-                                          progress: false,
-                                          target: () {})
-                                      : isFollowing
-                                          ? ElevatedButtonTh(
-                                              label: 'Remover',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              target: () async {
-                                                await FirestoreMethods()
-                                                    .followUser(
-                                                        user.uid, widget.uid);
-
-                                                removeFollower?.remove(
-                                                    widget.uid.toString());
-                                                widget.userStore?.setUser(
-                                                  UserData(
-                                                      username: widget
-                                                          .userStore!
-                                                          .user!
-                                                          .username,
-                                                      uid: widget
-                                                          .userStore!.user!.uid,
-                                                      email: widget.userStore!
-                                                          .user!.email,
-                                                      avatar: widget.userStore!
-                                                          .user!.avatar,
-                                                      followers: widget
-                                                          .userStore!
-                                                          .user!
-                                                          .followers,
-                                                      following: removeFollower,
-                                                      myfav: widget.userStore!
-                                                          .user!.myfav),
-                                                );
-
-                                                setState(() {
-                                                  isFollowing = false;
-                                                  followers--;
-                                                });
-                                              },
-                                              width: 260,
-                                              height: 30,
-                                              progress: false,
-                                            )
-                                          : ElevatedButtonTh(
-                                              label: 'Adicionar',
-                                              target: () async {
-                                                await FirestoreMethods()
-                                                    .followUser(
-                                                        user.uid, widget.uid);
-
-                                                addFollower?.add(
-                                                    widget.uid.toString());
-                                                widget.userStore?.setUser(
-                                                  UserData(
-                                                      username: widget
-                                                          .userStore!
-                                                          .user!
-                                                          .username,
-                                                      uid: widget
-                                                          .userStore!.user!.uid,
-                                                      email: widget.userStore!
-                                                          .user!.email,
-                                                      avatar: widget.userStore!
-                                                          .user!.avatar,
-                                                      followers: widget
-                                                          .userStore!
-                                                          .user!
-                                                          .followers,
-                                                      following: addFollower,
-                                                      myfav: widget.userStore!
-                                                          .user!.myfav),
-                                                );
-
-                                                setState(() {
-                                                  isFollowing = true;
-                                                  followers++;
-                                                });
-                                              },
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              width: 260,
-                                              height: 30,
-                                              progress: false,
-                                            ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: SizedBox(
-                                      child: Observer(
-                                        builder: (_) {
-                                          return Text(
-                                            widget.currentUid != false
-                                                ? widget
-                                                    .userStore!.user!.username
-                                                    .toString()
-                                                : userName,
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary,
-                                                fontSize: 20,
-                                                letterSpacing: 1.5),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                          )),
                     ],
                   ),
                 ),

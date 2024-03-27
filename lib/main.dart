@@ -1,5 +1,6 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/pages/add_review.dart';
+import 'package:bobok/pages/edit_profile.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/onboarding.dart';
 import 'package:bobok/pages/profile.dart';
@@ -25,8 +26,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
                 currentUid: true,
               ),
           AppRoutes.WORLD: (ctx) => const World(),
+          AppRoutes.EDITPROFILE: (ctx) => const EditProfile()
         },
       ),
     );

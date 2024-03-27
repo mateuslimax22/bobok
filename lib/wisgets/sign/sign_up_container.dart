@@ -193,17 +193,6 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     ),
                     Positioned(
                         bottom: 0,
-                        left: 0,
-                        child: SizedBox(
-                            child: Text(
-                          "Escolha sua foto",
-                          style: TextStyle(
-                            letterSpacing: 0.5,
-                            color: Theme.of(context).colorScheme.onError,
-                          ),
-                        ))),
-                    Positioned(
-                        bottom: 0,
                         right: 0,
                         child: SizedBox(
                           width: 30,
@@ -231,6 +220,13 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 ),
               ),
             ),
+            Text("Escolha sua foto",
+                style: TextStyle(
+                  letterSpacing: 0.5,
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                )),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: SizedBox(
