@@ -1,8 +1,30 @@
+import 'package:bobok/mobx/user_store.dart';
+import 'package:bobok/provider/google_sign_in.dart';
+import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class SettingsMenu extends StatelessWidget {
-  const SettingsMenu({super.key});
+class SettingsMenu extends StatefulWidget {
+  const SettingsMenu({super.key, this.userStore});
+  final UserStore? userStore;
+
+  @override
+  State<SettingsMenu> createState() => _SettingsMenuState();
+}
+
+class _SettingsMenuState extends State<SettingsMenu> {
+  void logout() async {
+    print("asdasd");
+    await widget.userStore?.clearUserFromCache();
+    // ignore: use_build_context_synchronously
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.clearUser();
+    final provider =
+        // ignore: use_build_context_synchronously
+        Provider.of<GoogleSignInProvider>(context, listen: false);
+    provider.logout();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +38,8 @@ class SettingsMenu extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: SlideTransition(
             position: Tween<Offset>(
-              begin: Offset(1.0, 0.0),
-              end: Offset(0.0, 0.0),
+              begin: const Offset(1.0, 0.0),
+              end: const Offset(0.0, 0.0),
             ).animate(CurvedAnimation(
               parent: ModalRoute.of(context)!.animation!,
               curve: Curves.easeInOut,
@@ -48,8 +70,12 @@ class SettingsMenu extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.onPrimary,
                               )),
                           onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(AppRoutes.EDITPROFILE);
+                            Navigator.of(context).pushNamed(
+                              AppRoutes.EDITPROFILE,
+                              arguments: {
+                                'userStore': widget.userStore,
+                              },
+                            );
                           }),
                       ListTile(
                         leading: Icon(
@@ -61,7 +87,8 @@ class SettingsMenu extends StatelessWidget {
                               color: Theme.of(context).colorScheme.onPrimary,
                             )),
                         onTap: () {
-                          // Implementar lógica de logout
+                          logout();
+                          Navigator.of(context).pop();
                         },
                       ),
                     ],

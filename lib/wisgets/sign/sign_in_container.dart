@@ -1,4 +1,3 @@
-import 'package:bobok/pages/onboarding.dart';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:flutter/material.dart';
 import 'package:bobok/provider/google_sign_in.dart';
@@ -22,30 +21,37 @@ class _SignInConatiner extends State<SignInConatiner> {
   bool notValid = false;
   bool isLoading = false;
   bool passwordVisible = false;
-  bool isLoadingRegister = false;
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    void _submitForm() async {
+    void submitForm() async {
+      setState(() {
+        isLoading = true;
+      });
       final isValid = _formKey.currentState?.validate() ?? false;
 
       if (!isValid) {
         notValid = true;
+        setState(() {
+          isLoading = false;
+        });
         return;
       }
 
       _formKey.currentState?.save();
 
-      setState(() {
-        isLoadingRegister = true;
-      });
-
-      await AuthEmail(context).signInWithEmailAndPassword(
+      var resp = await AuthEmail(context).signInWithEmailAndPassword(
         Provider.of<UserProvider>(context, listen: false),
         _formData["email"].toString(),
         _formData['senha'].toString(),
       );
+
+      if (resp != "login") {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
 
     return Form(
@@ -169,14 +175,14 @@ class _SignInConatiner extends State<SignInConatiner> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
                 label: 'Começar',
-                target: () {
-                  _submitForm();
+                target: () async {
+                  submitForm();
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
-                progress: true,
+                isLoading: isLoading,
               ),
             ),
             Row(children: <Widget>[

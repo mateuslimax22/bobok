@@ -1,5 +1,6 @@
 // ignore_for_file: dead_code
 import 'package:bobok/mobx/user_store.dart';
+import 'package:bobok/pages/settings.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
@@ -115,6 +116,19 @@ class _ProfileState extends State<Profile> {
       }
     }
 
+    void openDrawer(BuildContext context) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) {
+          return SettingsMenu(
+            userStore: widget.userStore,
+          );
+        },
+      );
+    }
+
     Brightness currentBrightness = Theme.of(context).brightness;
     String imagePath = currentBrightness == Brightness.light
         ? 'images/logoLight.png'
@@ -147,286 +161,247 @@ class _ProfileState extends State<Profile> {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                      child: SizedBox(
-                        child: Observer(
-                          builder: (_) {
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: SizedBox(
+                              child: Observer(
+                                builder: (_) {
+                                  return Text(
+                                    widget.currentUid != false
+                                        ? widget.userStore!.user!.username
+                                            .toString()
+                                        : userName,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        letterSpacing: 1.5),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Avaliadores",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 14,
+                                letterSpacing: 1.5),
+                          ),
+                          Observer(builder: (_) {
                             return Text(
                               widget.currentUid != false
-                                  ? widget.userStore!.user!.username.toString()
-                                  : userName,
+                                  ? widget.userStore!.user!.following!.length
+                                      .toString()
+                                  : following.toString(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
-                                  fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                   letterSpacing: 1.5),
                             );
-                          },
-                        ),
+                          }),
+                          Text(
+                            "Leitores",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 14,
+                                letterSpacing: 1.5),
+                          ),
+                          Observer(builder: (_) {
+                            return Text(
+                              widget.currentUid != false
+                                  ? widget.userStore!.user!.followers!.length
+                                      .toString()
+                                  : followers.toString(),
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: 20,
+                                  letterSpacing: 1.5),
+                            );
+                          }),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            widget.uid == user.uid
-                                ? ElevatedButtonTh(
-                                    label: 'Remover',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    target: () => {},
-                                    width: 120,
-                                    height: 30,
-                                    progress: false,
-                                  )
-                                : isFollowing
-                                    ? ElevatedButtonTh(
-                                        label: 'Remover',
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        target: () async {
-                                          await FirestoreMethods()
-                                              .followUser(user.uid, widget.uid);
-
-                                          removeFollower
-                                              ?.remove(widget.uid.toString());
-                                          widget.userStore?.setUser(
-                                            UserData(
-                                                username: widget
-                                                    .userStore!.user!.username,
-                                                uid:
-                                                    widget.userStore!.user!.uid,
-                                                email: widget
-                                                    .userStore!.user!.email,
-                                                avatar: widget
-                                                    .userStore!.user!.avatar,
-                                                followers: widget
-                                                    .userStore!.user!.followers,
-                                                following: removeFollower,
-                                                myfav: widget
-                                                    .userStore!.user!.myfav),
-                                          );
-
-                                          setState(() {
-                                            isFollowing = false;
-                                            followers--;
-                                          });
-                                        },
-                                        width: 120,
-                                        height: 30,
-                                        progress: false,
-                                      )
-                                    : ElevatedButtonTh(
-                                        label: 'Adicionar',
-                                        target: () async {
-                                          await FirestoreMethods()
-                                              .followUser(user.uid, widget.uid);
-
-                                          addFollower
-                                              ?.add(widget.uid.toString());
-                                          widget.userStore?.setUser(
-                                            UserData(
-                                                username: widget
-                                                    .userStore!.user!.username,
-                                                uid:
-                                                    widget.userStore!.user!.uid,
-                                                email: widget
-                                                    .userStore!.user!.email,
-                                                avatar: widget
-                                                    .userStore!.user!.avatar,
-                                                followers: widget
-                                                    .userStore!.user!.followers,
-                                                following: addFollower,
-                                                myfav: widget
-                                                    .userStore!.user!.myfav),
-                                          );
-
-                                          setState(() {
-                                            isFollowing = true;
-                                            followers++;
-                                          });
-                                        },
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        width: 120,
-                                        height: 30,
-                                        progress: false,
-                                      ),
+                            SizedBox(
+                              height: 140,
+                              width: 110,
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: 150,
+                                    padding:
+                                        const EdgeInsets.all(4), // Border width
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                    ),
+                                    child: SizedBox(
+                                      child: Observer(builder: (_) {
+                                        return ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          child: SizedBox.fromSize(
+                                              size: const Size.fromRadius(
+                                                  48), // Image radius
+                                              child: widget.currentUid ==
+                                                          false &&
+                                                      avatar == ''
+                                                  ? IconButton(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0),
+                                                      icon: Icon(
+                                                        Icons.person,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .background,
+                                                        size: 80,
+                                                      ),
+                                                      onPressed: () {},
+                                                    )
+                                                  : widget.currentUid !=
+                                                              false &&
+                                                          widget.userStore!
+                                                                  .user!.avatar
+                                                                  .toString() ==
+                                                              'null'
+                                                      ? IconButton(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(0),
+                                                          icon: Icon(
+                                                            Icons.person,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .background,
+                                                            size: 80,
+                                                          ),
+                                                          onPressed: () {},
+                                                        )
+                                                      : Image(
+                                                          fit: BoxFit.cover,
+                                                          image:
+                                                              CachedNetworkImageProvider(
+                                                            widget.currentUid !=
+                                                                    false
+                                                                ? widget
+                                                                    .userStore!
+                                                                    .user!
+                                                                    .avatar
+                                                                    .toString()
+                                                                : avatar
+                                                                    .toString(),
+                                                            maxHeight: 150,
+                                                            maxWidth: 110,
+                                                          ))),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ]),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Avaliadores",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        letterSpacing: 1.5),
-                                  ),
-                                  Observer(builder: (_) {
-                                    return Text(
-                                      widget.currentUid != false
-                                          ? widget.userStore!.user!.following!
-                                              .length
-                                              .toString()
-                                          : following.toString(),
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                          fontSize: 20,
-                                          letterSpacing: 1.5),
+                      widget.uid == user.uid
+                          ? ElevatedButtonTh(
+                              label: 'Config',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              target: () async {
+                                openDrawer(context);
+                              },
+                              width: 120,
+                              height: 30,
+                              isLoading: false,
+                            )
+                          : isFollowing
+                              ? ElevatedButtonTh(
+                                  label: 'Remover',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  target: () async {
+                                    await FirestoreMethods()
+                                        .followUser(user.uid, widget.uid);
+
+                                    removeFollower
+                                        ?.remove(widget.uid.toString());
+                                    widget.userStore?.setUser(
+                                      UserData(
+                                          username:
+                                              widget.userStore!.user!.username,
+                                          uid: widget.userStore!.user!.uid,
+                                          email: widget.userStore!.user!.email,
+                                          avatar:
+                                              widget.userStore!.user!.avatar,
+                                          followers:
+                                              widget.userStore!.user!.followers,
+                                          following: removeFollower,
+                                          myfav: widget.userStore!.user!.myfav),
                                     );
-                                  }),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Leitores",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontSize: 14,
-                                        letterSpacing: 1.5),
-                                  ),
-                                  Observer(builder: (_) {
-                                    return Text(
-                                      widget.currentUid != false
-                                          ? widget.userStore!.user!.followers!
-                                              .length
-                                              .toString()
-                                          : followers.toString(),
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                          fontSize: 20,
-                                          letterSpacing: 1.5),
+
+                                    setState(() {
+                                      isFollowing = false;
+                                      followers--;
+                                    });
+                                  },
+                                  width: 120,
+                                  height: 30,
+                                  isLoading: false,
+                                )
+                              : ElevatedButtonTh(
+                                  label: 'Adicionar',
+                                  target: () async {
+                                    await FirestoreMethods()
+                                        .followUser(user.uid, widget.uid);
+
+                                    addFollower?.add(widget.uid.toString());
+                                    widget.userStore?.setUser(
+                                      UserData(
+                                          username:
+                                              widget.userStore!.user!.username,
+                                          uid: widget.userStore!.user!.uid,
+                                          email: widget.userStore!.user!.email,
+                                          avatar:
+                                              widget.userStore!.user!.avatar,
+                                          followers:
+                                              widget.userStore!.user!.followers,
+                                          following: addFollower,
+                                          myfav: widget.userStore!.user!.myfav),
                                     );
-                                  }),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(
-                          height: 110,
-                          width: 110,
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.all(4), // Border width
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                  ),
-                                  child: SizedBox(
-                                    child: Observer(builder: (_) {
-                                      return ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
-                                        child: SizedBox.fromSize(
-                                            size: const Size.fromRadius(
-                                                48), // Image radius
-                                            child: widget.currentUid == false &&
-                                                    avatar == ''
-                                                ? IconButton(
-                                                    padding:
-                                                        const EdgeInsets.all(0),
-                                                    icon: Icon(
-                                                      Icons.person,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .background,
-                                                      size: 80,
-                                                    ),
-                                                    onPressed: () {},
-                                                  )
-                                                : widget.currentUid != false &&
-                                                        widget.userStore!.user!
-                                                                .avatar
-                                                                .toString() ==
-                                                            'null'
-                                                    ? IconButton(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(0),
-                                                        icon: Icon(
-                                                          Icons.person,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .background,
-                                                          size: 80,
-                                                        ),
-                                                        onPressed: () {},
-                                                      )
-                                                    : Image(
-                                                        fit: BoxFit.cover,
-                                                        image:
-                                                            CachedNetworkImageProvider(
-                                                          widget.currentUid !=
-                                                                  false
-                                                              ? widget
-                                                                  .userStore!
-                                                                  .user!
-                                                                  .avatar
-                                                                  .toString()
-                                                              : avatar
-                                                                  .toString(),
-                                                          maxHeight: 150,
-                                                          maxWidth: 110,
-                                                        ))),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+
+                                    setState(() {
+                                      isFollowing = true;
+                                      followers++;
+                                    });
+                                  },
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  width: 120,
+                                  height: 30,
+                                  isLoading: false,
+                                )
                     ],
                   ),
                 ),

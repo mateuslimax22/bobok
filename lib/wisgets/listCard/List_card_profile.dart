@@ -49,14 +49,14 @@ class _ListCardProfileState extends State<ListCardProfile> {
                     children: [
                       ElevatedButtonTh(
                         label: 'Add Resenha',
-                        target: () {
+                        target: () async {
                           Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
                         },
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         width: 200,
                         height: 45,
-                        progress: false,
+                        isLoading: false,
                       ),
                     ],
                   )

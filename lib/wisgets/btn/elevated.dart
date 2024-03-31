@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class ElevatedButtonTh extends StatefulWidget {
+class ElevatedButtonTh extends StatelessWidget {
   const ElevatedButtonTh({
-    super.key,
+    Key? key,
     required this.label,
     required this.target,
     required this.fontSize,
     required this.fontWeight,
     required this.width,
     required this.height,
-    required this.progress,
-  });
+    required this.isLoading,
+  }) : super(key: key);
 
   final String label;
   final Function()? target;
@@ -18,14 +18,7 @@ class ElevatedButtonTh extends StatefulWidget {
   final FontWeight fontWeight;
   final double width;
   final double height;
-  final bool progress;
-
-  @override
-  State<ElevatedButtonTh> createState() => _ElevatedButtonThState();
-}
-
-class _ElevatedButtonThState extends State<ElevatedButtonTh> {
-  bool _loading = false; // Estado do progresso
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -37,33 +30,24 @@ class _ElevatedButtonThState extends State<ElevatedButtonTh> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           backgroundColor: Theme.of(context).colorScheme.primary,
-          minimumSize: Size(widget.width, widget.height),
+          minimumSize: Size(width, height),
         ),
-        onPressed: widget.target != null && widget.progress
-            ? () {
-                setState(() {
-                  _loading =
-                      true; // Ativa o progresso quando o botão for clicado
-                });
-                widget.target != null ? widget.target!() : null;
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  setState(() {
-                    _loading = false;
-                  });
-                });
-              }
-            : widget.target,
-        child: _loading // Verifica se o progresso está ativo
+        onPressed: isLoading
+            ? null
+            : () {
+                target?.call();
+              },
+        child: isLoading
             ? CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context)
-                    .colorScheme
-                    .tertiary)) // Exibe o indicador de progresso
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.tertiary),
+              )
             : Text(
-                widget.label,
+                label,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.tertiary,
-                  fontSize: widget.fontSize,
-                  fontWeight: widget.fontWeight,
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
                   letterSpacing: 1.5,
                 ),
               ),

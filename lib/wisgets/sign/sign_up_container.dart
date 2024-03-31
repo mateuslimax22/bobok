@@ -117,17 +117,19 @@ class _SignUpConatiner extends State<SignUpConatiner> {
 
     // ignore: no_leading_underscores_for_local_identifiers
     void _submitForm() async {
+      setState(() {
+        isLoadingRegister = true;
+      });
       _formKey.currentState?.save();
       final isValid = _formKey.currentState?.validate() ?? false;
 
       if (!isValid) {
         notValid = true;
+        setState(() {
+          isLoadingRegister = false;
+        });
         return;
       }
-
-      setState(() {
-        isLoadingRegister = true;
-      });
 
       await AuthEmail(context).createUserWithEmailAndPassword(
           _formData["user"].toString(),
@@ -612,14 +614,14 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
                 label: 'Cadastrar',
-                target: () {
+                target: () async {
                   _submitForm();
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
-                progress: true,
+                isLoading: isLoadingRegister,
               ),
             ),
           ],

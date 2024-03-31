@@ -79,6 +79,64 @@ class AuthEmail extends ChangeNotifier {
     return null;
   }
 
+  Future<void> updateProfile(String uid, String? userName, String? oldPhotoUrl,
+      File? newAvatar, UserStore? userStore) async {
+    try {
+      // Atualizar o nome de usuário no Firebase Authentication
+      print("ASDASDASDASDASSD");
+      print(userName);
+      if (userName != null && userName != '') {
+        await FirebaseAuth.instance.currentUser!.updateDisplayName(userName);
+        userStore?.setUser(
+          UserData(
+              username: userName,
+              uid: userStore.user!.uid,
+              email: userStore.user!.email,
+              avatar: userStore.user!.avatar,
+              followers: userStore.user!.followers,
+              following: userStore.user!.following,
+              myfav: userStore.user!.myfav),
+        );
+      }
+
+      String? fileUrl;
+      // Se uma nova foto estiver sendo fornecida, atualize-a e exclua a antiga
+      if (newAvatar != null) {
+        final fileRef = FirebaseStorage.instance
+            .ref()
+            .child("profilePics")
+            .child('$uid.jpg');
+
+        // Upload da nova foto
+        await fileRef.putFile(newAvatar);
+
+        // Obtenção da URL da nova foto
+        fileUrl = await fileRef.getDownloadURL();
+        // Excluir a foto antiga do Firebase Storage
+
+        userStore?.setUser(
+          UserData(
+              username: userStore.user!.username,
+              uid: userStore.user!.uid,
+              email: userStore.user!.email,
+              avatar: fileUrl.toString(),
+              followers: userStore.user!.followers,
+              following: userStore.user!.following,
+              myfav: userStore.user!.myfav),
+        );
+      }
+
+      // Atualizar as informações do usuário no Firestore
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        if (userName != null && userName != '') 'username': userName,
+        if (fileUrl != null) 'photoUrl': fileUrl.toString(),
+      });
+    } catch (e) {
+      print("Erro ao atualizar perfil: $e");
+      // Lidar com o erro conforme necessário
+    }
+  }
+
   Future signInWithEmailAndPassword(
       UserProvider userProvider, String email, String password) async {
     try {
@@ -90,13 +148,13 @@ class AuthEmail extends ChangeNotifier {
       DocumentSnapshot snap = await userDocRef.get();
       var userData = UserData.fromSnap(snap);
       userProvider.setUser(userData);
+      return "login";
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(_context).showSnackBar(
         SnackBar(content: Text(e.message ?? "Ocorreu um erro desconhecido!")),
       );
+      return e.message;
     }
-
-    return null;
   }
 
   Future<UserData> getUserDetails() async {

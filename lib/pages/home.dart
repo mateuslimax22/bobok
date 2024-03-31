@@ -4,15 +4,11 @@ import 'package:bobok/pages/my_list.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/settings.dart';
 import 'package:bobok/pages/world.dart';
-import 'package:bobok/provider/google_sign_in.dart';
-import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, this.userData});
@@ -53,15 +49,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ];
   }
 
-  Future<void> _getUser() async {
-    DocumentReference userDocRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid);
-    DocumentSnapshot snap = await userDocRef.get();
-    var userData = UserData.fromSnap(snap);
-    userStore.setUser(userData);
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -70,36 +57,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    void logout() async {
-      await userStore.clearUserFromCache();
-      // ignore: use_build_context_synchronously
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.clearUser();
-      final provider =
-          // ignore: use_build_context_synchronously
-          Provider.of<GoogleSignInProvider>(context, listen: false);
-      provider.logout();
-    }
-
-    void _openDrawer(BuildContext context) {
+    void openDrawer(BuildContext context) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
-          return const SettingsMenu();
+          return SettingsMenu(
+            userStore: userStore,
+          );
         },
       );
-    }
-
-    void menuAppbar(String value) {
-      switch (value) {
-        case 'Logout':
-          logout();
-          break;
-        case 'Configuração':
-          break;
-      }
     }
 
     Brightness currentBrightness = Theme.of(context).brightness;
@@ -119,8 +87,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           actions: [
             _currentIndex == 3
                 ? IconButton(
-                    icon: Icon(Icons.more_vert),
-                    onPressed: () => _openDrawer(context),
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () => openDrawer(context),
                   )
                 : _currentIndex == 2
                     ? IconButton(

@@ -1,4 +1,5 @@
 // ignore_for_file: dead_code
+import 'package:bobok/models/user.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'dart:io';
 import 'package:bobok/provider/auth_email.dart';
@@ -32,77 +33,11 @@ class _EditProfile extends State<EditProfile> {
   bool isLoadingRegister = false;
   bool isSpecialCharacters = false;
 
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-
-  void _validatePassword(String password) {
-    List<int> passwordValid = [];
-    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
-    bool hasDigits = password.contains(RegExp(r'[0-9]'));
-    bool hasSpecialCharacters =
-        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    if (hasUppercase) {
-      passwordValid.add(1);
-      setState(() {
-        isUppercase = true;
-      });
-    } else {
-      setState(() {
-        isUppercase = false;
-      });
-    }
-    if (hasLowercase) passwordValid.add(1);
-    if (hasDigits) {
-      passwordValid.add(1);
-      setState(() {
-        isNumber = true;
-      });
-    } else {
-      setState(() {
-        isNumber = false;
-      });
-    }
-    if (hasSpecialCharacters) {
-      passwordValid.add(1);
-      setState(() {
-        isSpecialCharacters = true;
-      });
-    } else {
-      setState(() {
-        isSpecialCharacters = false;
-      });
-    }
-
-    if (password.length < 6) {
-      setState(() {
-        levelPassword = "Fraca";
-        is6Digits = true;
-      });
-    } else {
-      setState(() {
-        is6Digits = true;
-      });
-      if (passwordValid.length <= 2) {
-        setState(() {
-          levelPassword = "Fraca";
-        });
-      } else if (passwordValid.length == 3) {
-        setState(() {
-          levelPassword = "Média";
-        });
-      } else {
-        setState(() {
-          levelPassword = "Forte";
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    void _uploadImage() async {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    void uploadImage() async {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
@@ -117,7 +52,7 @@ class _EditProfile extends State<EditProfile> {
     }
 
     // ignore: no_leading_underscores_for_local_identifiers
-    void _submitForm() async {
+    Future<void> _submitForm() async {
       _formKey.currentState?.save();
       final isValid = _formKey.currentState?.validate() ?? false;
 
@@ -127,15 +62,20 @@ class _EditProfile extends State<EditProfile> {
       }
 
       setState(() {
-        isLoadingRegister = true;
+        isLoading = true;
       });
 
-      await AuthEmail(context).createUserWithEmailAndPassword(
+      await AuthEmail(context).updateProfile(
+          arguments['userStore'].user.uid,
           _formData["user"].toString(),
-          _formData["email"].toString(),
-          _formData['senha'].toString(),
+          arguments['userStore'].user.avatar,
           _avatar,
-          Provider.of<UserProvider>(context, listen: false));
+          arguments['userStore']);
+      setState(() {
+        isLoading = false;
+      });
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
     }
 
     return Scaffold(
@@ -163,6 +103,40 @@ class _EditProfile extends State<EditProfile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.all(4), // Border width
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.warning_amber_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                  "Você pode atualizar todos os campos ou somente o que desejar !",
+                                  style: TextStyle(
+                                    letterSpacing: 0.5,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
@@ -194,7 +168,7 @@ class _EditProfile extends State<EditProfile> {
                                             size: 80,
                                           ),
                                           onPressed: () {
-                                            _uploadImage();
+                                            uploadImage();
                                           },
                                         )
                                       : Image.file(
@@ -228,7 +202,7 @@ class _EditProfile extends State<EditProfile> {
                                             .primary,
                                       ),
                                       onPressed: () {
-                                        _uploadImage();
+                                        uploadImage();
                                       },
                                     ),
                                   ),
@@ -237,7 +211,7 @@ class _EditProfile extends State<EditProfile> {
                         ),
                       ),
                     ),
-                    Text("Escolha sua foto",
+                    Text("Atualize sua foto",
                         style: TextStyle(
                           letterSpacing: 0.5,
                           color: Theme.of(context).colorScheme.primary,
@@ -245,7 +219,7 @@ class _EditProfile extends State<EditProfile> {
                           fontSize: 14,
                         )),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: PhysicalModel(
@@ -259,7 +233,7 @@ class _EditProfile extends State<EditProfile> {
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             decoration: InputDecoration(
-                              labelText: "Usuário",
+                              labelText: "Novo nome de usuário",
                               labelStyle: TextStyle(
                                 letterSpacing: 0.5,
                                 color: Theme.of(context).colorScheme.primary,
@@ -282,305 +256,8 @@ class _EditProfile extends State<EditProfile> {
                             validator: (user) {
                               final title = user ?? '';
 
-                              if (title.trim().isEmpty) {
-                                return 'Nome de usuário obrigatório.';
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: PhysicalModel(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.background,
-                          elevation: 2.0,
-                          shadowColor: Theme.of(context).colorScheme.onPrimary,
-                          child: TextFormField(
-                            style: TextStyle(
-                              letterSpacing: 0.5,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              labelText: "Senha",
-                              labelStyle: TextStyle(
-                                letterSpacing: 0.5,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0)),
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 0),
-                              suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      passwordVisible = !passwordVisible;
-                                    });
-                                  },
-                                  child: Icon(
-                                      passwordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
-                            ),
-                            onChanged: (value) {
-                              _validatePassword(_passwordController.text);
-                            },
-                            keyboardType: TextInputType.text,
-                            obscureText: !passwordVisible,
-                            onSaved: (senha) {
-                              _formData['senha'] = senha ?? '';
-                            },
-                            validator: (senha) {
-                              final title = senha ?? '';
-
-                              if (title.trim().isEmpty) {
-                                return 'Senha obrigatória.';
-                              } else if (levelPassword == "Fraca" ||
-                                  levelPassword == "Média") {
-                                return 'Senha tem que ser forte.';
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                        width: deviceWidth * 0.8,
-                        height: 90,
-                        child: GridView.count(
-                          padding: const EdgeInsets.all(0),
-                          crossAxisCount: 2,
-                          childAspectRatio: 4,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_box,
-                                  color:
-                                      isUppercase ? Colors.green : Colors.grey,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Flexible(
-                                    child: Text(
-                                  "Letra maiúscula",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ))
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_box,
-                                  color: isNumber ? Colors.green : Colors.grey,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Flexible(
-                                    child: Text(
-                                  "Números",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ))
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_box,
-                                  color: isSpecialCharacters
-                                      ? Colors.green
-                                      : Colors.grey,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Flexible(
-                                    child: Text(
-                                  "Caracteres especiais",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ))
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_box,
-                                  color: isSpecialCharacters
-                                      ? Colors.green
-                                      : Colors.grey,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Flexible(
-                                    child: Text(
-                                  "Mais de 6 dígitos",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ))
-                              ],
-                            ),
-                          ],
-                        )),
-                    SizedBox(
-                      width: deviceWidth * 0.8,
-                      height: 5,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: levelPassword == "Fraca"
-                            ? 1
-                            : levelPassword == "Média"
-                                ? 3
-                                : 5, // Define o número de contêineres desejados
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: levelPassword == "Fraca"
-                                      ? Colors.red
-                                      : levelPassword == "Média"
-                                          ? Colors.orange
-                                          : Colors.green,
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(3))),
-                              width: deviceWidth * 0.147,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: SizedBox(
-                        width: deviceWidth * 0.8,
-                        child: Row(
-                          children: [
-                            Text(
-                              "Nivel: ",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                letterSpacing: 0.5,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              levelPassword,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                letterSpacing: 0.5,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: PhysicalModel(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.background,
-                          elevation: 2.0,
-                          shadowColor: Theme.of(context).colorScheme.onPrimary,
-                          child: TextFormField(
-                            style: TextStyle(
-                              letterSpacing: 0.5,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            controller: _confirmPasswordController,
-                            decoration: InputDecoration(
-                              labelText: "Confirmar senha",
-                              labelStyle: TextStyle(
-                                letterSpacing: 0.5,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0)),
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 0),
-                              suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      confirmPasswordVisible =
-                                          !confirmPasswordVisible;
-                                    });
-                                  },
-                                  child: Icon(
-                                    confirmPasswordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  )),
-                            ),
-                            keyboardType: TextInputType.text,
-                            obscureText: !confirmPasswordVisible,
-                            onSaved: (confirmaSenha) {
-                              _formData['confirmaSenha'] = confirmaSenha ?? '';
-                            },
-                            validator: (confirmaSenha) {
-                              final title = confirmaSenha ?? '';
-                              print(_formData['senha'].toString());
-
-                              if (title.trim().isEmpty) {
-                                return 'Confirmar a senha obrigatório.';
-                              } else if (title.trim().toString() !=
-                                  _formData['senha'].toString()) {
-                                return 'Senhas diferentes';
+                              if (title.trim().isEmpty && _avatar == null) {
+                                return 'Você não adicionou nada para atualizar.';
                               }
 
                               return null;
@@ -592,15 +269,15 @@ class _EditProfile extends State<EditProfile> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: ElevatedButtonTh(
-                        label: 'Cadastrar',
-                        target: () {
+                        label: 'Atualizar',
+                        target: () async {
                           _submitForm();
                         },
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         width: 260,
                         height: 45,
-                        progress: true,
+                        isLoading: isLoading,
                       ),
                     ),
                   ],
