@@ -4,6 +4,7 @@ import 'package:bobok/pages/settings.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
+import 'package:bobok/wisgets/delete/modal_block.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
 import 'package:bobok/wisgets/listCard/list_recom.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,6 +32,7 @@ class _ProfileState extends State<Profile> {
   bool isEdit = false;
   List<dynamic>? addFollower = [];
   List<dynamic>? removeFollower = [];
+  List<dynamic> updatedBlocking = [];
 
   final user = FirebaseAuth.instance.currentUser!;
   var userData = {};
@@ -40,7 +42,11 @@ class _ProfileState extends State<Profile> {
   int followers = 0;
   int following = 0;
   bool isFollowing = false;
+  bool isBlocking = false;
   bool isLoading = false;
+  bool isModalVisible = false;
+  bool isLoadingBtnAdd = false;
+  bool isLoadingBtnRmv = false;
 
   @override
   void initState() {
@@ -67,6 +73,69 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  void block() async {
+    if (isFollowing) {
+      removeFollow();
+      updatedBlocking.add(widget.uid);
+      await FirestoreMethods().blockUser(user.uid, widget.uid);
+
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: removeFollower,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: updatedBlocking,
+            myfav: widget.userStore!.user!.myfav),
+      );
+    } else {
+      updatedBlocking.add(widget.uid);
+      await FirestoreMethods().blockUser(user.uid, widget.uid);
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: removeFollower,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: updatedBlocking,
+            myfav: widget.userStore!.user!.myfav),
+      );
+    }
+  }
+
+  void removeFollow() async {
+    setState(() {
+      isLoadingBtnRmv = true;
+    });
+    await FirestoreMethods().followUser(user.uid, widget.uid);
+
+    removeFollower?.remove(widget.uid.toString());
+    widget.userStore?.setUser(
+      UserData(
+          username: widget.userStore!.user!.username,
+          uid: widget.userStore!.user!.uid,
+          email: widget.userStore!.user!.email,
+          avatar: widget.userStore!.user!.avatar,
+          followers: widget.userStore!.user!.followers,
+          following: removeFollower,
+          blocked: widget.userStore!.user!.blocked,
+          blocking: widget.userStore!.user!.blocking,
+          myfav: widget.userStore!.user!.myfav),
+    );
+
+    setState(() {
+      isFollowing = false;
+      followers--;
+      isLoadingBtnRmv = false;
+    });
+  }
+
   void getUserName() async {
     try {
       setState(() {
@@ -80,6 +149,7 @@ class _ProfileState extends State<Profile> {
   }
 
   void getUserNameReviwer() async {
+    updatedBlocking = widget.userStore!.user!.blocking ?? [];
     try {
       DocumentSnapshot<Map<String, dynamic>> userDocument =
           await FirebaseFirestore.instance
@@ -90,6 +160,7 @@ class _ProfileState extends State<Profile> {
         followers = userDocument['followers'].length;
         following = userDocument['following'].length;
         isFollowing = userDocument['followers'].contains(user.uid);
+        isBlocking = userDocument['blocked'].contains(user.uid);
         userName = userDocument['username'].toString();
         avatar = userDocument['photoUrl'] == null
             ? ''
@@ -164,37 +235,34 @@ class _ProfileState extends State<Profile> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 8),
+                  child: SizedBox(
+                    child: Observer(
+                      builder: (_) {
+                        return Text(
+                          widget.currentUid != false
+                              ? widget.userStore!.user!.username.toString()
+                              : userName,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                              letterSpacing: 1.5),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    children: <Widget>[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: SizedBox(
-                              child: Observer(
-                                builder: (_) {
-                                  return Text(
-                                    widget.currentUid != false
-                                        ? widget.userStore!.user!.username
-                                            .toString()
-                                        : userName,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                        letterSpacing: 1.5),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
                           Text(
                             "Avaliadores",
                             style: TextStyle(
@@ -241,86 +309,95 @@ class _ProfileState extends State<Profile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              height: 140,
-                              width: 110,
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 150,
-                                    padding:
-                                        const EdgeInsets.all(4), // Border width
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: SizedBox(
-                                      child: Observer(builder: (_) {
-                                        return ClipRRect(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10)),
-                                          child: SizedBox.fromSize(
-                                              size: const Size.fromRadius(
-                                                  48), // Image radius
-                                              child: widget.currentUid ==
-                                                          false &&
-                                                      avatar == ''
-                                                  ? IconButton(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0),
-                                                      icon: Icon(
-                                                        Icons.person,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .background,
-                                                        size: 80,
-                                                      ),
-                                                      onPressed: () {},
-                                                    )
-                                                  : widget.currentUid !=
-                                                              false &&
-                                                          widget.userStore!
-                                                                  .user!.avatar
-                                                                  .toString() ==
-                                                              'null'
-                                                      ? IconButton(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(0),
-                                                          icon: Icon(
-                                                            Icons.person,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .background,
-                                                            size: 80,
-                                                          ),
-                                                          onPressed: () {},
-                                                        )
-                                                      : Image(
-                                                          fit: BoxFit.cover,
-                                                          image:
-                                                              CachedNetworkImageProvider(
-                                                            widget.currentUid !=
-                                                                    false
-                                                                ? widget
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: SizedBox(
+                                height: 110,
+                                width: 110,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      height: 110,
+                                      padding: const EdgeInsets.all(
+                                          4), // Border width
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      child: SizedBox(
+                                        child: Observer(builder: (_) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(10)),
+                                            child: SizedBox.fromSize(
+                                                size: const Size.fromRadius(
+                                                    48), // Image radius
+                                                child: widget.currentUid ==
+                                                            false &&
+                                                        avatar == ''
+                                                    ? IconButton(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(0),
+                                                        icon: Icon(
+                                                          Icons.person,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background,
+                                                          size: 80,
+                                                        ),
+                                                        onPressed: () {},
+                                                      )
+                                                    : widget.currentUid !=
+                                                                false &&
+                                                            widget
                                                                     .userStore!
                                                                     .user!
                                                                     .avatar
-                                                                    .toString()
-                                                                : avatar
-                                                                    .toString(),
-                                                            maxHeight: 150,
-                                                            maxWidth: 110,
-                                                          ))),
-                                        );
-                                      }),
+                                                                    .toString() ==
+                                                                'null'
+                                                        ? IconButton(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(0),
+                                                            icon: Icon(
+                                                              Icons.person,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .background,
+                                                              size: 80,
+                                                            ),
+                                                            onPressed: () {},
+                                                          )
+                                                        : Image(
+                                                            fit: BoxFit.cover,
+                                                            image:
+                                                                CachedNetworkImageProvider(
+                                                              widget.currentUid !=
+                                                                      false
+                                                                  ? widget
+                                                                      .userStore!
+                                                                      .user!
+                                                                      .avatar
+                                                                      .toString()
+                                                                  : avatar
+                                                                      .toString(),
+                                                              maxHeight: 140,
+                                                              maxWidth: 110,
+                                                            ))),
+                                          );
+                                        }),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ]),
@@ -337,71 +414,130 @@ class _ProfileState extends State<Profile> {
                               isLoading: false,
                             )
                           : isFollowing
-                              ? ElevatedButtonTh(
-                                  label: 'Remover',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  target: () async {
-                                    await FirestoreMethods()
-                                        .followUser(user.uid, widget.uid);
-
-                                    removeFollower
-                                        ?.remove(widget.uid.toString());
-                                    widget.userStore?.setUser(
-                                      UserData(
-                                          username:
-                                              widget.userStore!.user!.username,
-                                          uid: widget.userStore!.user!.uid,
-                                          email: widget.userStore!.user!.email,
-                                          avatar:
-                                              widget.userStore!.user!.avatar,
-                                          followers:
-                                              widget.userStore!.user!.followers,
-                                          following: removeFollower,
-                                          myfav: widget.userStore!.user!.myfav),
-                                    );
-
-                                    setState(() {
-                                      isFollowing = false;
-                                      followers--;
-                                    });
-                                  },
-                                  width: 120,
-                                  height: 30,
-                                  isLoading: false,
+                              ? Column(
+                                  children: [
+                                    ElevatedButtonTh(
+                                      label: 'Remover',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      target: () async {
+                                        removeFollow();
+                                      },
+                                      width: 120,
+                                      height: 30,
+                                      isLoading: isLoadingBtnRmv,
+                                    ),
+                                    ElevatedButtonTh(
+                                      label: 'Bloquear',
+                                      target: () async {
+                                        setState(() {
+                                          isModalVisible = true;
+                                        });
+                                      },
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      width: 120,
+                                      height: 30,
+                                      isLoading: false,
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                  ],
                                 )
-                              : ElevatedButtonTh(
-                                  label: 'Adicionar',
-                                  target: () async {
-                                    await FirestoreMethods()
-                                        .followUser(user.uid, widget.uid);
+                              : isBlocking
+                                  ? Column(
+                                      children: [
+                                        ElevatedButtonTh(
+                                          label: '-------',
+                                          isLoading: isLoadingBtnAdd,
+                                          target: () async {},
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          width: 120,
+                                          height: 30,
+                                        ),
+                                        ElevatedButtonTh(
+                                          label: 'Desbloquear',
+                                          target: () async {
+                                            setState(() {
+                                              isModalVisible = true;
+                                            });
+                                          },
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          width: 120,
+                                          height: 30,
+                                          isLoading: false,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        ),
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        ElevatedButtonTh(
+                                          label: 'Adicionar',
+                                          isLoading: isLoadingBtnAdd,
+                                          target: () async {
+                                            setState(() {
+                                              isLoadingBtnAdd = true;
+                                            });
+                                            await FirestoreMethods().followUser(
+                                                user.uid, widget.uid);
 
-                                    addFollower?.add(widget.uid.toString());
-                                    widget.userStore?.setUser(
-                                      UserData(
-                                          username:
-                                              widget.userStore!.user!.username,
-                                          uid: widget.userStore!.user!.uid,
-                                          email: widget.userStore!.user!.email,
-                                          avatar:
-                                              widget.userStore!.user!.avatar,
-                                          followers:
-                                              widget.userStore!.user!.followers,
-                                          following: addFollower,
-                                          myfav: widget.userStore!.user!.myfav),
-                                    );
+                                            addFollower
+                                                ?.add(widget.uid.toString());
+                                            widget.userStore?.setUser(
+                                              UserData(
+                                                  username: widget.userStore!
+                                                      .user!.username,
+                                                  uid: widget
+                                                      .userStore!.user!.uid,
+                                                  email: widget
+                                                      .userStore!.user!.email,
+                                                  avatar: widget
+                                                      .userStore!.user!.avatar,
+                                                  followers: widget.userStore!
+                                                      .user!.followers,
+                                                  following: addFollower,
+                                                  blocked: widget
+                                                      .userStore!.user!.blocked,
+                                                  blocking: widget.userStore!
+                                                      .user!.blocking,
+                                                  myfav: widget
+                                                      .userStore!.user!.myfav),
+                                            );
 
-                                    setState(() {
-                                      isFollowing = true;
-                                      followers++;
-                                    });
-                                  },
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  width: 120,
-                                  height: 30,
-                                  isLoading: false,
-                                )
+                                            setState(() {
+                                              isFollowing = true;
+                                              followers++;
+                                              isLoadingBtnAdd = false;
+                                            });
+                                          },
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          width: 120,
+                                          height: 30,
+                                        ),
+                                        ElevatedButtonTh(
+                                          label: 'Bloquear',
+                                          target: () async {
+                                            setState(() {
+                                              isModalVisible = true;
+                                            });
+                                          },
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          width: 120,
+                                          height: 30,
+                                          isLoading: false,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                        ),
+                                      ],
+                                    )
                     ],
                   ),
                 ),
@@ -418,6 +554,13 @@ class _ProfileState extends State<Profile> {
                         color: Theme.of(context).colorScheme.onError),
                     child: Row(
                       children: [
+                        BlockConfirmationModal(
+                          item: userName.toUpperCase(),
+                          onDelete: () {
+                            block();
+                          },
+                          isVisible: isModalVisible,
+                        ),
                         Expanded(
                           flex: 3,
                           child: Padding(
@@ -437,11 +580,21 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                 ),
-                                ListCardRecommendation(
-                                  uid: widget.uid,
-                                  userId: user.uid,
-                                  userStore: widget.userStore,
-                                )
+                                isBlocking
+                                    ? Text('Bloaqueado',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ))
+                                    : ListCardRecommendation(
+                                        uid: widget.uid,
+                                        userId: user.uid,
+                                        userStore: widget.userStore,
+                                      )
                               ],
                             ),
                           ),
@@ -465,11 +618,21 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                 ),
-                                ListCardProfile(
-                                  uid: widget.uid,
-                                  userId: user.uid,
-                                  userStore: widget.userStore,
-                                ),
+                                isBlocking
+                                    ? Text('Bloaqueado',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ))
+                                    : ListCardProfile(
+                                        uid: widget.uid,
+                                        userId: user.uid,
+                                        userStore: widget.userStore,
+                                      )
                               ],
                             ),
                           ),

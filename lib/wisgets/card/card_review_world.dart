@@ -5,6 +5,7 @@ import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
   bool isSave = false;
   int countLikes = 0;
   int commentLen = 0;
+  bool _isModalVisible = false;
   List<QueryDocumentSnapshot>? comments;
 
   @override
@@ -89,6 +91,8 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
           avatar: widget.userStore!.user!.avatar,
           followers: widget.userStore!.user!.followers,
           following: widget.userStore!.user!.following,
+          blocked: widget.userStore!.user!.blocked,
+          blocking: widget.userStore!.user!.blocking,
           myfav: myfav),
     );
   }
@@ -111,6 +115,11 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
     }
   }
 
+  void delete() {
+    FirestoreMethods().deleteReview(widget.review.postId);
+    widget.attList();
+  }
+
   @override
   Widget build(BuildContext context) {
     void setFav(Map<String, dynamic> fav) {
@@ -125,6 +134,8 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
             avatar: widget.userStore!.user!.avatar,
             followers: widget.userStore!.user!.followers,
             following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
             myfav: widget.userStore!.user!.myfav),
       );
     }
@@ -132,8 +143,9 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
     void menuAppbar(String value) {
       switch (value) {
         case 'Delete resenha':
-          FirestoreMethods().deleteReview(widget.review.postId);
-          widget.attList();
+          setState(() {
+            _isModalVisible = true;
+          });
           break;
         case 'Colocar na minha lista':
           setFav({
@@ -346,6 +358,13 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                                           fontSize: 14,
                                           letterSpacing: 1.5),
                                     ),
+                                  ),
+                                  DeleteConfirmationModal(
+                                    item: widget.review.title.toUpperCase(),
+                                    onDelete: () {
+                                      delete();
+                                    },
+                                    isVisible: _isModalVisible,
                                   ),
                                   Padding(
                                     padding:

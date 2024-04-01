@@ -87,8 +87,10 @@ class _ListCardWorldState extends State<ListCardWorld>
 
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo as reviews dos amigos
+    print(widget.userStore!.user!.blocking);
     var reviewsSnapshot = await FirebaseFirestore.instance
         .collection('reviews')
+        .where('uid', whereNotIn: widget.userStore!.user!.blocking)
         .orderBy("datePublish", descending: true)
         .get();
     return reviewsSnapshot.docs;

@@ -74,6 +74,8 @@ class GoogleSignInProvider extends ChangeNotifier {
         'email': googleSignIn.currentUser!.email,
         'followers': [],
         'following': [],
+        'blocked': [],
+        'blocking': [],
         'myfav': [],
         'photoUrl': fileUrl,
       });
@@ -84,6 +86,8 @@ class GoogleSignInProvider extends ChangeNotifier {
         'email': googleSignIn.currentUser!.email,
         'followers': [],
         'following': [],
+        'blocked': [],
+        'blocking': [],
         'myfav': [],
         'photoUrl': fileUrl,
       });

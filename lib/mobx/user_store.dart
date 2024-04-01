@@ -45,7 +45,6 @@ abstract class _UserStoreBase with Store, ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Recuperando os dados do usuário da cache
     String? userDataString = prefs.getString('userData');
-
     print(prefs.getString('userData'));
 
     if (userDataString != null) {

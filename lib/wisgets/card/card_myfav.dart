@@ -39,6 +39,8 @@ class _CardMyFavState extends State<CardMyFav> {
           avatar: widget.userStore!.user!.avatar,
           followers: widget.userStore!.user!.followers,
           following: widget.userStore!.user!.following,
+          blocked: widget.userStore!.user!.blocked,
+          blocking: widget.userStore!.user!.blocking,
           myfav: myfav),
     );
 

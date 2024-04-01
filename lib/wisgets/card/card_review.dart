@@ -5,6 +5,7 @@ import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,7 @@ class _CardReviewState extends State<CardReview> {
   bool isSave = false;
   int countLikes = 0;
   int commentLen = 0;
+  bool _isModalVisible = false;
   List<QueryDocumentSnapshot>? comments;
 
   @override
@@ -103,13 +105,19 @@ class _CardReviewState extends State<CardReview> {
     }
   }
 
+  void delete() {
+    FirestoreMethods().deleteReview(widget.review.postId);
+    widget.attList();
+  }
+
   @override
   Widget build(BuildContext context) {
     void menuAppbar(String value) {
       switch (value) {
         case 'Delete resenha':
-          FirestoreMethods().deleteReview(widget.review.postId);
-          widget.attList();
+          setState(() {
+            _isModalVisible = true;
+          });
           break;
         case 'Colocar na minha lista':
           break;
@@ -316,6 +324,13 @@ class _CardReviewState extends State<CardReview> {
                                           fontSize: 14,
                                           letterSpacing: 1.5),
                                     ),
+                                  ),
+                                  DeleteConfirmationModal(
+                                    item: widget.review.title.toUpperCase(),
+                                    onDelete: () {
+                                      delete();
+                                    },
+                                    isVisible: _isModalVisible,
                                   ),
                                   Padding(
                                     padding:

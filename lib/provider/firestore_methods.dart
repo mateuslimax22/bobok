@@ -188,6 +188,8 @@ class FirestoreMethods {
         email: userDocument['email'],
         followers: List<String>.from(userDocument['followers']),
         following: List<String>.from(userDocument['following']),
+        blocked: List<String>.from(userDocument['blocked']),
+        blocking: List<String>.from(userDocument['blocking']),
         myfav: List<Map<String, dynamic>>.from(userDocument['myfav']),
         avatar: userDocument['photoUrl'],
       );
@@ -246,6 +248,35 @@ class FirestoreMethods {
 
         await _firestore.collection('users').doc(uid).update({
           'following': FieldValue.arrayUnion([followId])
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> blockUser(String uid, String? blockId) async {
+    try {
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(uid).get();
+
+      List blocking = (snap.data()! as dynamic)['blocking'];
+
+      if (blocking.contains(blockId)) {
+        await _firestore.collection('users').doc(blockId).update({
+          'blocked': FieldValue.arrayRemove([uid])
+        });
+
+        await _firestore.collection('users').doc(uid).update({
+          'blocking': FieldValue.arrayRemove([blockId])
+        });
+      } else {
+        await _firestore.collection('users').doc(blockId).update({
+          'blocked': FieldValue.arrayUnion([uid])
+        });
+
+        await _firestore.collection('users').doc(uid).update({
+          'blocking': FieldValue.arrayUnion([blockId])
         });
       }
     } catch (e) {

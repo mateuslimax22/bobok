@@ -48,7 +48,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
               onTap: () {}, // impedir que o clique seja propagado para fora
               child: Container(
                 height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.7,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                   borderRadius: const BorderRadius.only(
@@ -57,7 +57,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
                   child: ListView(
                     children: [
                       ListTile(

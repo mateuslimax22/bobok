@@ -7,6 +7,8 @@ class UserData {
   final String? email;
   final List? followers;
   final List? following;
+  final List? blocked;
+  final List? blocking;
   final List<dynamic>? myfav;
 
   UserData(
@@ -16,6 +18,8 @@ class UserData {
       required this.email,
       this.followers,
       this.following,
+      this.blocked,
+      this.blocking,
       this.myfav});
 
   static UserData fromSnap(DocumentSnapshot snap) {
@@ -28,6 +32,8 @@ class UserData {
       avatar: snapshot["photoUrl"],
       followers: snapshot["followers"],
       following: snapshot["following"],
+      blocked: snapshot["blocked"],
+      blocking: snapshot["blocking"],
       myfav: snapshot["myfav"],
     );
   }
@@ -40,6 +46,10 @@ class UserData {
       avatar: json['avatar'],
       followers: List<dynamic>.from(json['followers']),
       following: List<dynamic>.from(json['following']),
+      blocked:
+          json['blocked'] != null ? List<dynamic>.from(json['blocked']) : [],
+      blocking:
+          json['blocking'] != null ? List<dynamic>.from(json['blocking']) : [],
       myfav: List<dynamic>.from(json['myfav']),
     );
   }
@@ -52,6 +62,9 @@ class UserData {
       avatar: map['avatar'],
       followers: List<dynamic>.from(map['followers']),
       following: List<dynamic>.from(map['following']),
+      blocked: map['blocked'] != null ? List<dynamic>.from(map['blocked']) : [],
+      blocking:
+          map['blocking'] != null ? List<dynamic>.from(map['blocking']) : [],
       myfav: List<dynamic>.from(map['myfav']),
     );
   }
@@ -63,6 +76,8 @@ class UserData {
         "avatar": avatar,
         "followers": followers,
         "following": following,
+        "blocked": blocked,
+        "blocking": blocking,
         "myfav": myfav
       };
 }

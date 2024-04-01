@@ -53,6 +53,8 @@ class AuthEmail extends ChangeNotifier {
         'email': email,
         'followers': [],
         'following': [],
+        'blocked': [],
+        'blocking': [],
         'myfav': [],
         'photoUrl': fileUrl,
       });
@@ -63,6 +65,8 @@ class AuthEmail extends ChangeNotifier {
         'email': email,
         'followers': [],
         'following': [],
+        'blocked': [],
+        'blocking': [],
         'myfav': [],
         'photoUrl': fileUrl,
       });
@@ -83,8 +87,6 @@ class AuthEmail extends ChangeNotifier {
       File? newAvatar, UserStore? userStore) async {
     try {
       // Atualizar o nome de usuário no Firebase Authentication
-      print("ASDASDASDASDASSD");
-      print(userName);
       if (userName != null && userName != '') {
         await FirebaseAuth.instance.currentUser!.updateDisplayName(userName);
         userStore?.setUser(
@@ -95,6 +97,8 @@ class AuthEmail extends ChangeNotifier {
               avatar: userStore.user!.avatar,
               followers: userStore.user!.followers,
               following: userStore.user!.following,
+              blocked: userStore.user!.blocked,
+              blocking: userStore.user!.blocking,
               myfav: userStore.user!.myfav),
         );
       }
@@ -122,6 +126,8 @@ class AuthEmail extends ChangeNotifier {
               avatar: fileUrl.toString(),
               followers: userStore.user!.followers,
               following: userStore.user!.following,
+              blocked: userStore.user!.blocked,
+              blocking: userStore.user!.blocking,
               myfav: userStore.user!.myfav),
         );
       }
