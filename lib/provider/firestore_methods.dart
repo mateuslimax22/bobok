@@ -226,7 +226,7 @@ class FirestoreMethods {
     }
   }
 
-  Future<void> followUser(String uid, String? followId) async {
+  Future<void> followUser(String? uid, String? followId) async {
     try {
       DocumentSnapshot snap =
           await _firestore.collection('users').doc(uid).get();

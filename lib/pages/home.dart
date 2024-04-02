@@ -98,7 +98,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
-                          Navigator.of(context).pushNamed(AppRoutes.SEARCH);
+                          Navigator.of(context).pushNamed(
+                            AppRoutes.SEARCH,
+                            arguments: {
+                              'userStore': userStore,
+                            },
+                          );
                         },
                       )
                     : IconButton(

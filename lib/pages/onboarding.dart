@@ -39,6 +39,8 @@ class OnboardingState extends State<Onboarding> {
                 avatar: user.avatar,
                 followers: user.followers,
                 following: user.following,
+                blocked: user.blocked,
+                blocking: user.blocking,
                 myfav: user.myfav,
               ),
             ); // Se o usuário estiver autenticado e os dados do usuário estiverem disponíveis, vá para a tela inicial

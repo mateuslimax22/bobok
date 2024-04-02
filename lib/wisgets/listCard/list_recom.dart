@@ -50,7 +50,15 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
                     fontSize: 16,
                   ),
                 )
-              : const Text("Sem Indicações");
+              : Text(
+                  "Sem Indicações",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    letterSpacing: 0.5,
+                    fontSize: 16,
+                  ),
+                );
         }
 
         // Obtendo IDs de revisões favoritas do snapshot

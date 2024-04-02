@@ -49,6 +49,7 @@ class AuthEmail extends ChangeNotifier {
       //add user on database
       await _firestore.collection('users').doc(credential.user!.uid).set({
         'username': userName,
+        'searchname': userName.toLowerCase(),
         'uid': credential.user!.uid,
         'email': email,
         'followers': [],
@@ -135,6 +136,7 @@ class AuthEmail extends ChangeNotifier {
       // Atualizar as informações do usuário no Firestore
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
         if (userName != null && userName != '') 'username': userName,
+        if (userName != null && userName != '') 'searchname': userName,
         if (fileUrl != null) 'photoUrl': fileUrl.toString(),
       });
     } catch (e) {

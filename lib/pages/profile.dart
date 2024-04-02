@@ -32,6 +32,7 @@ class _ProfileState extends State<Profile> {
   bool isEdit = false;
   List<dynamic>? addFollower = [];
   List<dynamic>? removeFollower = [];
+  List<dynamic>? removeFollowing = [];
   List<dynamic> updatedBlocking = [];
 
   final user = FirebaseAuth.instance.currentUser!;
@@ -42,7 +43,9 @@ class _ProfileState extends State<Profile> {
   int followers = 0;
   int following = 0;
   bool isFollowing = false;
+  bool isFollowers = false;
   bool isBlocking = false;
+  bool isBlocked = false;
   bool isLoading = false;
   bool isModalVisible = false;
   bool isLoadingBtnAdd = false;
@@ -55,18 +58,13 @@ class _ProfileState extends State<Profile> {
     // Inicialize o userStore no initState
   }
 
-  void onChangedEdit() {
-    setState(() {
-      isEdit = !isEdit;
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.currentUid == false) {
       addFollower = widget.userStore?.user?.following;
       removeFollower = widget.userStore?.user?.following;
+      removeFollowing = widget.userStore?.user?.followers;
       getUserNameReviwer();
     } else {
       getUserName();
@@ -74,39 +72,81 @@ class _ProfileState extends State<Profile> {
   }
 
   void block() async {
+    // Sempre executar essas ações independentemente das condições.
     if (isFollowing) {
       removeFollow();
-      updatedBlocking.add(widget.uid);
-      await FirestoreMethods().blockUser(user.uid, widget.uid);
-
-      widget.userStore?.setUser(
-        UserData(
-            username: widget.userStore!.user!.username,
-            uid: widget.userStore!.user!.uid,
-            email: widget.userStore!.user!.email,
-            avatar: widget.userStore!.user!.avatar,
-            followers: widget.userStore!.user!.followers,
-            following: removeFollower,
-            blocked: widget.userStore!.user!.blocked,
-            blocking: updatedBlocking,
-            myfav: widget.userStore!.user!.myfav),
-      );
-    } else {
-      updatedBlocking.add(widget.uid);
-      await FirestoreMethods().blockUser(user.uid, widget.uid);
-      widget.userStore?.setUser(
-        UserData(
-            username: widget.userStore!.user!.username,
-            uid: widget.userStore!.user!.uid,
-            email: widget.userStore!.user!.email,
-            avatar: widget.userStore!.user!.avatar,
-            followers: widget.userStore!.user!.followers,
-            following: removeFollower,
-            blocked: widget.userStore!.user!.blocked,
-            blocking: updatedBlocking,
-            myfav: widget.userStore!.user!.myfav),
-      );
     }
+    if (isFollowers) {
+      removeFollowrs();
+    }
+
+    closeModal();
+    updatedBlocking.add(widget.uid);
+    await FirestoreMethods().blockUser(user.uid, widget.uid);
+
+    setState(() {
+      isBlocking = true;
+      isEdit = false;
+    });
+
+    // Atualiza o usuário uma vez, depois de manipular as condições necessárias.
+    widget.userStore?.setUser(
+      UserData(
+        username: widget.userStore!.user!.username,
+        uid: widget.userStore!.user!.uid,
+        email: widget.userStore!.user!.email,
+        avatar: widget.userStore!.user!.avatar,
+        followers:
+            isFollowers ? removeFollowing : widget.userStore!.user!.followers,
+        following:
+            isFollowing ? removeFollower : widget.userStore!.user!.following,
+        blocked: widget.userStore!.user!.blocked,
+        blocking: updatedBlocking,
+        myfav: widget.userStore!.user!.myfav,
+      ),
+    );
+  }
+
+  void unblock() async {
+    setState(() {
+      isEdit = true;
+    });
+    updatedBlocking.remove(widget.uid);
+    await FirestoreMethods().blockUser(user.uid, widget.uid);
+    setState(() {
+      isBlocked = false;
+      isEdit = false;
+    });
+    widget.userStore?.setUser(
+      UserData(
+          username: widget.userStore!.user!.username,
+          uid: widget.userStore!.user!.uid,
+          email: widget.userStore!.user!.email,
+          avatar: widget.userStore!.user!.avatar,
+          followers: widget.userStore!.user!.followers,
+          following: widget.userStore!.user!.following,
+          blocked: widget.userStore!.user!.blocked,
+          blocking: updatedBlocking,
+          myfav: widget.userStore!.user!.myfav),
+    );
+  }
+
+  void removeFollowrs() async {
+    await FirestoreMethods().followUser(widget.uid, user.uid);
+
+    removeFollowing?.remove(user.uid.toString());
+    widget.userStore?.setUser(
+      UserData(
+          username: widget.userStore!.user!.username,
+          uid: widget.userStore!.user!.uid,
+          email: widget.userStore!.user!.email,
+          avatar: widget.userStore!.user!.avatar,
+          followers: removeFollowing,
+          following: widget.userStore!.user!.following,
+          blocked: widget.userStore!.user!.blocked,
+          blocking: widget.userStore!.user!.blocking,
+          myfav: widget.userStore!.user!.myfav),
+    );
   }
 
   void removeFollow() async {
@@ -160,7 +200,9 @@ class _ProfileState extends State<Profile> {
         followers = userDocument['followers'].length;
         following = userDocument['following'].length;
         isFollowing = userDocument['followers'].contains(user.uid);
-        isBlocking = userDocument['blocked'].contains(user.uid);
+        isBlocking = userDocument['blocking'].contains(user.uid);
+        isBlocked = userDocument['blocked'].contains(user.uid);
+        isFollowers = userDocument['following'].contains(user.uid);
         userName = userDocument['username'].toString();
         avatar = userDocument['photoUrl'] == null
             ? ''
@@ -171,6 +213,12 @@ class _ProfileState extends State<Profile> {
         getUserName();
       }
     }
+  }
+
+  void closeModal() {
+    setState(() {
+      isModalVisible = !isModalVisible;
+    });
   }
 
   @override
@@ -430,9 +478,7 @@ class _ProfileState extends State<Profile> {
                                     ElevatedButtonTh(
                                       label: 'Bloquear',
                                       target: () async {
-                                        setState(() {
-                                          isModalVisible = true;
-                                        });
+                                        closeModal();
                                       },
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -444,7 +490,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ],
                                 )
-                              : isBlocking
+                              : isBlocked
                                   ? Column(
                                       children: [
                                         ElevatedButtonTh(
@@ -459,85 +505,114 @@ class _ProfileState extends State<Profile> {
                                         ElevatedButtonTh(
                                           label: 'Desbloquear',
                                           target: () async {
-                                            setState(() {
-                                              isModalVisible = true;
-                                            });
+                                            unblock();
                                           },
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           width: 120,
                                           height: 30,
-                                          isLoading: false,
+                                          isLoading: isEdit,
                                           backgroundColor: Theme.of(context)
                                               .colorScheme
                                               .error,
                                         ),
                                       ],
                                     )
-                                  : Column(
-                                      children: [
-                                        ElevatedButtonTh(
-                                          label: 'Adicionar',
-                                          isLoading: isLoadingBtnAdd,
-                                          target: () async {
-                                            setState(() {
-                                              isLoadingBtnAdd = true;
-                                            });
-                                            await FirestoreMethods().followUser(
-                                                user.uid, widget.uid);
+                                  : isBlocking
+                                      ? Column(
+                                          children: [
+                                            ElevatedButtonTh(
+                                              label: '-------',
+                                              isLoading: isLoadingBtnAdd,
+                                              target: () async {},
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              width: 120,
+                                              height: 30,
+                                            ),
+                                            ElevatedButtonTh(
+                                              label: 'bloqueado',
+                                              target: () async {},
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              width: 120,
+                                              height: 30,
+                                              isLoading: isEdit,
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            ElevatedButtonTh(
+                                              label: 'Adicionar',
+                                              isLoading: isLoadingBtnAdd,
+                                              target: () async {
+                                                setState(() {
+                                                  isLoadingBtnAdd = true;
+                                                });
+                                                await FirestoreMethods()
+                                                    .followUser(
+                                                        user.uid, widget.uid);
 
-                                            addFollower
-                                                ?.add(widget.uid.toString());
-                                            widget.userStore?.setUser(
-                                              UserData(
-                                                  username: widget.userStore!
-                                                      .user!.username,
-                                                  uid: widget
-                                                      .userStore!.user!.uid,
-                                                  email: widget
-                                                      .userStore!.user!.email,
-                                                  avatar: widget
-                                                      .userStore!.user!.avatar,
-                                                  followers: widget.userStore!
-                                                      .user!.followers,
-                                                  following: addFollower,
-                                                  blocked: widget
-                                                      .userStore!.user!.blocked,
-                                                  blocking: widget.userStore!
-                                                      .user!.blocking,
-                                                  myfav: widget
-                                                      .userStore!.user!.myfav),
-                                            );
+                                                addFollower?.add(
+                                                    widget.uid.toString());
+                                                widget.userStore?.setUser(
+                                                  UserData(
+                                                      username: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .username,
+                                                      uid: widget
+                                                          .userStore!.user!.uid,
+                                                      email: widget.userStore!
+                                                          .user!.email,
+                                                      avatar: widget.userStore!
+                                                          .user!.avatar,
+                                                      followers: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .followers,
+                                                      following: addFollower,
+                                                      blocked: widget.userStore!
+                                                          .user!.blocked,
+                                                      blocking: widget
+                                                          .userStore!
+                                                          .user!
+                                                          .blocking,
+                                                      myfav: widget.userStore!
+                                                          .user!.myfav),
+                                                );
 
-                                            setState(() {
-                                              isFollowing = true;
-                                              followers++;
-                                              isLoadingBtnAdd = false;
-                                            });
-                                          },
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          width: 120,
-                                          height: 30,
-                                        ),
-                                        ElevatedButtonTh(
-                                          label: 'Bloquear',
-                                          target: () async {
-                                            setState(() {
-                                              isModalVisible = true;
-                                            });
-                                          },
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          width: 120,
-                                          height: 30,
-                                          isLoading: false,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                        ),
-                                      ],
-                                    )
+                                                setState(() {
+                                                  isFollowing = true;
+                                                  followers++;
+                                                  isLoadingBtnAdd = false;
+                                                });
+                                              },
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              width: 120,
+                                              height: 30,
+                                            ),
+                                            ElevatedButtonTh(
+                                              label: 'Bloquear',
+                                              target: () async {
+                                                closeModal();
+                                              },
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              width: 120,
+                                              height: 30,
+                                              isLoading: false,
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          ],
+                                        )
                     ],
                   ),
                 ),
@@ -580,7 +655,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                 ),
-                                isBlocking
+                                isBlocking || isBlocked
                                     ? Text('Bloaqueado',
                                         style: TextStyle(
                                           color: Theme.of(context)
@@ -618,7 +693,7 @@ class _ProfileState extends State<Profile> {
                                     ),
                                   ),
                                 ),
-                                isBlocking
+                                isBlocking || isBlocked
                                     ? Text('Bloaqueado',
                                         style: TextStyle(
                                           color: Theme.of(context)

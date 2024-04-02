@@ -87,13 +87,20 @@ class _ListCardWorldState extends State<ListCardWorld>
 
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo as reviews dos amigos
-    print(widget.userStore!.user!.blocking);
-    var reviewsSnapshot = await FirebaseFirestore.instance
-        .collection('reviews')
-        .where('uid', whereNotIn: widget.userStore!.user!.blocking)
-        .orderBy("datePublish", descending: true)
-        .get();
-    return reviewsSnapshot.docs;
+    if (widget.userStore!.user!.blocking!.isNotEmpty ||
+        widget.userStore!.user!.blocked!.isNotEmpty) {
+      var reviewsSnapshot = await FirebaseFirestore.instance
+          .collection('reviews')
+          .where('uid', whereNotIn: [
+        ...widget.userStore!.user!.blocking!,
+        ...widget.userStore!.user!.blocked!
+      ]).get();
+      return reviewsSnapshot.docs;
+    } else {
+      var reviewsSnapshot =
+          await FirebaseFirestore.instance.collection('reviews').get();
+      return reviewsSnapshot.docs;
+    }
   }
 
   Future<void> attList() async {
@@ -130,7 +137,8 @@ class _ListCardWorldState extends State<ListCardWorld>
                   return const SizedBox();
                 },
                 itemBuilder: (context, index) {
-                  Review review = Review.fromSnap(snapshot.data![index]);
+                  int reverseIndex = snapshot.data!.length - 1 - index;
+                  Review review = Review.fromSnap(snapshot.data![reverseIndex]);
                   return CardReviewWorld(
                     colorback: review.spoiler == true
                         ? Theme.of(context).colorScheme.secondaryContainer

@@ -70,6 +70,7 @@ class GoogleSignInProvider extends ChangeNotifier {
       //add user on database
       await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
         'username': googleSignIn.currentUser!.displayName,
+        'searchname': googleSignIn.currentUser!.displayName!.toLowerCase(),
         'uid': _auth.currentUser!.uid,
         'email': googleSignIn.currentUser!.email,
         'followers': [],
