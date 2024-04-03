@@ -20,6 +20,7 @@ class _SignInConatiner extends State<SignInConatiner> {
   bool msgError = false;
   bool notValid = false;
   bool isLoading = false;
+  bool isLoadingEmail = false;
   bool passwordVisible = false;
   final TextEditingController _passwordController = TextEditingController();
 
@@ -27,14 +28,14 @@ class _SignInConatiner extends State<SignInConatiner> {
   Widget build(BuildContext context) {
     void submitForm() async {
       setState(() {
-        isLoading = true;
+        isLoadingEmail = true;
       });
       final isValid = _formKey.currentState?.validate() ?? false;
 
       if (!isValid) {
         notValid = true;
         setState(() {
-          isLoading = false;
+          isLoadingEmail = false;
         });
         return;
       }
@@ -49,7 +50,7 @@ class _SignInConatiner extends State<SignInConatiner> {
 
       if (resp != "login") {
         setState(() {
-          isLoading = false;
+          isLoadingEmail = false;
         });
       }
     }
@@ -182,7 +183,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
-                isLoading: isLoading,
+                isLoading: isLoadingEmail,
               ),
             ),
             Row(children: <Widget>[

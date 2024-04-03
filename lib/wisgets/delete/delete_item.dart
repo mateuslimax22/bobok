@@ -21,7 +21,7 @@ class DeleteConfirmationModal extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               content: Text(
-                'Deseja bloquear o usuário "$item"?',
+                'Deseja deletar "$item"?',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 15,

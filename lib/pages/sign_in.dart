@@ -158,7 +158,7 @@ class _SignIn extends State<SignIn> {
                     decoration: BoxDecoration(
                         color: Theme.of(context)
                             .colorScheme
-                            .background
+                            .onError
                             .withOpacity(0.8),
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20))),

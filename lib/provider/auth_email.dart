@@ -145,6 +145,20 @@ class AuthEmail extends ChangeNotifier {
     }
   }
 
+  String mapFirebaseErrorMessage(String? errorCode) {
+    print(errorCode);
+    switch (errorCode) {
+      case 'There is no user record corresponding to this identifier. The user may have been deleted.':
+        return 'Usuário não encontrado. Por favor, verifique o email ou senha digitado';
+      case 'The password is invalid or the user does not have a password.':
+        return 'Usuário não encontrado. Por favor, verifique o email ou senha digitado';
+      case 'The email address is badly formatted.':
+        return 'O formato do email está incorreto.';
+      default:
+        return 'Ocorreu um erro durante a autenticação. Por favor, tente novamente mais tarde.';
+    }
+  }
+
   Future signInWithEmailAndPassword(
       UserProvider userProvider, String email, String password) async {
     try {
@@ -158,8 +172,19 @@ class AuthEmail extends ChangeNotifier {
       userProvider.setUser(userData);
       return "login";
     } on FirebaseAuthException catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(_context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Ocorreu um erro desconhecido!")),
+        SnackBar(
+            // ignore: use_build_context_synchronously
+            backgroundColor: Theme.of(_context).colorScheme.onError,
+            content: Text(
+              mapFirebaseErrorMessage(e.message),
+              style: TextStyle(
+                  // ignore: use_build_context_synchronously
+                  color: Theme.of(_context).colorScheme.primary,
+                  fontSize: 15,
+                  letterSpacing: 1.5),
+            )),
       );
       return e.message;
     }

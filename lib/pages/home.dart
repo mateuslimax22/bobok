@@ -113,7 +113,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         ),
                         tooltip: 'Show Snackbar',
                         onPressed: () {
-                          Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
+                          Navigator.of(context).pushNamed(
+                            AppRoutes.ADD_REVIEW,
+                            arguments: {
+                              'userStore': userStore,
+                            },
+                          );
                         },
                       )
           ]),

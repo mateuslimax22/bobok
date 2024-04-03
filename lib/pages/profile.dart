@@ -263,18 +263,7 @@ class _ProfileState extends State<Profile> {
                 titleSpacing: 5,
                 title: Image.asset(imagePath,
                     width: 133, height: 45, fit: BoxFit.fill),
-                actions: [
-                    PopupMenuButton<String>(
-                        onSelected: menuAppbar,
-                        itemBuilder: (BuildContext context) {
-                          return {'Logout', 'Settings'}.map((String choice) {
-                            return PopupMenuItem<String>(
-                              value: choice,
-                              child: Text(choice),
-                            );
-                          }).toList();
-                        })
-                  ])
+              )
             : null,
         body: Stack(
           children: [
@@ -283,7 +272,7 @@ class _ProfileState extends State<Profile> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 8),
+                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 8),
                   child: SizedBox(
                     child: Observer(
                       builder: (_) {
@@ -294,8 +283,8 @@ class _ProfileState extends State<Profile> {
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                              letterSpacing: 1.5),
+                              fontSize: 24,
+                              letterSpacing: 1.8),
                         );
                       },
                     ),

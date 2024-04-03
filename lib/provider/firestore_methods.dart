@@ -24,6 +24,7 @@ class FirestoreMethods {
       String title,
       String review,
       bool spoiler,
+      String profileImg,
       String category,
       List<String> genresSelect) async {
     String res = "Some error occured";
@@ -46,10 +47,11 @@ class FirestoreMethods {
       final newReview = Review(
         uid: _auth.currentUser!.uid,
         username: userName,
+        searchname: title.toLowerCase(),
         title: title,
         review: review,
         imageUrl: fileUrl,
-        profileImg: _auth.currentUser?.photoURL,
+        profileImg: profileImg,
         postId: postId,
         likes: [],
         datePublish: DateTime.now(),
@@ -130,6 +132,39 @@ class FirestoreMethods {
           'datePublished': DateTime.now(),
         });
       }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> editComment(
+      String postId, String commentId, String newText) async {
+    try {
+      if (newText.isNotEmpty) {
+        await _firestore
+            .collection('reviews')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'text': newText,
+          'datePublished': DateTime.now(),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+// Função para excluir um comentário
+  Future<void> deleteComment(String postId, String commentId) async {
+    try {
+      await _firestore
+          .collection('reviews')
+          .doc(postId)
+          .collection('comments')
+          .doc(commentId)
+          .delete();
     } catch (e) {
       print(e.toString());
     }

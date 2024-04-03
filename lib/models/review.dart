@@ -4,6 +4,7 @@ class Review {
   final String? uid;
   final String? postId;
   final String username;
+  final String? searchname;
   final String title;
   final String review;
   final datePublish;
@@ -17,6 +18,7 @@ class Review {
   Review({
     this.uid,
     required this.username,
+    this.searchname,
     required this.title,
     required this.review,
     required this.imageUrl,
@@ -32,6 +34,7 @@ class Review {
   Map<String, dynamic> toJson() => {
         "uid": uid,
         "username": username,
+        "searchname": searchname,
         "title": title,
         "review": review,
         "imageUrl": imageUrl,
@@ -49,6 +52,7 @@ class Review {
     return Review(
         uid: snapshot['uid'],
         username: snapshot['username'],
+        searchname: snapshot['searchname'],
         title: snapshot['title'],
         review: snapshot['review'],
         imageUrl: snapshot['imageUrl'],

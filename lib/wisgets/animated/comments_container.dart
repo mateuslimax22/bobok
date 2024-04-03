@@ -15,7 +15,7 @@ class CommentsCard extends StatefulWidget {
   final String? avatar;
   final String postId;
   final String userName;
-  final userUid;
+  final String userUid;
 
   @override
   State<CommentsCard> createState() => _CommentsCard();
@@ -80,6 +80,8 @@ class _CommentsCard extends State<CommentsCard> {
                         itemBuilder: (context, index) {
                           return CardComment(
                             snap: snapshot.data!.docs[index],
+                            userId: widget.userUid,
+                            postId: widget.postId,
                           );
                         },
                       );

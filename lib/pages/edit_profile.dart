@@ -92,195 +92,220 @@ class _EditProfile extends State<EditProfile> {
           foregroundColor: Theme.of(context).colorScheme.primary,
           titleSpacing: 5,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.all(4), // Border width
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.background,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.warning_amber_rounded,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                  "Você pode atualizar todos os campos ou somente o que desejar !",
-                                  style: TextStyle(
-                                    letterSpacing: 0.5,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 110,
-                        width: 110,
-                        child: Stack(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4), // Border width
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                child: SizedBox.fromSize(
-                                  size:
-                                      const Size.fromRadius(48), // Image radius
-                                  child: _avatar == null
-                                      ? IconButton(
-                                          padding: const EdgeInsets.all(0),
-                                          icon: Icon(
-                                            Icons.person,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .background,
-                                            size: 80,
-                                          ),
-                                          onPressed: () {
-                                            uploadImage();
-                                          },
-                                        )
-                                      : Image.file(
-                                          _avatar!,
-                                          fit: BoxFit.cover,
-                                        ),
+        backgroundColor: Theme.of(context).colorScheme.onError,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 3,
+                ),
+              ),
+              borderRadius: BorderRadius.circular(8),
+              color: Theme.of(context).colorScheme.onError),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.all(4), // Border width
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.background,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary
+                                      .withOpacity(0.2),
+                                  spreadRadius: 0.3,
+                                  blurRadius: 1,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                            ),
-                            Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: RawMaterialButton(
-                                    onPressed: () {},
-                                    elevation: 2.0,
-                                    fillColor: Theme.of(context)
-                                        .colorScheme
-                                        .background,
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5))),
-                                    child: IconButton(
-                                      padding: const EdgeInsets.all(0),
-                                      icon: Icon(
-                                        Icons.camera_alt_outlined,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                      onPressed: () {
-                                        uploadImage();
-                                      },
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text("Atualize sua foto",
-                        style: TextStyle(
-                          letterSpacing: 0.5,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: PhysicalModel(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.background,
-                          elevation: 2.0,
-                          shadowColor: Theme.of(context).colorScheme.onPrimary,
-                          child: TextFormField(
-                            style: TextStyle(
-                              letterSpacing: 0.5,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: "Novo nome de usuário",
-                              labelStyle: TextStyle(
-                                letterSpacing: 0.5,
-                                color: Theme.of(context).colorScheme.primary,
+                              Flexible(
+                                child: Text(
+                                    "Você pode atualizar todos os campos ou somente o que desejar !",
+                                    style: TextStyle(
+                                      letterSpacing: 0.5,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    )),
                               ),
-                              border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5.0)),
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 0),
-                            ),
-                            textInputAction: TextInputAction.next,
-                            onSaved: (user) {
-                              _formData['user'] = user ?? '';
-                            },
-                            validator: (user) {
-                              final title = user ?? '';
-
-                              if (title.trim().isEmpty && _avatar == null) {
-                                return 'Você não adicionou nada para atualizar.';
-                              }
-
-                              return null;
-                            },
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ElevatedButtonTh(
-                        label: 'Atualizar',
-                        target: () async {
-                          _submitForm();
-                        },
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        width: 260,
-                        height: 45,
-                        isLoading: isLoading,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 110,
+                          width: 110,
+                          child: Stack(
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.all(4), // Border width
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                  child: SizedBox.fromSize(
+                                    size: const Size.fromRadius(
+                                        48), // Image radius
+                                    child: _avatar == null
+                                        ? IconButton(
+                                            padding: const EdgeInsets.all(0),
+                                            icon: Icon(
+                                              Icons.person,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              size: 80,
+                                            ),
+                                            onPressed: () {
+                                              uploadImage();
+                                            },
+                                          )
+                                        : Image.file(
+                                            _avatar!,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: RawMaterialButton(
+                                      onPressed: () {},
+                                      elevation: 2.0,
+                                      fillColor: Theme.of(context)
+                                          .colorScheme
+                                          .background,
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5))),
+                                      child: IconButton(
+                                        padding: const EdgeInsets.all(0),
+                                        icon: Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        onPressed: () {
+                                          uploadImage();
+                                        },
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      Text("Atualize sua foto",
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: PhysicalModel(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).colorScheme.background,
+                            elevation: 2.0,
+                            shadowColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            child: TextFormField(
+                              style: TextStyle(
+                                letterSpacing: 0.5,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              decoration: InputDecoration(
+                                labelText: "Novo nome de usuário",
+                                labelStyle: TextStyle(
+                                  letterSpacing: 0.5,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                border: InputBorder.none,
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5.0)),
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 0),
+                              ),
+                              textInputAction: TextInputAction.next,
+                              onSaved: (user) {
+                                _formData['user'] = user ?? '';
+                              },
+                              validator: (user) {
+                                final title = user ?? '';
+
+                                if (title.trim().isEmpty && _avatar == null) {
+                                  return 'Você não adicionou nada para atualizar.';
+                                }
+
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: ElevatedButtonTh(
+                          label: 'Atualizar',
+                          target: () async {
+                            _submitForm();
+                          },
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          width: 260,
+                          height: 45,
+                          isLoading: isLoading,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
