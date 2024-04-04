@@ -136,7 +136,8 @@ class AuthEmail extends ChangeNotifier {
       // Atualizar as informações do usuário no Firestore
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
         if (userName != null && userName != '') 'username': userName,
-        if (userName != null && userName != '') 'searchname': userName,
+        if (userName != null && userName != '')
+          'searchname': userName.toLowerCase(),
         if (fileUrl != null) 'photoUrl': fileUrl.toString(),
       });
     } catch (e) {
@@ -146,7 +147,6 @@ class AuthEmail extends ChangeNotifier {
   }
 
   String mapFirebaseErrorMessage(String? errorCode) {
-    print(errorCode);
     switch (errorCode) {
       case 'There is no user record corresponding to this identifier. The user may have been deleted.':
         return 'Usuário não encontrado. Por favor, verifique o email ou senha digitado';

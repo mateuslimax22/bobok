@@ -68,12 +68,12 @@ class _CardTop5State extends State<CardTop5> {
               Image.network(
                 widget.itemReview.imageUrl,
                 width: cardSizeWidth * 0.5,
-                height: 200,
+                height: cardSizeWidth,
                 fit: BoxFit.cover,
               ),
               Container(
                 width: cardSizeWidth * 0.5,
-                height: 200,
+                height: cardSizeWidth,
                 color: Colors.black.withOpacity(0.6),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../provider/user_provider.dart';
 import '../../wisgets/btn/elevated.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignInConatiner extends StatefulWidget {
   const SignInConatiner({super.key});
@@ -63,7 +64,7 @@ class _SignInConatiner extends State<SignInConatiner> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Bem vindo ao BoBok',
+            Text(AppLocalizations.of(context)!.welcome,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium!.copyWith(
                     letterSpacing: 0.5,

@@ -18,18 +18,28 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:flutter/services.dart'; fullscreen
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   MobileAds.instance.initialize();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 //ThemeData globalTheme = darkTheme;
@@ -53,6 +63,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: isDarkMode ? darkTheme : lightTheme,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('pt', 'BR'),
+        ],
         home: const Onboarding(),
         routes: {
           AppRoutes.REVIEW_DETAIL: (ctx) => const ReviewDetail(),

@@ -164,7 +164,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
       color: widget.colorback,
       child: SizedBox(
         width: deviceWidth,
-        height: 326,
+        height: deviceHeight * 0.41,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
@@ -483,100 +483,104 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                     ),
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3.0),
-                      child: SizedBox(
-                        height: 35,
-                        width: 25,
-                        child: IconButton(
-                          icon: Icon(Icons.star_border_rounded,
-                              size: 25,
-                              color: isLike
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onPrimary),
-                          tooltip: 'Show Snackbar',
-                          onPressed: () async {
-                            setState(() {
-                              isLike = !isLike;
-                            });
-                            setState(() {
-                              isLike
-                                  ? countLikes = ++countLikes
-                                  : countLikes = --countLikes;
-                            });
-                            await FirestoreMethods().likePost(
-                                widget.review.postId, widget.user.uid, isLike);
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: Text(
-                          countLikes.toString(),
-                          style: TextStyle(
-                              color: isLike
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onPrimary),
-                        )),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: SizedBox(
-                        height: 40,
-                        width: 30,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.messenger_outline,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 20,
+                SizedBox(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: SizedBox(
+                          height: 35,
+                          width: 25,
+                          child: IconButton(
+                            icon: Icon(Icons.star_border_rounded,
+                                size: 25,
+                                color: isLike
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onPrimary),
+                            tooltip: 'Show Snackbar',
+                            onPressed: () async {
+                              setState(() {
+                                isLike = !isLike;
+                              });
+                              setState(() {
+                                isLike
+                                    ? countLikes = ++countLikes
+                                    : countLikes = --countLikes;
+                              });
+                              await FirestoreMethods().likePost(
+                                  widget.review.postId,
+                                  widget.user.uid,
+                                  isLike);
+                            },
                           ),
-                          tooltip: 'Show Snackbar',
-                          onPressed: () {
-                            navigateToReviewDetail(context, true);
-                          },
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: SizedBox(
-                        height: 40,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.bookmark_add_outlined,
-                            color: isSave
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onPrimary,
-                            size: 20,
+                      SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: Text(
+                            countLikes.toString(),
+                            style: TextStyle(
+                                color: isLike
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onPrimary),
+                          )),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: SizedBox(
+                          height: 40,
+                          width: 30,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.messenger_outline,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              size: 20,
+                            ),
+                            tooltip: 'Show Snackbar',
+                            onPressed: () {
+                              navigateToReviewDetail(context, true);
+                            },
                           ),
-                          tooltip: 'Show Snackbar',
-                          onPressed: () {
-                            setState(() {
-                              isSave = !isSave;
-                            });
-                            setState(() {
-                              isSave
-                                  ? setFav({
-                                      "title": widget.review.title,
-                                      "category": widget.review.category,
-                                      "imageUrl": widget.review.imageUrl
-                                    })
-                                  : removeFav(widget.userStore!.user!.myfav, {
-                                      "title": widget.review.title,
-                                      "category": widget.review.category,
-                                      "imageUrl": widget.review.imageUrl
-                                    });
-                            });
-                          },
                         ),
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: SizedBox(
+                          height: 40,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.bookmark_add_outlined,
+                              color: isSave
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onPrimary,
+                              size: 20,
+                            ),
+                            tooltip: 'Show Snackbar',
+                            onPressed: () {
+                              setState(() {
+                                isSave = !isSave;
+                              });
+                              setState(() {
+                                isSave
+                                    ? setFav({
+                                        "title": widget.review.title,
+                                        "category": widget.review.category,
+                                        "imageUrl": widget.review.imageUrl
+                                      })
+                                    : removeFav(widget.userStore!.user!.myfav, {
+                                        "title": widget.review.title,
+                                        "category": widget.review.category,
+                                        "imageUrl": widget.review.imageUrl
+                                      });
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
