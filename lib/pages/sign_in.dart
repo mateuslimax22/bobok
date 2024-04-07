@@ -1,6 +1,7 @@
 import 'package:bobok/wisgets/sign/sign_in_container.dart';
 import 'package:bobok/wisgets/sign/sign_up_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/constants.dart';
 
@@ -87,12 +88,12 @@ class _SignIn extends State<SignIn> {
         children: [
           _showLogo
               ? Text(
-                  "Não possui conta ? ",
+                  AppLocalizations.of(context)!.noAcc,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )
               : Text(
-                  "Já possui conta ? ",
+                  AppLocalizations.of(context)!.yesAcc,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
@@ -102,12 +103,12 @@ class _SignIn extends State<SignIn> {
               // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
             },
             child: _showLogo
-                ? Text("Cadastre-se.",
+                ? Text(AppLocalizations.of(context)!.signUp,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5))
                 : Text(
-                    "Entar ",
+                    AppLocalizations.of(context)!.login,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5),

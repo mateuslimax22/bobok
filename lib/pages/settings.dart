@@ -4,6 +4,7 @@ import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsMenu extends StatefulWidget {
   const SettingsMenu({super.key, this.userStore});
@@ -15,7 +16,6 @@ class SettingsMenu extends StatefulWidget {
 
 class _SettingsMenuState extends State<SettingsMenu> {
   void logout() async {
-    print("asdasd");
     await widget.userStore?.clearUserFromCache();
     // ignore: use_build_context_synchronously
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -65,7 +65,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
                             Icons.palette,
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
-                          title: Text('Editar Perfl',
+                          title: Text(AppLocalizations.of(context)!.edtPro,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.onPrimary,
                               )),

@@ -11,6 +11,7 @@ class Review {
   final String imageUrl;
   final String? profileImg;
   final likes;
+  final String? language;
   final bool spoiler;
   final String category;
   final genres;
@@ -26,6 +27,7 @@ class Review {
     this.datePublish,
     this.postId,
     required this.likes,
+    this.language,
     required this.spoiler,
     required this.category,
     required this.genres,
@@ -42,6 +44,7 @@ class Review {
         "postId": postId,
         "likes": [],
         "datePublish": datePublish,
+        "language": language,
         "spoiler": spoiler,
         "category": category,
         "genres": genres,
@@ -60,6 +63,7 @@ class Review {
         postId: snapshot['postId'],
         likes: snapshot['likes'],
         datePublish: ['datePublish'],
+        language: snapshot['language'],
         spoiler: snapshot['spoiler'],
         category: snapshot['category'],
         genres: snapshot['genres']);

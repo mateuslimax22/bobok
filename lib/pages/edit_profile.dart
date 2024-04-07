@@ -1,13 +1,10 @@
 // ignore_for_file: dead_code
-import 'package:bobok/models/user.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'dart:io';
 import 'package:bobok/provider/auth_email.dart';
-import 'package:bobok/provider/user_provider.dart';
-import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -81,7 +78,7 @@ class _EditProfile extends State<EditProfile> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "Atualize o Perfil",
+            AppLocalizations.of(context)!.edtPro,
             style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 25,
@@ -145,15 +142,16 @@ class _EditProfile extends State<EditProfile> {
                                 ),
                               ),
                               Flexible(
-                                child: Text(
-                                    "Você pode atualizar todos os campos ou somente o que desejar !",
-                                    style: TextStyle(
-                                      letterSpacing: 0.5,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    )),
+                                child:
+                                    Text(AppLocalizations.of(context)!.upField,
+                                        style: TextStyle(
+                                          letterSpacing: 0.5,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        )),
                               ),
                             ],
                           ),
@@ -234,7 +232,7 @@ class _EditProfile extends State<EditProfile> {
                           ),
                         ),
                       ),
-                      Text("Atualize sua foto",
+                      Text(AppLocalizations.of(context)!.attPhoto,
                           style: TextStyle(
                             letterSpacing: 0.5,
                             color: Theme.of(context).colorScheme.primary,
@@ -252,12 +250,15 @@ class _EditProfile extends State<EditProfile> {
                             shadowColor:
                                 Theme.of(context).colorScheme.onPrimary,
                             child: TextFormField(
+                              maxLength: 15,
                               style: TextStyle(
                                 letterSpacing: 0.5,
                                 color: Theme.of(context).colorScheme.onPrimary,
                               ),
                               decoration: InputDecoration(
-                                labelText: "Novo nome de usuário",
+                                counterText: '',
+                                labelText:
+                                    AppLocalizations.of(context)!.attName,
                                 labelStyle: TextStyle(
                                   letterSpacing: 0.5,
                                   color: Theme.of(context).colorScheme.primary,
@@ -281,7 +282,7 @@ class _EditProfile extends State<EditProfile> {
                                 final title = user ?? '';
 
                                 if (title.trim().isEmpty && _avatar == null) {
-                                  return 'Você não adicionou nada para atualizar.';
+                                  return AppLocalizations.of(context)!.notAtt;
                                 }
 
                                 return null;
@@ -293,7 +294,7 @@ class _EditProfile extends State<EditProfile> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ElevatedButtonTh(
-                          label: 'Atualizar',
+                          label: AppLocalizations.of(context)!.update,
                           target: () async {
                             _submitForm();
                           },

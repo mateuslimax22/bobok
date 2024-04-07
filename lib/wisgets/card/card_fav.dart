@@ -3,15 +3,15 @@ import 'package:bobok/models/review.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CardFavorite extends StatefulWidget {
   const CardFavorite(
-      {Key? key,
+      {super.key,
       required this.itemReview,
       required this.userId,
       required this.uid,
-      required this.userStore})
-      : super(key: key);
+      required this.userStore});
 
   final Review itemReview;
   final String? userId;
@@ -32,9 +32,8 @@ class _CardFavoriteState extends State<CardFavorite> {
         showDialog<void>(
             context: context,
             builder: (ctx) => AlertDialog(
-                  title: const Text("Ocorreu um erro!"),
-                  content:
-                      const Text("Não foi possivel remover sua indicação ;("),
+                  title: Text(AppLocalizations.of(context)!.error),
+                  content: Text(AppLocalizations.of(context)!.errorInd),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.of(context).pop(),
@@ -43,12 +42,12 @@ class _CardFavoriteState extends State<CardFavorite> {
                 ));
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       showDialog<void>(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: const Text("Ocorreu um erro!"),
-                content:
-                    const Text("Não foi possivel remover sua indicação ;("),
+                title: Text(AppLocalizations.of(context)!.error),
+                content: Text(AppLocalizations.of(context)!.errorInd),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -65,6 +64,7 @@ class _CardFavoriteState extends State<CardFavorite> {
         Navigator.of(context).pushNamed(
           AppRoutes.REVIEW_DETAIL,
           arguments: {
+            'reviewAll': widget.itemReview,
             'review': widget.itemReview.review,
             'title': widget.itemReview.title,
             'postId': widget.itemReview.postId,
@@ -75,6 +75,7 @@ class _CardFavoriteState extends State<CardFavorite> {
             'isComment': false,
             'currentUserName': widget.userStore!.user?.username,
             'currentUserPhoto': widget.userStore!.user?.avatar,
+            'myFav': widget.userStore!.user!.myfav
           },
         );
       },
@@ -147,7 +148,7 @@ class _CardFavoriteState extends State<CardFavorite> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text(
-                      'Deseja remover esta indicação?',
+                      AppLocalizations.of(context)!.rmvInd,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 20,
@@ -155,13 +156,13 @@ class _CardFavoriteState extends State<CardFavorite> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Cancelar'),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                       ),
                       TextButton(
-                        child: Text('Remover',
+                        child: Text(AppLocalizations.of(context)!.remove,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.error,
                                 fontSize: 15,

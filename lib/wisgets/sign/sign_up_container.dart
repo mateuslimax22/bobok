@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../wisgets/btn/elevated.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUpConatiner extends StatefulWidget {
   const SignUpConatiner({super.key});
@@ -24,84 +25,85 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   bool isLoading = false;
   bool passwordVisible = false;
   bool confirmPasswordVisible = false;
-  String levelPassword = "Fraca";
+
   bool is6Digits = false;
   bool isUppercase = false;
   bool isNumber = false;
   bool isLoadingRegister = false;
   bool isSpecialCharacters = false;
+  String levelPassword = "";
 
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  void _validatePassword(String password) {
-    List<int> passwordValid = [];
-    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
-    bool hasDigits = password.contains(RegExp(r'[0-9]'));
-    bool hasSpecialCharacters =
-        password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    if (hasUppercase) {
-      passwordValid.add(1);
-      setState(() {
-        isUppercase = true;
-      });
-    } else {
-      setState(() {
-        isUppercase = false;
-      });
-    }
-    if (hasLowercase) passwordValid.add(1);
-    if (hasDigits) {
-      passwordValid.add(1);
-      setState(() {
-        isNumber = true;
-      });
-    } else {
-      setState(() {
-        isNumber = false;
-      });
-    }
-    if (hasSpecialCharacters) {
-      passwordValid.add(1);
-      setState(() {
-        isSpecialCharacters = true;
-      });
-    } else {
-      setState(() {
-        isSpecialCharacters = false;
-      });
-    }
-
-    if (password.length < 6) {
-      setState(() {
-        levelPassword = "Fraca";
-        is6Digits = true;
-      });
-    } else {
-      setState(() {
-        is6Digits = true;
-      });
-      if (passwordValid.length <= 2) {
+  @override
+  Widget build(BuildContext context) {
+    void validatePassword(String password) {
+      List<int> passwordValid = [];
+      bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+      bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+      bool hasDigits = password.contains(RegExp(r'[0-9]'));
+      bool hasSpecialCharacters =
+          password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+      if (hasUppercase) {
+        passwordValid.add(1);
         setState(() {
-          levelPassword = "Fraca";
-        });
-      } else if (passwordValid.length == 3) {
-        setState(() {
-          levelPassword = "Média";
+          isUppercase = true;
         });
       } else {
         setState(() {
-          levelPassword = "Forte";
+          isUppercase = false;
         });
       }
-    }
-  }
+      if (hasLowercase) passwordValid.add(1);
+      if (hasDigits) {
+        passwordValid.add(1);
+        setState(() {
+          isNumber = true;
+        });
+      } else {
+        setState(() {
+          isNumber = false;
+        });
+      }
+      if (hasSpecialCharacters) {
+        passwordValid.add(1);
+        setState(() {
+          isSpecialCharacters = true;
+        });
+      } else {
+        setState(() {
+          isSpecialCharacters = false;
+        });
+      }
 
-  @override
-  Widget build(BuildContext context) {
-    void _uploadImage() async {
+      if (password.length < 6) {
+        setState(() {
+          levelPassword = AppLocalizations.of(context)!.passWeak;
+          is6Digits = true;
+        });
+      } else {
+        setState(() {
+          is6Digits = true;
+        });
+        if (passwordValid.length <= 2) {
+          setState(() {
+            levelPassword = AppLocalizations.of(context)!.passWeak;
+          });
+        } else if (passwordValid.length == 3) {
+          setState(() {
+            levelPassword = AppLocalizations.of(context)!.passModerate;
+          });
+        } else {
+          setState(() {
+            levelPassword = AppLocalizations.of(context)!.passStrong;
+          });
+        }
+      }
+    }
+
+    void uploadImage() async {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
@@ -115,8 +117,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
       }
     }
 
-    // ignore: no_leading_underscores_for_local_identifiers
-    void _submitForm() async {
+    void submitForm() async {
       setState(() {
         isLoadingRegister = true;
       });
@@ -147,7 +148,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Nova conta BoBok',
+            Text(AppLocalizations.of(context)!.newbobok,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -183,7 +184,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                                     size: 80,
                                   ),
                                   onPressed: () {
-                                    _uploadImage();
+                                    uploadImage();
                                   },
                                 )
                               : Image.file(
@@ -213,7 +214,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               onPressed: () {
-                                _uploadImage();
+                                uploadImage();
                               },
                             ),
                           ),
@@ -222,7 +223,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 ),
               ),
             ),
-            Text("Escolha sua foto",
+            Text(AppLocalizations.of(context)!.selectPhoto,
                 style: TextStyle(
                   letterSpacing: 0.5,
                   color: Theme.of(context).colorScheme.primary,
@@ -244,7 +245,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     decoration: InputDecoration(
-                      labelText: "Email",
+                      labelText: AppLocalizations.of(context)!.email,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -266,14 +267,14 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       final title = email ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Email obrigatório.';
+                        return AppLocalizations.of(context)!.emailReq;
                       }
                       // Expressão regular para verificar se o e-mail possui o formato correto
                       final emailRegex =
                           RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
                       if (!emailRegex.hasMatch(title)) {
-                        return 'Por favor, insira um email válido.';
+                        return AppLocalizations.of(context)!.emailValid;
                       }
 
                       return null;
@@ -297,7 +298,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     decoration: InputDecoration(
-                      labelText: "Usuário",
+                      labelText: AppLocalizations.of(context)!.user,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -319,7 +320,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       final title = user ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Nome de usuário obrigatório.';
+                        return AppLocalizations.of(context)!.userReq;
                       }
 
                       return null;
@@ -344,7 +345,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     ),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: "Senha",
+                      labelText: AppLocalizations.of(context)!.password,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -370,7 +371,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                               color: Theme.of(context).colorScheme.primary)),
                     ),
                     onChanged: (value) {
-                      _validatePassword(_passwordController.text);
+                      validatePassword(_passwordController.text);
                     },
                     keyboardType: TextInputType.text,
                     obscureText: !passwordVisible,
@@ -381,10 +382,12 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       final title = senha ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Senha obrigatória.';
-                      } else if (levelPassword == "Fraca" ||
-                          levelPassword == "Média") {
-                        return 'Senha tem que ser forte.';
+                        return AppLocalizations.of(context)!.passReq;
+                      } else if (levelPassword ==
+                              AppLocalizations.of(context)!.passWeak ||
+                          levelPassword ==
+                              AppLocalizations.of(context)!.passModerate) {
+                        return AppLocalizations.of(context)!.passErrorStrong;
                       }
 
                       return null;
@@ -412,7 +415,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         ),
                         Flexible(
                             child: Text(
-                          "Letra maiúscula",
+                          AppLocalizations.of(context)!.upLetter,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             letterSpacing: 0.5,
@@ -433,7 +436,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         ),
                         Flexible(
                             child: Text(
-                          "Números",
+                          AppLocalizations.of(context)!.numbers,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             letterSpacing: 0.5,
@@ -455,7 +458,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         ),
                         Flexible(
                             child: Text(
-                          "Caracteres especiais",
+                          AppLocalizations.of(context)!.charSpe,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             letterSpacing: 0.5,
@@ -477,7 +480,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                         ),
                         Flexible(
                             child: Text(
-                          "Mais de 6 dígitos",
+                          AppLocalizations.of(context)!.digits6,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             letterSpacing: 0.5,
@@ -495,9 +498,11 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
-                itemCount: levelPassword == "Fraca"
+                itemCount: levelPassword == "" ||
+                        levelPassword == AppLocalizations.of(context)!.passWeak
                     ? 1
-                    : levelPassword == "Média"
+                    : levelPassword ==
+                            AppLocalizations.of(context)!.passModerate
                         ? 3
                         : 5, // Define o número de contêineres desejados
                 itemBuilder: (context, index) {
@@ -505,9 +510,12 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: levelPassword == "Fraca"
+                          color: levelPassword == "" ||
+                                  levelPassword ==
+                                      AppLocalizations.of(context)!.passWeak
                               ? Colors.red
-                              : levelPassword == "Média"
+                              : levelPassword ==
+                                      AppLocalizations.of(context)!.passModerate
                                   ? Colors.orange
                                   : Colors.green,
                           borderRadius:
@@ -525,7 +533,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                 child: Row(
                   children: [
                     Text(
-                      "Nivel: ",
+                      AppLocalizations.of(context)!.level,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5,
@@ -562,7 +570,7 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                     ),
                     controller: _confirmPasswordController,
                     decoration: InputDecoration(
-                      labelText: "Confirmar senha",
+                      labelText: AppLocalizations.of(context)!.confPass,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -598,10 +606,10 @@ class _SignUpConatiner extends State<SignUpConatiner> {
                       print(_formData['senha'].toString());
 
                       if (title.trim().isEmpty) {
-                        return 'Confirmar a senha obrigatório.';
+                        return AppLocalizations.of(context)!.confPassReq;
                       } else if (title.trim().toString() !=
                           _formData['senha'].toString()) {
-                        return 'Senhas diferentes';
+                        return AppLocalizations.of(context)!.difPass;
                       }
 
                       return null;
@@ -613,9 +621,9 @@ class _SignUpConatiner extends State<SignUpConatiner> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
-                label: 'Cadastrar',
+                label: AppLocalizations.of(context)!.signUp,
                 target: () async {
-                  _submitForm();
+                  submitForm();
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,

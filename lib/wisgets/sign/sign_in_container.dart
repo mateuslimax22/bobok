@@ -85,7 +85,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                     decoration: InputDecoration(
-                      labelText: "Email",
+                      labelText: AppLocalizations.of(context)!.email,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -107,7 +107,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                       final title = email ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Email obrigatório.';
+                        return AppLocalizations.of(context)!.emailReq;
                       }
 
                       return null;
@@ -132,7 +132,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                     ),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: "Senha",
+                      labelText: AppLocalizations.of(context)!.password,
                       labelStyle: TextStyle(
                         letterSpacing: 0.5,
                         color: Theme.of(context).colorScheme.primary,
@@ -164,7 +164,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                       final title = senha ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Senha obrigatória.';
+                        return AppLocalizations.of(context)!.passReq;
                       }
 
                       return null;
@@ -176,7 +176,7 @@ class _SignInConatiner extends State<SignInConatiner> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
-                label: 'Começar',
+                label: AppLocalizations.of(context)!.login,
                 target: () async {
                   submitForm();
                 },
@@ -197,7 +197,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                     )),
               ),
               Text(
-                "OR",
+                AppLocalizations.of(context)!.or,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -216,7 +216,7 @@ class _SignInConatiner extends State<SignInConatiner> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
               child: ElevatedButton.icon(
-                label: const Text("Continuar com o Google"),
+                label: Text(AppLocalizations.of(context)!.google),
                 icon: isLoading
                     ? Container(
                         width: 24,

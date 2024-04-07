@@ -3,6 +3,7 @@ import 'package:bobok/models/review.dart';
 import 'package:bobok/wisgets/card/card_fav.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListCardRecommendation extends StatefulWidget {
   const ListCardRecommendation(
@@ -41,7 +42,7 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return widget.uid == widget.userId
               ? Text(
-                  'Add Indicações',
+                  AppLocalizations.of(context)!.addtoInd,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
@@ -51,7 +52,7 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
                   ),
                 )
               : Text(
-                  "Sem Indicações",
+                  AppLocalizations.of(context)!.noInd,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,

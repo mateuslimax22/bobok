@@ -2,7 +2,6 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/pages/settings.dart';
 import 'package:bobok/provider/firestore_methods.dart';
-import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/delete/modal_block.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
@@ -12,7 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/user.dart';
 
@@ -223,18 +222,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    void menuAppbar(String value) {
-      switch (value) {
-        case 'Logout':
-          final provider =
-              Provider.of<GoogleSignInProvider>(context, listen: false);
-          provider.logout();
-          break;
-        case 'Settings':
-          break;
-      }
-    }
-
     void openDrawer(BuildContext context) {
       showModalBottomSheet(
         context: context,
@@ -301,7 +288,7 @@ class _ProfileState extends State<Profile> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Avaliadores",
+                            AppLocalizations.of(context)!.reviewers,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 14,
@@ -321,7 +308,7 @@ class _ProfileState extends State<Profile> {
                             );
                           }),
                           Text(
-                            "Leitores",
+                            AppLocalizations.of(context)!.readers,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 14,
@@ -440,7 +427,7 @@ class _ProfileState extends State<Profile> {
                           ]),
                       widget.uid == user.uid
                           ? ElevatedButtonTh(
-                              label: 'Config',
+                              label: AppLocalizations.of(context)!.setting,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               target: () async {
@@ -454,7 +441,8 @@ class _ProfileState extends State<Profile> {
                               ? Column(
                                   children: [
                                     ElevatedButtonTh(
-                                      label: 'Remover',
+                                      label:
+                                          AppLocalizations.of(context)!.remove,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                       target: () async {
@@ -465,7 +453,8 @@ class _ProfileState extends State<Profile> {
                                       isLoading: isLoadingBtnRmv,
                                     ),
                                     ElevatedButtonTh(
-                                      label: 'Bloquear',
+                                      label:
+                                          AppLocalizations.of(context)!.block,
                                       target: () async {
                                         closeModal();
                                       },
@@ -492,7 +481,8 @@ class _ProfileState extends State<Profile> {
                                           height: 30,
                                         ),
                                         ElevatedButtonTh(
-                                          label: 'Desbloquear',
+                                          label: AppLocalizations.of(context)!
+                                              .unblock,
                                           target: () async {
                                             unblock();
                                           },
@@ -520,7 +510,9 @@ class _ProfileState extends State<Profile> {
                                               height: 30,
                                             ),
                                             ElevatedButtonTh(
-                                              label: 'bloqueado',
+                                              label:
+                                                  AppLocalizations.of(context)!
+                                                      .blocked,
                                               target: () async {},
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
@@ -536,7 +528,9 @@ class _ProfileState extends State<Profile> {
                                       : Column(
                                           children: [
                                             ElevatedButtonTh(
-                                              label: 'Adicionar',
+                                              label:
+                                                  AppLocalizations.of(context)!
+                                                      .add,
                                               isLoading: isLoadingBtnAdd,
                                               target: () async {
                                                 setState(() {
@@ -587,7 +581,9 @@ class _ProfileState extends State<Profile> {
                                               height: 30,
                                             ),
                                             ElevatedButtonTh(
-                                              label: 'Bloquear',
+                                              label:
+                                                  AppLocalizations.of(context)!
+                                                      .block,
                                               target: () async {
                                                 closeModal();
                                               },
@@ -634,7 +630,7 @@ class _ProfileState extends State<Profile> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Indicações',
+                                    AppLocalizations.of(context)!.indications,
                                     style: TextStyle(
                                       color:
                                           Theme.of(context).colorScheme.primary,
@@ -645,7 +641,8 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 isBlocking || isBlocked
-                                    ? Text('Bloaqueado',
+                                    ? Text(
+                                        AppLocalizations.of(context)!.blocked,
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -672,7 +669,7 @@ class _ProfileState extends State<Profile> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    'Resenhas',
+                                    AppLocalizations.of(context)!.reviews,
                                     style: TextStyle(
                                       color:
                                           Theme.of(context).colorScheme.primary,
@@ -683,7 +680,8 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 isBlocking || isBlocked
-                                    ? Text('Bloaqueado',
+                                    ? Text(
+                                        AppLocalizations.of(context)!.blocked,
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme

@@ -1,6 +1,8 @@
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 
 class CardComment extends StatefulWidget {
@@ -20,27 +22,11 @@ class CardComment extends StatefulWidget {
 }
 
 class _CardCommentState extends State<CardComment> {
+  // ignore: prefer_final_fields
   TextEditingController _textEditingController = TextEditingController();
 
   bool isEdit = false;
   bool isModalVisible = false;
-
-  void menuAppbar(String value) {
-    switch (value) {
-      case 'Editar comentário':
-        setState(() {
-          isEdit = !isEdit;
-          _textEditingController.text = widget.snap.data()['text'].toString();
-        });
-        break;
-      case 'Excluir comentário':
-        setState(() {
-          isModalVisible = true;
-        });
-
-        break;
-    }
-  }
 
   @override
   void dispose() {
@@ -51,6 +37,22 @@ class _CardCommentState extends State<CardComment> {
 
   @override
   Widget build(BuildContext context) {
+    final String editComment = AppLocalizations.of(context)!.edtComm;
+    final String deleteComment = AppLocalizations.of(context)!.dltComm;
+
+    void menuAppbar(String value) {
+      if (value == editComment) {
+        setState(() {
+          isEdit = !isEdit;
+          _textEditingController.text = widget.snap.data()['text'].toString();
+        });
+      } else if (value == deleteComment) {
+        setState(() {
+          isModalVisible = true;
+        });
+      }
+    }
+
     return SizedBox(
       height: 45,
       child: Row(
@@ -58,7 +60,7 @@ class _CardCommentState extends State<CardComment> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           DeleteConfirmationModal(
-            item: "este comentário",
+            item: AppLocalizations.of(context)!.thiscomm,
             onDelete: () {
               FirestoreMethods().deleteComment(
                 widget.postId,
@@ -180,8 +182,8 @@ class _CardCommentState extends State<CardComment> {
                   onSelected: menuAppbar,
                   itemBuilder: (BuildContext context) {
                     return {
-                      'Editar comentário',
-                      'Excluir comentário',
+                      editComment,
+                      deleteComment,
                     }.map((String choice) {
                       return PopupMenuItem<String>(
                         value: choice,

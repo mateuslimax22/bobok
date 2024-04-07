@@ -85,12 +85,18 @@ class _ListCardWorldState extends State<ListCardWorld>
     _reviewsAmigosFuture = getReviewsAmigos();
   }
 
+  String systemLanguagePrefix() {
+    final locale = Platform.localeName;
+    return locale.substring(0, 2);
+  }
+
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo as reviews dos amigos
     if (widget.userStore!.user!.blocking!.isNotEmpty ||
         widget.userStore!.user!.blocked!.isNotEmpty) {
       var reviewsSnapshot = await FirebaseFirestore.instance
           .collection('reviews')
+          .where('language', isLessThan: '${systemLanguagePrefix()}z')
           .where('uid', whereNotIn: [
         ...widget.userStore!.user!.blocking!,
         ...widget.userStore!.user!.blocked!

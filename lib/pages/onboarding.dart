@@ -6,6 +6,7 @@ import 'package:bobok/provider/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({Key? key}) : super(key: key);
@@ -23,8 +24,8 @@ class OnboardingState extends State<Onboarding> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return const Center(
-            child: Text('Algo deu errado ;( '),
+          return Center(
+            child: Text(AppLocalizations.of(context)!.error),
           );
         } else if (snapshot.hasData) {
           final userProvider = Provider.of<UserProvider>(context);

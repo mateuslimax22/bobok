@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/user.dart';
 
@@ -146,16 +147,16 @@ class AuthEmail extends ChangeNotifier {
     }
   }
 
-  String mapFirebaseErrorMessage(String? errorCode) {
+  String mapFirebaseErrorMessage(String? errorCode, context) {
     switch (errorCode) {
       case 'There is no user record corresponding to this identifier. The user may have been deleted.':
-        return 'Usuário não encontrado. Por favor, verifique o email ou senha digitado';
+        return AppLocalizations.of(context)!.userNotFound;
       case 'The password is invalid or the user does not have a password.':
-        return 'Usuário não encontrado. Por favor, verifique o email ou senha digitado';
+        return AppLocalizations.of(context)!.userNotFound;
       case 'The email address is badly formatted.':
-        return 'O formato do email está incorreto.';
+        return AppLocalizations.of(context)!.emailValid;
       default:
-        return 'Ocorreu um erro durante a autenticação. Por favor, tente novamente mais tarde.';
+        return AppLocalizations.of(context)!.errorAuth;
     }
   }
 
@@ -178,7 +179,8 @@ class AuthEmail extends ChangeNotifier {
             // ignore: use_build_context_synchronously
             backgroundColor: Theme.of(_context).colorScheme.onError,
             content: Text(
-              mapFirebaseErrorMessage(e.message),
+              // ignore: use_build_context_synchronously
+              mapFirebaseErrorMessage(e.message, _context),
               style: TextStyle(
                   // ignore: use_build_context_synchronously
                   color: Theme.of(_context).colorScheme.primary,

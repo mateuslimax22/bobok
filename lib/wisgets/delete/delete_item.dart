@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeleteConfirmationModal extends StatelessWidget {
   final String item;
@@ -21,7 +22,7 @@ class DeleteConfirmationModal extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               content: Text(
-                'Deseja deletar "$item"?',
+                '${AppLocalizations.of(context)!.deleteItem}$item?',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 15,
@@ -33,7 +34,7 @@ class DeleteConfirmationModal extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancelar',
+                  child: Text(AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                           fontSize: 15,
@@ -45,7 +46,7 @@ class DeleteConfirmationModal extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Confirmar',
+                    AppLocalizations.of(context)!.confirm,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 15,

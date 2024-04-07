@@ -1,6 +1,6 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
-import 'package:bobok/models/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
@@ -62,6 +62,7 @@ class _CardReviewState extends State<CardReview> {
     Navigator.of(context).pushNamed(
       AppRoutes.REVIEW_DETAIL,
       arguments: {
+        'reviewAll': widget.review,
         'review': widget.review.review,
         'title': widget.review.title,
         'postId': widget.review.postId,
@@ -72,6 +73,7 @@ class _CardReviewState extends State<CardReview> {
         'isComment': isComment,
         'currentUserName': widget.userStore!.user?.username,
         'currentUserPhoto': widget.userStore!.user?.avatar,
+        'myFav': widget.userStore!.user!.myfav
       },
     );
   }
@@ -80,11 +82,42 @@ class _CardReviewState extends State<CardReview> {
     myfav?.removeWhere((item) => item['imageUrl'] == fav['imageUrl']);
 
     await FirestoreMethods().removeFav(widget.userStore!.user!.uid, fav);
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          // ignore: use_build_context_synchronously
+          backgroundColor: Theme.of(context).colorScheme.onError,
+          content: Text(
+            // ignore: use_build_context_synchronously
+            AppLocalizations.of(context)!.snakRmv,
+            style: TextStyle(
+                // ignore: use_build_context_synchronously
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 15,
+                letterSpacing: 1.5),
+          )),
+    );
   }
 
   void setFav(Map<String, dynamic> fav) {
     FirestoreMethods().addFav(widget.userStore!.user!.uid, [fav]);
     widget.userStore!.user!.myfav?.add(fav);
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          // ignore: use_build_context_synchronously
+          backgroundColor: Theme.of(context).colorScheme.onError,
+          content: Text(
+            // ignore: use_build_context_synchronously
+            AppLocalizations.of(context)!.snakAdd,
+            style: TextStyle(
+                // ignore: use_build_context_synchronously
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 15,
+                letterSpacing: 1.5),
+          )),
+    );
   }
 
   void getComments() async {
@@ -120,6 +153,11 @@ class _CardReviewState extends State<CardReview> {
           });
           break;
         case 'Colocar na minha lista':
+          setFav({
+            "title": widget.review.title,
+            "category": widget.review.category,
+            "imageUrl": widget.review.imageUrl
+          });
           break;
       }
     }
@@ -217,7 +255,7 @@ class _CardReviewState extends State<CardReview> {
                                   return PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(
-                                      choice,
+                                      AppLocalizations.of(context)!.deleteRew,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -233,7 +271,7 @@ class _CardReviewState extends State<CardReview> {
                                   return PopupMenuItem<String>(
                                     value: choice,
                                     child: Text(
-                                      choice,
+                                      AppLocalizations.of(context)!.saveMylist,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -336,7 +374,9 @@ class _CardReviewState extends State<CardReview> {
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 5, 0, 5),
                                     child: Text(
-                                      "Resenha: ".toUpperCase(),
+                                      AppLocalizations.of(context)!
+                                          .review
+                                          .toUpperCase(),
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -404,8 +444,11 @@ class _CardReviewState extends State<CardReview> {
                                         children: [
                                           Text(
                                             widget.review.spoiler != true
-                                                ? "ver mais.".toUpperCase()
-                                                : "A resenha contém spoiler. "
+                                                ? AppLocalizations.of(context)!
+                                                    .seeMore
+                                                    .toUpperCase()
+                                                : AppLocalizations.of(context)!
+                                                    .reviewSpoiler
                                                     .toUpperCase(),
                                             style: TextStyle(
                                               color:
@@ -423,7 +466,9 @@ class _CardReviewState extends State<CardReview> {
                                           Text(
                                             widget.review.spoiler != true
                                                 ? ""
-                                                : "Ver mais?".toUpperCase(),
+                                                : AppLocalizations.of(context)!
+                                                    .seeMor
+                                                    .toUpperCase(),
                                             style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
@@ -452,7 +497,7 @@ class _CardReviewState extends State<CardReview> {
                       padding: const EdgeInsets.only(top: 3.0),
                       child: SizedBox(
                         height: 35,
-                        width: 25,
+                        width: 35,
                         child: IconButton(
                           icon: Icon(Icons.star_border_rounded,
                               size: 25,
@@ -547,7 +592,7 @@ class _CardReviewState extends State<CardReview> {
                       navigateToReviewDetail(context, true);
                     },
                     child: Text(
-                      "Ver todos os comentários",
+                      AppLocalizations.of(context)!.seeComments,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 13,

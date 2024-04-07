@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BlockConfirmationModal extends StatefulWidget {
   final String item;
@@ -30,7 +31,7 @@ class _BlockConfirmationModalState extends State<BlockConfirmationModal> {
                 child: Column(
                   children: [
                     Text(
-                      'Deseja bloquear o usuário "${widget.item}"?',
+                      '${AppLocalizations.of(context)!.blockUser}${widget.item}?',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 15,
@@ -40,7 +41,7 @@ class _BlockConfirmationModalState extends State<BlockConfirmationModal> {
                     Padding(
                       padding: const EdgeInsets.only(top: 15),
                       child: Text(
-                        'Com isso ficará disponível apenas o acesso ao perfil (bloqueado) para desbloqueio.',
+                        AppLocalizations.of(context)!.blockMsg,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 15,
@@ -56,7 +57,7 @@ class _BlockConfirmationModalState extends State<BlockConfirmationModal> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancelar',
+                  child: Text(AppLocalizations.of(context)!.cancel,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.error,
                           fontSize: 15,
@@ -69,7 +70,7 @@ class _BlockConfirmationModalState extends State<BlockConfirmationModal> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Confirmar',
+                    AppLocalizations.of(context)!.confirm,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 15,

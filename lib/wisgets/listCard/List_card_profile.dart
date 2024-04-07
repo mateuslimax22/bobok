@@ -5,6 +5,7 @@ import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/card/profile_review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListCardProfile extends StatefulWidget {
   const ListCardProfile(
@@ -48,7 +49,7 @@ class _ListCardProfileState extends State<ListCardProfile> {
                 ? Column(
                     children: [
                       ElevatedButtonTh(
-                        label: 'Add Resenha',
+                        label: AppLocalizations.of(context)!.addrw,
                         target: () async {
                           Navigator.of(context).pushNamed(AppRoutes.ADD_REVIEW);
                         },

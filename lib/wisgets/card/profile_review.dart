@@ -7,15 +7,15 @@ import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileReview extends StatefulWidget {
   const ProfileReview(
-      {Key? key,
+      {super.key,
       required this.itemReview,
       required this.userId,
       required this.uid,
-      required this.userStore})
-      : super(key: key);
+      required this.userStore});
 
   final Review itemReview;
   final String? userId;
@@ -51,9 +51,8 @@ class _ProfileReviewState extends State<ProfileReview> {
         showDialog<void>(
             context: context,
             builder: (ctx) => AlertDialog(
-                  title: const Text("Ocorreu um erro!"),
-                  content:
-                      const Text("Não foi possivel adicionar sua indicação ;("),
+                  title: Text(AppLocalizations.of(context)!.error),
+                  content: Text(AppLocalizations.of(context)!.errorInd),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.of(context).pop(),
@@ -66,9 +65,8 @@ class _ProfileReviewState extends State<ProfileReview> {
       showDialog<void>(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: const Text("Ocorreu um erro!"),
-                content:
-                    const Text("Não foi possivel adicionar sua indicação ;("),
+                title: Text(AppLocalizations.of(context)!.error),
+                content: Text(AppLocalizations.of(context)!.errorInd),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -86,6 +84,7 @@ class _ProfileReviewState extends State<ProfileReview> {
         Navigator.of(context).pushNamed(
           AppRoutes.REVIEW_DETAIL,
           arguments: {
+            'reviewAll': widget.itemReview,
             'review': widget.itemReview.review,
             'title': widget.itemReview.title,
             'postId': widget.itemReview.postId,
@@ -96,6 +95,7 @@ class _ProfileReviewState extends State<ProfileReview> {
             'isComment': false,
             'currentUserName': widget.userStore!.user?.username,
             'currentUserPhoto': widget.userStore!.user?.avatar,
+            'myFav': widget.userStore!.user!.myfav
           },
         );
       },
@@ -153,7 +153,8 @@ class _ProfileReviewState extends State<ProfileReview> {
                                         child: ListTile(
                                           contentPadding: EdgeInsets.zero,
                                           title: Text(
-                                            'Adicionar aos Indicados',
+                                            AppLocalizations.of(context)!
+                                                .addInd,
                                             style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme

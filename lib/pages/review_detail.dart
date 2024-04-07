@@ -1,5 +1,7 @@
+import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/animated/comments_container.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ReviewDetail extends StatefulWidget {
@@ -12,6 +14,73 @@ class ReviewDetail extends StatefulWidget {
 }
 
 class _ReviewDetailState extends State<ReviewDetail> {
+  bool isLike = false;
+  bool isSave = false;
+  int countLikes = 0;
+  get arguments =>
+      (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{})
+          as Map;
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+      countLikes = arguments['reviewAll'].likes.length;
+    });
+    if (arguments['reviewAll'].likes.contains(arguments['userUid'])) {
+      setState(() {
+        isLike = true;
+      });
+    }
+    if (arguments['myFav']
+        .any((map) => map['imageUrl'] == arguments['reviewAll'].imageUrl)) {
+      setState(() {
+        isSave = true;
+      });
+    }
+  }
+
+  void removeFav(List<dynamic>? myfav, Map<String, dynamic> fav) async {
+    myfav?.removeWhere((item) => item['imageUrl'] == fav['imageUrl']);
+
+    await FirestoreMethods().removeFav(arguments['userUid'], fav);
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          // ignore: use_build_context_synchronously
+          backgroundColor: Theme.of(context).colorScheme.onError,
+          content: Text(
+            // ignore: use_build_context_synchronously
+            AppLocalizations.of(context)!.snakRmv,
+            style: TextStyle(
+                // ignore: use_build_context_synchronously
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 15,
+                letterSpacing: 1.5),
+          )),
+    );
+  }
+
+  void setFav(Map<String, dynamic> fav) {
+    FirestoreMethods().addFav(arguments['userUid'], [fav]);
+    arguments['myFav'].add(fav);
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          // ignore: use_build_context_synchronously
+          backgroundColor: Theme.of(context).colorScheme.onError,
+          content: Text(
+            // ignore: use_build_context_synchronously
+            AppLocalizations.of(context)!.snakAdd,
+            style: TextStyle(
+                // ignore: use_build_context_synchronously
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 15,
+                letterSpacing: 1.5),
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
@@ -107,7 +176,9 @@ class _ReviewDetailState extends State<ReviewDetail> {
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              'Resenha: '.toUpperCase(),
+                              AppLocalizations.of(context)!
+                                  .review
+                                  .toUpperCase(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -173,12 +244,12 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                         padding: const EdgeInsets.fromLTRB(
                                             10, 0, 0, 3),
                                         child: Text(
-                                          "ver mais...",
+                                          AppLocalizations.of(context)!.seeMore,
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .onPrimary,
-                                              fontSize: 15,
+                                              fontSize: 14,
                                               letterSpacing: 1.5),
                                         ),
                                       ),
@@ -208,54 +279,125 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      height: 35,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.star_border_rounded,
-                                          size: 25,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 3.0),
+                                      child: SizedBox(
+                                        height: 35,
+                                        width: 35,
+                                        child: IconButton(
+                                          icon: Icon(Icons.star_border_rounded,
+                                              size: 25,
+                                              color: isLike
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                          tooltip: 'Show Snackbar',
+                                          onPressed: () async {
+                                            setState(() {
+                                              isLike = !isLike;
+                                            });
+                                            setState(() {
+                                              isLike
+                                                  ? countLikes = ++countLikes
+                                                  : countLikes = --countLikes;
+                                            });
+                                            await FirestoreMethods().likePost(
+                                                arguments['reviewAll'].postId,
+                                                arguments['userUid'],
+                                                isLike);
+                                          },
                                         ),
-                                        tooltip: 'Show Snackbar',
-                                        onPressed: () {
-                                          print("sdasd");
-                                        },
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 40,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.messenger_outline,
-                                          size: 20,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
+                                        height: 30,
+                                        width: 40,
+                                        child: Text(
+                                          countLikes.toString(),
+                                          style: TextStyle(
+                                              color: isLike
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                        )),
+                                    const Spacer(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5.0),
+                                      child: SizedBox(
+                                        height: 40,
+                                        width: 30,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.messenger_outline,
+                                            size: 20,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary,
+                                          ),
+                                          tooltip: 'Show Snackbar',
+                                          onPressed: () {
+                                            setState(() {
+                                              arguments['isComment'] = true;
+                                            });
+                                          },
                                         ),
-                                        tooltip: 'Show Snackbar',
-                                        onPressed: () {
-                                          setState(() {
-                                            arguments['isComment'] = true;
-                                          });
-                                        },
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 40,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.share,
-                                          size: 20,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: SizedBox(
+                                        height: 40,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.bookmark_add_outlined,
+                                            size: 20,
+                                            color: isSave
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                          ),
+                                          tooltip: 'Show Snackbar',
+                                          onPressed: () {
+                                            setState(() {
+                                              isSave = !isSave;
+                                            });
+                                            setState(() {
+                                              isSave
+                                                  ? setFav({
+                                                      "title":
+                                                          arguments['reviewAll']
+                                                              .title,
+                                                      "category":
+                                                          arguments['reviewAll']
+                                                              .category,
+                                                      "imageUrl":
+                                                          arguments['reviewAll']
+                                                              .imageUrl
+                                                    })
+                                                  : removeFav(
+                                                      arguments['myFav'], {
+                                                      "title":
+                                                          arguments['reviewAll']
+                                                              .title,
+                                                      "category":
+                                                          arguments['reviewAll']
+                                                              .category,
+                                                      "imageUrl":
+                                                          arguments['reviewAll']
+                                                              .imageUrl
+                                                    });
+                                            });
+                                          },
                                         ),
-                                        tooltip: 'Show Snackbar',
-                                        onPressed: () {
-                                          print("sdasd");
-                                        },
                                       ),
                                     )
                                   ],

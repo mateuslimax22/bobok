@@ -1,6 +1,7 @@
 import 'package:bobok/pages/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -39,7 +40,8 @@ class _Search extends State<Search> {
           titleSpacing: 5,
           title: TextField(
             controller: textEditingController,
-            decoration: const InputDecoration(labelText: 'Pesquisar usuário'),
+            decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.searchUser),
             onChanged: (String value) {
               setState(() {
                 isShowUsers = true;
@@ -141,7 +143,7 @@ class _Search extends State<Search> {
             : Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Usuários",
+                  AppLocalizations.of(context)!.user,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     letterSpacing: 0.5,

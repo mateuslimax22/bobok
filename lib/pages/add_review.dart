@@ -4,6 +4,8 @@ import 'package:bobok/provider/firestore_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:web_scraper/web_scraper.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:io';
 
 class AddReview extends StatefulWidget {
   const AddReview({super.key});
@@ -14,7 +16,6 @@ class AddReview extends StatefulWidget {
 
 class _AddReviewState extends State<AddReview> {
   // Initial Selected Value
-  String dropdownvalue = 'Livro';
   String img = '';
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
@@ -27,33 +28,14 @@ class _AddReviewState extends State<AddReview> {
   bool isLoading = false;
   bool mature = false;
   String titleFolder = '';
+  String dropdownvalue = "";
 
   List<String> genresSelect = [];
   FocusNode myFocusNodeTitle = FocusNode();
   FocusNode myFocusNodeReview = FocusNode();
 
   // List of items in our dropdown menu
-  var items = [
-    'Livro',
-    'Mangá',
-    'HQ',
-    'Filme',
-    'Série',
-    'Anime',
-  ];
 
-  var genres = [
-    'Ação/aventura',
-    'Ficção científica',
-    'Thriller/Suspense',
-    'Romance',
-    'Infantil',
-    'Autoajuda',
-    'Guias & Como fazer',
-    'Tecnologia e Ciência',
-    'Ficção Policial',
-    'LGBTQ+',
-  ];
   @override
   void initState() {
     super.initState();
@@ -76,6 +58,15 @@ class _AddReviewState extends State<AddReview> {
     if (!myFocusNodeTitle.hasFocus) {
       _getImage();
     }
+  }
+
+  String getSystemLocaleString() {
+    final locale = Platform.localeName;
+    if (locale.contains('_')) {
+      final parts = locale.split('_');
+      return '${parts[0]}_${parts[1].toUpperCase()}';
+    }
+    return locale;
   }
 
   Future submitForm(String profileImg) async {
@@ -102,6 +93,7 @@ class _AddReviewState extends State<AddReview> {
       review: _formData["review"].toString(),
       imageUrl: img.toString(),
       likes: "0",
+      language: getSystemLocaleString(),
       spoiler: spoiler,
       category: _formData["category"].toString(),
       genres: genresSelect,
@@ -120,6 +112,7 @@ class _AddReviewState extends State<AddReview> {
           newReview.spoiler,
           profileImg,
           newReview.category,
+          newReview.language,
           newReview.genres);
 
       if (res != "sucess") {
@@ -189,11 +182,33 @@ class _AddReviewState extends State<AddReview> {
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{}) as Map;
+
+    var items = [
+      AppLocalizations.of(context)!.book,
+      AppLocalizations.of(context)!.manga,
+      AppLocalizations.of(context)!.comic,
+      AppLocalizations.of(context)!.movie,
+      AppLocalizations.of(context)!.serie,
+      AppLocalizations.of(context)!.anime,
+    ];
+
+    var genres = [
+      AppLocalizations.of(context)!.actionAdventure,
+      AppLocalizations.of(context)!.scienceFiction,
+      AppLocalizations.of(context)!.thrillerSuspense,
+      AppLocalizations.of(context)!.romance,
+      AppLocalizations.of(context)!.children,
+      AppLocalizations.of(context)!.selfHelp,
+      AppLocalizations.of(context)!.guidesHowTo,
+      AppLocalizations.of(context)!.technologyScience,
+      AppLocalizations.of(context)!.detectiveFiction,
+      AppLocalizations.of(context)!.lgbtqPlus,
+    ];
     _formData['category'] = dropdownvalue;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Nova Resenha",
+          AppLocalizations.of(context)!.newRe,
           style: TextStyle(
               color: Theme.of(context).colorScheme.onPrimary,
               fontSize: 25,
@@ -253,7 +268,7 @@ class _AddReviewState extends State<AddReview> {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
-                                "Selecione a categoria:",
+                                AppLocalizations.of(context)!.selCat,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
@@ -278,7 +293,9 @@ class _AddReviewState extends State<AddReview> {
                                         horizontal: 8.0),
                                     child: DropdownButton(
                                       // Initial Value
-                                      value: dropdownvalue,
+                                      value: dropdownvalue == ""
+                                          ? AppLocalizations.of(context)!.book
+                                          : dropdownvalue,
                                       isExpanded: true,
                                       underline: Container(),
 
@@ -339,7 +356,8 @@ class _AddReviewState extends State<AddReview> {
                                           .onPrimary,
                                     ),
                                     decoration: InputDecoration(
-                                      labelText: "Título",
+                                      labelText:
+                                          AppLocalizations.of(context)!.title,
                                       labelStyle: TextStyle(
                                           color: myFocusNodeTitle.hasFocus
                                               ? Theme.of(context)
@@ -383,15 +401,18 @@ class _AddReviewState extends State<AddReview> {
                                       final title = _title ?? '';
 
                                       if (title.trim().isEmpty) {
-                                        return 'Título obrigatório.';
+                                        return AppLocalizations.of(context)!
+                                            .titReq;
                                       }
 
                                       if (title.trim().length <= 3) {
-                                        return 'Se o título for menor que 3 caracter coloque o seu ano de lançamento junto com o título.';
+                                        return AppLocalizations.of(context)!
+                                            .titleng;
                                       }
 
                                       if (mature == true) {
-                                        return 'A capa deste título contém imagens impróprias para menores de idade.';
+                                        return AppLocalizations.of(context)!
+                                            .titMature;
                                       }
 
                                       return null;
@@ -412,7 +433,7 @@ class _AddReviewState extends State<AddReview> {
                                 activeColor:
                                     Theme.of(context).colorScheme.primary,
                                 title: Text(
-                                  'Contém Spoiler?',
+                                  AppLocalizations.of(context)!.ySpoiler,
                                   style: TextStyle(
                                     letterSpacing: 0.5,
                                     color:
@@ -437,7 +458,7 @@ class _AddReviewState extends State<AddReview> {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: msgError == false
                                   ? Text(
-                                      "Selecione o gênero :",
+                                      AppLocalizations.of(context)!.selGen,
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
@@ -446,9 +467,9 @@ class _AddReviewState extends State<AddReview> {
                                             .onPrimary,
                                       ),
                                     )
-                                  : const Text(
-                                      "Selecione o gênero : *",
-                                      style: TextStyle(
+                                  : Text(
+                                      AppLocalizations.of(context)!.selGenError,
+                                      style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.red,
@@ -584,7 +605,7 @@ class _AddReviewState extends State<AddReview> {
                             ),
                             maxLines: 2000,
                             decoration: InputDecoration(
-                              labelText: "Escreva sua resenha",
+                              labelText: AppLocalizations.of(context)!.writeRw,
                               alignLabelWithHint: true,
                               labelStyle: TextStyle(
                                   color: myFocusNodeReview.hasFocus
@@ -611,11 +632,11 @@ class _AddReviewState extends State<AddReview> {
                               final review = _review ?? '';
 
                               if (review.trim().isEmpty) {
-                                return 'Cadê a resenha ????';
+                                return AppLocalizations.of(context)!.wheRw;
                               }
 
                               if (review.trim().length <= 5) {
-                                return 'Sua resenha é uma palavra???? melhore.';
+                                return AppLocalizations.of(context)!.rwLen;
                               }
 
                               return null;

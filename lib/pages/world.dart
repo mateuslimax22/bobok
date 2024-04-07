@@ -2,6 +2,7 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/wisgets/listCard/list_card_top5.dart';
 import 'package:bobok/wisgets/listCard/list_card_world.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class World extends StatefulWidget {
@@ -53,7 +54,7 @@ class _World extends State<World> {
                           child: Column(
                             children: [
                               Text(
-                                "Mundo",
+                                AppLocalizations.of(context)!.world,
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   letterSpacing: 0.5,

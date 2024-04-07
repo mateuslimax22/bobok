@@ -26,6 +26,7 @@ class FirestoreMethods {
       bool spoiler,
       String profileImg,
       String category,
+      String? language,
       List<String> genresSelect) async {
     String res = "Some error occured";
     try {
@@ -55,6 +56,7 @@ class FirestoreMethods {
         postId: postId,
         likes: [],
         datePublish: DateTime.now(),
+        language: language,
         spoiler: spoiler,
         category: category,
         genres: genresSelect,

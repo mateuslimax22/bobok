@@ -3,6 +3,7 @@ import 'package:bobok/models/user.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CardMyFav extends StatefulWidget {
   const CardMyFav(
@@ -97,7 +98,7 @@ class _CardMyFavState extends State<CardMyFav> {
                                   PopupMenuItem(
                                     child: ListTile(
                                       title: Text(
-                                        'Remover',
+                                        AppLocalizations.of(context)!.remove,
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme

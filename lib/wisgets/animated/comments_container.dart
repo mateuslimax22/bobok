@@ -2,6 +2,7 @@ import 'package:bobok/provider/firestore_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../card/card_comment.dart';
 
 class CommentsCard extends StatefulWidget {
@@ -66,7 +67,7 @@ class _CommentsCard extends State<CommentsCard> {
 
                       if (snapshot.data!.docs.isEmpty) {
                         return Text(
-                          "Nenhum comentário",
+                          AppLocalizations.of(context)!.noComm,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 15,
