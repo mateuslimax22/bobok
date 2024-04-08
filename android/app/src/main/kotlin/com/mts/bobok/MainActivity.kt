@@ -1,4 +1,4 @@
-package com.example.bobok
+package com.mts.bobok
 
 import io.flutter.embedding.android.FlutterActivity
 

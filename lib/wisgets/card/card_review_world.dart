@@ -198,7 +198,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
       color: widget.colorback,
       child: SizedBox(
         width: deviceWidth,
-        height: deviceHeight * 0.41,
+        height: 300,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(

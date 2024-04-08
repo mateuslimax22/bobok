@@ -1,7 +1,6 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
 import 'package:bobok/models/user.dart';
-import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
@@ -10,12 +9,12 @@ import 'package:provider/provider.dart';
 
 class CardTop5 extends StatefulWidget {
   const CardTop5({
-    Key? key,
+    super.key,
     required this.itemReview,
     required this.userId,
     required this.uid,
     required this.userStore,
-  }) : super(key: key);
+  });
 
   final Review itemReview;
   final String? userId;
@@ -45,6 +44,7 @@ class _CardTop5State extends State<CardTop5> {
         Navigator.of(context).pushNamed(
           AppRoutes.REVIEW_DETAIL,
           arguments: {
+            'reviewAll': widget.itemReview,
             'review': widget.itemReview.review,
             'title': widget.itemReview.title,
             'postId': widget.itemReview.postId,
@@ -55,6 +55,7 @@ class _CardTop5State extends State<CardTop5> {
             'isComment': false,
             'currentUserName': widget.userStore!.user?.username,
             'currentUserPhoto': widget.userStore!.user?.avatar,
+            'myFav': widget.userStore!.user!.myfav
           },
         );
       },
