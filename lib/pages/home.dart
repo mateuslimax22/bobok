@@ -5,10 +5,15 @@ import 'package:bobok/pages/profile.dart';
 import 'package:bobok/pages/settings.dart';
 import 'package:bobok/pages/world.dart';
 import 'package:bobok/utils/app_routes.dart';
+import 'package:bobok/utils/push_notification.dart';
 import 'package:bobok/wisgets/listCard/list_card_home.dart';
 import 'package:bobok/wisgets/src/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:overlay_support/overlay_support.dart';
+
+Future<void> _firebaseMessagingBackgroundHadler(RemoteMessage message) async {}
 
 class Home extends StatefulWidget {
   const Home({super.key, this.userData});
@@ -18,11 +23,68 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> {
   late PageController _pageController;
   late List<Widget> _pages;
   late UserStore userStore;
   int _currentIndex = 1;
+
+  late FirebaseMessaging _messaging;
+  int _totalNotifications = 0;
+  late PushNotification _notificationInfo;
+
+  void registerNotifications() async {
+    _messaging = FirebaseMessaging.instance;
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHadler);
+
+    NotificationSettings settings = await _messaging.requestPermission(
+        alert: true, badge: true, provisional: false, sound: true);
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print("mensage ${message.notification?.title}");
+
+        PushNotification notification = PushNotification(
+            title: message.notification?.title ?? '',
+            body: message.notification?.body ?? '',
+            dataTitle: message.data['title'] ?? '',
+            dataBody: message.data['body'] ?? '');
+
+        setState(() {
+          _notificationInfo = notification;
+          _totalNotifications++;
+        });
+
+        if (_notificationInfo != null) {
+          showSimpleNotification(Text(_notificationInfo.title),
+              subtitle: Text(_notificationInfo.body ?? ''),
+              background: Theme.of(context).colorScheme.onError,
+              duration: const Duration(seconds: 2));
+        } else {
+          print("Sem permissão");
+        }
+      });
+    }
+  }
+
+  checkeForInitialMessage() async {
+    RemoteMessage? initialMessege =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessege != null) {
+      PushNotification notification = PushNotification(
+          title: initialMessege.notification?.title ?? '',
+          body: initialMessege.notification?.body ?? '',
+          dataTitle: initialMessege.data['title'] ?? '',
+          dataBody: initialMessege.data['body'] ?? '');
+
+      setState(() {
+        _notificationInfo = notification;
+        _totalNotifications++;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -47,6 +109,23 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         userStore: userStore,
       ),
     ];
+
+    _totalNotifications = 0;
+    registerNotifications();
+    checkeForInitialMessage();
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage messege) {
+      PushNotification notification = PushNotification(
+          title: messege.notification?.title ?? '',
+          body: messege.notification?.body ?? '',
+          dataTitle: messege.data['title'] ?? '',
+          dataBody: messege.data['body'] ?? '');
+
+      setState(() {
+        _notificationInfo = notification;
+        _totalNotifications++;
+      });
+    });
   }
 
   @override

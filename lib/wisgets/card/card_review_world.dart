@@ -198,7 +198,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
       color: widget.colorback,
       child: SizedBox(
         width: deviceWidth,
-        height: 300,
+        height: 310,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
@@ -325,6 +325,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                   ],
                 ),
                 SizedBox(
+                  height: 191,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
@@ -374,7 +375,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -527,11 +528,12 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
                   ),
                 ),
                 SizedBox(
+                  height: 40,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 3.0),
+                        padding: const EdgeInsets.only(top: 2.0),
                         child: SizedBox(
                           height: 35,
                           width: 35,
