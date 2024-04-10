@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
   int _currentIndex = 1;
 
   late FirebaseMessaging _messaging;
+  // ignore: unused_field
   int _totalNotifications = 0;
   late PushNotification _notificationInfo;
 
@@ -43,6 +44,7 @@ class _HomeState extends State<Home> {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        // ignore: avoid_print
         print("mensage ${message.notification?.title}");
 
         PushNotification notification = PushNotification(

@@ -2,6 +2,7 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/pages/settings.dart';
 import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
 import 'package:bobok/wisgets/delete/modal_block.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
@@ -33,6 +34,8 @@ class _ProfileState extends State<Profile> {
   List<dynamic>? removeFollower = [];
   List<dynamic>? removeFollowing = [];
   List<dynamic> updatedBlocking = [];
+  List<dynamic> listFollowing = [];
+  List<dynamic> listFollowers = [];
 
   final user = FirebaseAuth.instance.currentUser!;
   var userData = {};
@@ -179,6 +182,8 @@ class _ProfileState extends State<Profile> {
     try {
       setState(() {
         isFollowing = widget.userStore!.user!.followers!.contains(user.uid);
+        listFollowers = widget.userStore!.user!.followers!;
+        listFollowing = widget.userStore!.user!.following!;
       });
     } catch (e) {
       if (e.toString() == "Null check operator used on a null value") {
@@ -196,6 +201,8 @@ class _ProfileState extends State<Profile> {
               .doc(widget.uid)
               .get();
       setState(() {
+        listFollowers = userDocument['followers'];
+        listFollowing = userDocument['following'];
         followers = userDocument['followers'].length;
         following = userDocument['following'].length;
         isFollowing = userDocument['followers'].contains(user.uid);
@@ -287,46 +294,96 @@ class _ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            AppLocalizations.of(context)!.reviewers,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.of(context).pushNamed(
+                                AppRoutes.LISTFRIENDS,
+                                arguments: {
+                                  'following': true,
+                                  'listFollowers': listFollowers,
+                                  'listFollowing': listFollowing,
+                                  'userStore': widget.userStore
+                                },
+                              )
+                            },
+                            child: SizedBox(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!.reviewers,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
+                                  Observer(builder: (_) {
+                                    return Text(
+                                      widget.currentUid != false
+                                          ? widget.userStore!.user!.following!
+                                              .length
+                                              .toString()
+                                          : following.toString(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 20,
+                                          letterSpacing: 1.5),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            ),
                           ),
-                          Observer(builder: (_) {
-                            return Text(
-                              widget.currentUid != false
-                                  ? widget.userStore!.user!.following!.length
-                                      .toString()
-                                  : following.toString(),
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 20,
-                                  letterSpacing: 1.5),
-                            );
-                          }),
-                          Text(
-                            AppLocalizations.of(context)!.readers,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 14,
-                                letterSpacing: 1.5),
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.of(context).pushNamed(
+                                AppRoutes.LISTFRIENDS,
+                                arguments: {
+                                  'following': false,
+                                  'listFollowers': listFollowers,
+                                  'listFollowing': listFollowing,
+                                  'userStore': widget.userStore
+                                },
+                              )
+                            },
+                            child: SizedBox(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!.readers,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontSize: 14,
+                                        letterSpacing: 1.5),
+                                  ),
+                                  Observer(builder: (_) {
+                                    return Text(
+                                      widget.currentUid != false
+                                          ? widget.userStore!.user!.followers!
+                                              .length
+                                              .toString()
+                                          : followers.toString(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary,
+                                          fontSize: 20,
+                                          letterSpacing: 1.5),
+                                    );
+                                  }),
+                                ],
+                              ),
+                            ),
                           ),
-                          Observer(builder: (_) {
-                            return Text(
-                              widget.currentUid != false
-                                  ? widget.userStore!.user!.followers!.length
-                                      .toString()
-                                  : followers.toString(),
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 20,
-                                  letterSpacing: 1.5),
-                            );
-                          }),
                         ],
                       ),
                       Column(

@@ -405,6 +405,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
                               )
                             : Expanded(
                                 child: CommentsCard(
+                                    userStore: arguments['userStore'],
                                     avatar: arguments['currentUserPhoto'],
                                     userUid: arguments['userUid'],
                                     postId: arguments['postId'],

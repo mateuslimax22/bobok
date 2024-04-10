@@ -14,6 +14,7 @@ import 'package:bobok/themes/theme.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:bobok/utils/push_notification.dart';
+import 'package:bobok/wisgets/listCard/list_card_friends.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart'; fullscreen
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -30,8 +31,6 @@ import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 
 Future<void> _firebaseMessagingBackgroundHadler(RemoteMessage message) async {
-  print(message.messageId);
-
   RemoteMessage? initialMessege =
       await FirebaseMessaging.instance.getInitialMessage();
 
@@ -127,7 +126,8 @@ class _MyAppState extends State<MyApp> {
                   currentUid: true,
                 ),
             AppRoutes.WORLD: (ctx) => const World(),
-            AppRoutes.EDITPROFILE: (ctx) => const EditProfile()
+            AppRoutes.EDITPROFILE: (ctx) => const EditProfile(),
+            AppRoutes.LISTFRIENDS: (ctx) => const ListFriends()
           },
         ),
       ),

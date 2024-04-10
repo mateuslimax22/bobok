@@ -3,6 +3,7 @@ import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,10 +16,20 @@ class AuthEmail extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   User? user;
   bool isLoading = true;
 
   late final BuildContext _context;
+
+  String getSystemLocaleString() {
+    final locale = Platform.localeName;
+    if (locale.contains('_')) {
+      final parts = locale.split('_');
+      return '${parts[0]}_${parts[1].toUpperCase()}';
+    }
+    return locale;
+  }
 
   Future<UserData?> createUserWithEmailAndPassword(
     String userName,
@@ -32,6 +43,10 @@ class AuthEmail extends ChangeNotifier {
           email: email, password: password);
 
       await credential.user?.updateDisplayName(userName);
+      final lan = getSystemLocaleString();
+      final token = await _firebaseMessaging.getToken().then((token) {
+        return token;
+      });
 
       String? fileUrl;
 
@@ -52,12 +67,14 @@ class AuthEmail extends ChangeNotifier {
         'username': userName,
         'searchname': userName.toLowerCase(),
         'uid': credential.user!.uid,
+        'uidFmc': token,
         'email': email,
         'followers': [],
         'following': [],
         'blocked': [],
         'blocking': [],
         'myfav': [],
+        'language': lan,
         'photoUrl': fileUrl,
       });
 
@@ -168,7 +185,18 @@ class AuthEmail extends ChangeNotifier {
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(_auth.currentUser!.uid);
+
       DocumentSnapshot snap = await userDocRef.get();
+      var uidFmc = snap.data() as Map<String, dynamic>;
+      if (uidFmc["uidFmc"] == '') {
+        final token = await _firebaseMessaging.getToken().then((token) {
+          return token;
+        });
+
+        await _firestore.collection('users').doc(credential.user!.uid).update({
+          'uidFmc': token,
+        });
+      }
       var userData = UserData.fromSnap(snap);
       userProvider.setUser(userData);
       return "login";

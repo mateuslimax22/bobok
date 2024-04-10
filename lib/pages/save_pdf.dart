@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bobok/provider/firestore_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +12,7 @@ class QuickAccessList extends StatefulWidget {
 }
 
 class _QuickAccessListState extends State<QuickAccessList> {
-  List<File> _pdfFiles = [];
+  final List<File> _pdfFiles = [];
 
   @override
   void initState() {

@@ -1,3 +1,4 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,17 +7,18 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../card/card_comment.dart';
 
 class CommentsCard extends StatefulWidget {
-  const CommentsCard({
-    super.key,
-    required this.avatar,
-    required this.postId,
-    required this.userUid,
-    required this.userName,
-  });
+  const CommentsCard(
+      {super.key,
+      required this.avatar,
+      required this.postId,
+      required this.userUid,
+      required this.userName,
+      required this.userStore});
   final String? avatar;
   final String postId;
   final String userName;
   final String userUid;
+  final UserStore? userStore;
 
   @override
   State<CommentsCard> createState() => _CommentsCard();
@@ -80,6 +82,7 @@ class _CommentsCard extends State<CommentsCard> {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           return CardComment(
+                            userStore: widget.userStore,
                             snap: snapshot.data!.docs[index],
                             userId: widget.userUid,
                             postId: widget.postId,

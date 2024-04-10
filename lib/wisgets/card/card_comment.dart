@@ -1,3 +1,5 @@
+import 'package:bobok/mobx/user_store.dart';
+import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +8,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class CardComment extends StatefulWidget {
-  const CardComment({
-    super.key,
-    required this.snap,
-    required this.userId,
-    required this.postId,
-  });
-
+  const CardComment(
+      {super.key,
+      required this.snap,
+      required this.userId,
+      required this.postId,
+      required this.userStore});
+  final UserStore? userStore;
   final dynamic snap;
   final String userId;
   final String postId;
@@ -87,10 +89,33 @@ class _CardCommentState extends State<CardComment> {
                           color: Theme.of(context).colorScheme.primary,
                           size: 40,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Profile(
+                                  uid: widget.snap.data()['uid'],
+                                  userStore: widget.userStore,
+                                  currentUid: false),
+                            ),
+                          );
+                        },
                       )
-                    : Image.network(widget.snap.data()['profileImg'],
-                        fit: BoxFit.cover),
+                    : GestureDetector(
+                        onTap: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Profile(
+                                  uid: widget.snap.data()['uid'],
+                                  userStore: widget.userStore,
+                                  currentUid: false),
+                            ),
+                          )
+                        },
+                        child: Image.network(widget.snap.data()['profileImg'],
+                            fit: BoxFit.cover),
+                      ),
               ),
             ),
           ),
@@ -138,43 +163,56 @@ class _CardCommentState extends State<CardComment> {
                     ],
                   ),
                 )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: RichText(
-                          text: TextSpan(children: [
-                            TextSpan(
-                                text: widget.snap.data()['name'],
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                )),
-                            TextSpan(
-                                text: ' ${widget.snap.data()['text']}',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ))
-                          ]),
+              : GestureDetector(
+                  onTap: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Profile(
+                            uid: widget.snap.data()['uid'],
+                            userStore: widget.userStore,
+                            currentUid: false),
+                      ),
+                    )
+                  },
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: widget.snap.data()['name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  )),
+                              TextSpan(
+                                  text: ' ${widget.snap.data()['text']}',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ))
+                            ]),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: Text(
-                            DateFormat.yMMMd().format(
-                              widget.snap.data()['datePublished'].toDate(),
-                            ),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            )),
-                      ),
-                    ]),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Text(
+                              DateFormat.yMMMd().format(
+                                widget.snap.data()['datePublished'].toDate(),
+                              ),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              )),
+                        ),
+                      ]),
+                ),
           const Spacer(),
           widget.snap.data()["uid"] == widget.userId
               ? PopupMenuButton<String>(

@@ -1,9 +1,9 @@
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
-import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 final userStore = UserStore();
 
@@ -22,10 +21,20 @@ class GoogleSignInProvider extends ChangeNotifier {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   GoogleSignInAccount? _user;
 
   GoogleSignInAccount get user => _user!;
+
+  String getSystemLocaleString() {
+    final locale = Platform.localeName;
+    if (locale.contains('_')) {
+      final parts = locale.split('_');
+      return '${parts[0]}_${parts[1].toUpperCase()}';
+    }
+    return locale;
+  }
 
   Future googleLogin(BuildContext context, UserProvider userProvider) async {
     final googleUser = await googleSignIn.signIn();
@@ -49,6 +58,19 @@ class GoogleSignInProvider extends ChangeNotifier {
     DocumentSnapshot snap = await userDocRef.get();
 
     if (snap.exists) {
+      var uidFmc = snap.data() as Map<String, dynamic>;
+      if (uidFmc["uidFmc"] == '') {
+        final token = await _firebaseMessaging.getToken().then((token) {
+          return token;
+        });
+
+        await _firestore
+            .collection('users')
+            .doc(_auth.currentUser!.uid)
+            .update({
+          'uidFmc': token,
+        });
+      }
       var userData = UserData.fromSnap(snap);
       userProvider.setUser(userData);
     } else {
@@ -66,6 +88,10 @@ class GoogleSignInProvider extends ChangeNotifier {
       await fileRef.putFile(file);
 
       fileUrl = await fileRef.getDownloadURL();
+      final lan = getSystemLocaleString();
+      final token = await _firebaseMessaging.getToken().then((token) {
+        return token;
+      });
 
       //add user on database
       await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
@@ -77,6 +103,8 @@ class GoogleSignInProvider extends ChangeNotifier {
         'following': [],
         'blocked': [],
         'blocking': [],
+        'uidFmc': token,
+        'language': lan,
         'myfav': [],
         'photoUrl': fileUrl,
       });

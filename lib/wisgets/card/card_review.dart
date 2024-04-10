@@ -62,6 +62,7 @@ class _CardReviewState extends State<CardReview> {
     Navigator.of(context).pushNamed(
       AppRoutes.REVIEW_DETAIL,
       arguments: {
+        'userStore': widget.userStore,
         'reviewAll': widget.review,
         'review': widget.review.review,
         'title': widget.review.title,

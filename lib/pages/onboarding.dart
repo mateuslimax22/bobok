@@ -3,14 +3,13 @@ import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/sign_in.dart';
 import 'package:bobok/provider/user_provider.dart';
-import 'package:bobok/utils/push_notification.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Onboarding extends StatefulWidget {
-  const Onboarding({Key? key}) : super(key: key);
+  const Onboarding({super.key});
 
   @override
   OnboardingState createState() => OnboardingState();

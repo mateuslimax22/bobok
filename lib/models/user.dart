@@ -50,7 +50,7 @@ class UserData {
           json['blocked'] != null ? List<dynamic>.from(json['blocked']) : [],
       blocking:
           json['blocking'] != null ? List<dynamic>.from(json['blocking']) : [],
-      myfav: List<dynamic>.from(json['myfav']),
+      myfav: json['myfav'] != null ? List<dynamic>.from(json['myfav']) : [],
     );
   }
 
@@ -65,7 +65,7 @@ class UserData {
       blocked: map['blocked'] != null ? List<dynamic>.from(map['blocked']) : [],
       blocking:
           map['blocking'] != null ? List<dynamic>.from(map['blocking']) : [],
-      myfav: List<dynamic>.from(map['myfav']),
+      myfav: map['myfav'] != null ? List<dynamic>.from(map['myfav']) : [],
     );
   }
 

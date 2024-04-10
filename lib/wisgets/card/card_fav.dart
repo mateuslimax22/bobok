@@ -64,6 +64,7 @@ class _CardFavoriteState extends State<CardFavorite> {
         Navigator.of(context).pushNamed(
           AppRoutes.REVIEW_DETAIL,
           arguments: {
+            'userStore': widget.userStore,
             'reviewAll': widget.itemReview,
             'review': widget.itemReview.review,
             'title': widget.itemReview.title,
