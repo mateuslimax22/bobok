@@ -6,7 +6,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../utils/constants.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+  const SignIn({
+    super.key,
+  });
 
   @override
   State<SignIn> createState() => _SignIn();

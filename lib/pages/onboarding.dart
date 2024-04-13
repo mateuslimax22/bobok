@@ -3,6 +3,8 @@ import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/home.dart';
 import 'package:bobok/pages/sign_in.dart';
 import 'package:bobok/provider/user_provider.dart';
+import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/delete/modal_vericate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,16 +18,32 @@ class Onboarding extends StatefulWidget {
 }
 
 class OnboardingState extends State<Onboarding> {
+  bool isVerificate = false;
+  late List isModalVisible;
   @override
   void initState() {
     super.initState();
+    isModalVisible = [];
   }
 
   @override
   Widget build(BuildContext context) {
+    Brightness currentBrightness = Theme.of(context).brightness;
+    String imagePath = currentBrightness == Brightness.light
+        ? 'images/backZoo.png'
+        : 'images/backDark.png';
+
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        if (isModalVisible.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              isModalVisible = [];
+            });
+          });
+        }
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
@@ -34,27 +52,61 @@ class OnboardingState extends State<Onboarding> {
           );
         } else if (snapshot.hasData) {
           final userProvider = Provider.of<UserProvider>(context);
-          final UserData? user = userProvider.user;
+          final UserData? userEnter = userProvider.user;
 
-          if (user != null) {
+          if (userEnter != null) {
             return Home(
               userData: UserData(
-                uid: user.uid,
-                username: user.username,
-                email: user.email,
-                avatar: user.avatar,
-                followers: user.followers,
-                following: user.following,
-                blocked: user.blocked,
-                blocking: user.blocking,
-                myfav: user.myfav,
+                uid: userEnter.uid,
+                username: userEnter.username,
+                email: userEnter.email,
+                avatar: userEnter.avatar,
+                followers: userEnter.followers,
+                following: userEnter.following,
+                blocked: userEnter.blocked,
+                blocking: userEnter.blocking,
+                myfav: userEnter.myfav,
               ),
             ); // Se o usuário estiver autenticado e os dados do usuário estiverem disponíveis, vá para a tela inicial
           } else {
-            UserStore().loadUserFromCache(userProvider);
-            return const Center(
-                child:
-                    CircularProgressIndicator()); // Caso contrário, exiba um indicador de progresso enquanto os dados do usuário estão sendo carregados
+            User? user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              isModalVisible.add("1");
+              if (user.emailVerified) {
+                UserStore().loadUserFromCache(userProvider);
+                return Scaffold(
+                  body: Container(
+                    height: deviceHeight,
+                    width: deviceWidth,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(imagePath), fit: BoxFit.cover),
+                    ),
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                );
+              } else {
+                return Scaffold(
+                  body: Container(
+                    height: deviceHeight,
+                    width: deviceWidth,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(imagePath), fit: BoxFit.cover),
+                    ),
+                    child: VerificateModal(
+                      onDelete: () async {
+                        await user.sendEmailVerification();
+                      },
+                      isVisible: isModalVisible,
+                    ),
+                  ),
+                );
+              }
+            } else {
+              // O usuário não está autenticado, provavelmente precisa fazer login
+              return Container();
+            }
           }
         } else {
           // O usuário não está autenticado, provavelmente precisa fazer login

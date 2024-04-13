@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -17,12 +18,13 @@ import 'package:path_provider/path_provider.dart';
 final userStore = UserStore();
 
 class GoogleSignInProvider extends ChangeNotifier {
+  GoogleSignInProvider(this._context);
   final googleSignIn = GoogleSignIn();
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
+  late final BuildContext _context;
   GoogleSignInAccount? _user;
 
   GoogleSignInAccount get user => _user!;
@@ -44,84 +46,104 @@ class GoogleSignInProvider extends ChangeNotifier {
 
     final googleAuth = await googleUser.authentication;
 
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+    if (googleAuth.accessToken != null && googleAuth.idToken != null) {
+      try {
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
+        final UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // Verificar se o usuário já existe no banco de dados
-    DocumentReference userDocRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser!.uid);
-    DocumentSnapshot snap = await userDocRef.get();
+        final User? user = userCredential.user;
 
-    if (snap.exists) {
-      var uidFmc = snap.data() as Map<String, dynamic>;
-      if (uidFmc["uidFmc"] == '') {
-        final token = await _firebaseMessaging.getToken().then((token) {
-          return token;
-        });
+        if (user != null) {
+          if (user.emailVerified) {
+            DocumentReference userDocRef = FirebaseFirestore.instance
+                .collection('users')
+                .doc(_auth.currentUser!.uid);
+            DocumentSnapshot snap = await userDocRef.get();
 
-        await _firestore
-            .collection('users')
-            .doc(_auth.currentUser!.uid)
-            .update({
-          'uidFmc': token,
-        });
+            if (snap.exists) {
+              var uidFmc = snap.data() as Map<String, dynamic>;
+              if (uidFmc["uidFmc"] == '') {
+                final token = await _firebaseMessaging.getToken().then((token) {
+                  return token;
+                });
+
+                await _firestore
+                    .collection('users')
+                    .doc(_auth.currentUser!.uid)
+                    .update({
+                  'uidFmc': token,
+                });
+              }
+              var userData = UserData.fromSnap(snap);
+              userProvider.setUser(userData);
+            } else {
+              String? fileUrl;
+              List url = [googleSignIn.currentUser!.photoUrl];
+
+              final fileRef = _storage
+                  .ref()
+                  .child("profilePics")
+                  .child(_auth.currentUser!.uid);
+
+              var response = await http.get(Uri.parse(url[0].toString()));
+              Directory documentDirectory =
+                  await getApplicationDocumentsDirectory();
+              File file = File(join(documentDirectory.path, 'imagetest.png'));
+              file.writeAsBytesSync(response.bodyBytes);
+
+              await fileRef.putFile(file);
+
+              fileUrl = await fileRef.getDownloadURL();
+              final lan = getSystemLocaleString();
+              final token = await _firebaseMessaging.getToken().then((token) {
+                return token;
+              });
+
+              //add user on database
+              await _firestore
+                  .collection('users')
+                  .doc(_auth.currentUser!.uid)
+                  .set({
+                'username': googleSignIn.currentUser!.displayName,
+                'searchname':
+                    googleSignIn.currentUser!.displayName!.toLowerCase(),
+                'uid': _auth.currentUser!.uid,
+                'email': googleSignIn.currentUser!.email,
+                'followers': [],
+                'following': [],
+                'blocked': [],
+                'blocking': [],
+                'uidFmc': token,
+                'language': lan,
+                'myfav': [],
+                'photoUrl': fileUrl,
+              });
+
+              var userData = UserData.fromMap({
+                'username': googleSignIn.currentUser!.displayName,
+                'uid': _auth.currentUser!.uid,
+                'email': googleSignIn.currentUser!.email,
+                'followers': [],
+                'following': [],
+                'blocked': [],
+                'blocking': [],
+                'myfav': [],
+                'photoUrl': fileUrl,
+              });
+
+              userProvider.setUser(userData);
+            }
+          }
+        }
+      } catch (error) {
+        print("Erro durante a autenticação com o Google: $error");
+        // Trate o erro conforme necessário
       }
-      var userData = UserData.fromSnap(snap);
-      userProvider.setUser(userData);
-    } else {
-      String? fileUrl;
-      List url = [googleSignIn.currentUser!.photoUrl];
-
-      final fileRef =
-          _storage.ref().child("profilePics").child(_auth.currentUser!.uid);
-
-      var response = await http.get(Uri.parse(url[0].toString()));
-      Directory documentDirectory = await getApplicationDocumentsDirectory();
-      File file = File(join(documentDirectory.path, 'imagetest.png'));
-      file.writeAsBytesSync(response.bodyBytes);
-
-      await fileRef.putFile(file);
-
-      fileUrl = await fileRef.getDownloadURL();
-      final lan = getSystemLocaleString();
-      final token = await _firebaseMessaging.getToken().then((token) {
-        return token;
-      });
-
-      //add user on database
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).set({
-        'username': googleSignIn.currentUser!.displayName,
-        'searchname': googleSignIn.currentUser!.displayName!.toLowerCase(),
-        'uid': _auth.currentUser!.uid,
-        'email': googleSignIn.currentUser!.email,
-        'followers': [],
-        'following': [],
-        'blocked': [],
-        'blocking': [],
-        'uidFmc': token,
-        'language': lan,
-        'myfav': [],
-        'photoUrl': fileUrl,
-      });
-
-      var userData = UserData.fromMap({
-        'username': googleSignIn.currentUser!.displayName,
-        'uid': _auth.currentUser!.uid,
-        'email': googleSignIn.currentUser!.email,
-        'followers': [],
-        'following': [],
-        'blocked': [],
-        'blocking': [],
-        'myfav': [],
-        'photoUrl': fileUrl,
-      });
-
-      userProvider.setUser(userData);
     }
   }
 

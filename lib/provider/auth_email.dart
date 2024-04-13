@@ -182,24 +182,36 @@ class AuthEmail extends ChangeNotifier {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      DocumentReference userDocRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(_auth.currentUser!.uid);
 
-      DocumentSnapshot snap = await userDocRef.get();
-      var uidFmc = snap.data() as Map<String, dynamic>;
-      if (uidFmc["uidFmc"] == '') {
-        final token = await _firebaseMessaging.getToken().then((token) {
-          return token;
-        });
+      final User? user = credential.user;
 
-        await _firestore.collection('users').doc(credential.user!.uid).update({
-          'uidFmc': token,
-        });
+      if (user != null) {
+        if (user.emailVerified) {
+          DocumentReference userDocRef = FirebaseFirestore.instance
+              .collection('users')
+              .doc(_auth.currentUser!.uid);
+
+          DocumentSnapshot snap = await userDocRef.get();
+          var uidFmc = snap.data() as Map<String, dynamic>;
+          if (uidFmc["uidFmc"] == '') {
+            final token = await _firebaseMessaging.getToken().then((token) {
+              return token;
+            });
+
+            await _firestore
+                .collection('users')
+                .doc(credential.user!.uid)
+                .update({
+              'uidFmc': token,
+            });
+          }
+          var userData = UserData.fromSnap(snap);
+          userProvider.setUser(userData);
+          return "login";
+        } else {
+          return "verify";
+        }
       }
-      var userData = UserData.fromSnap(snap);
-      userProvider.setUser(userData);
-      return "login";
     } on FirebaseAuthException catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(_context).showSnackBar(

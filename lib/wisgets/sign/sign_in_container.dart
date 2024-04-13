@@ -1,4 +1,5 @@
 import 'package:bobok/provider/auth_email.dart';
+import 'package:bobok/wisgets/delete/modal_politic.dart';
 import 'package:flutter/material.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,7 +20,10 @@ class _SignInConatiner extends State<SignInConatiner> {
   final _formData = Map<String, Object>();
   bool spoiler = false;
   bool msgError = false;
+  bool isModalVisibleEmail = false;
+  bool isModalVisibleGoogle = false;
   bool notValid = false;
+  bool isPrivicy = false;
   bool isLoading = false;
   bool isLoadingEmail = false;
   bool passwordVisible = false;
@@ -49,7 +53,9 @@ class _SignInConatiner extends State<SignInConatiner> {
         _formData['senha'].toString(),
       );
 
-      if (resp != "login") {
+      if (resp == "verify") {
+        print("não esta verificado");
+      } else if (resp != "login") {
         setState(() {
           isLoadingEmail = false;
         });
@@ -64,6 +70,28 @@ class _SignInConatiner extends State<SignInConatiner> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            TermsModal(
+                onDelete: () {
+                  setState(() {
+                    isPrivicy = true;
+                    isModalVisibleEmail = false;
+                  });
+                  submitForm();
+                },
+                isVisible: isModalVisibleEmail),
+            TermsModal(
+                onDelete: () {
+                  setState(() {
+                    isPrivicy = true;
+                    isLoading = true;
+                    isModalVisibleGoogle = false;
+                  });
+                  final provider =
+                      Provider.of<GoogleSignInProvider>(context, listen: false);
+                  provider.googleLogin(context,
+                      Provider.of<UserProvider>(context, listen: false));
+                },
+                isVisible: isModalVisibleGoogle),
             Text(AppLocalizations.of(context)!.welcome,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium!.copyWith(
@@ -178,7 +206,13 @@ class _SignInConatiner extends State<SignInConatiner> {
               child: ElevatedButtonTh(
                 label: AppLocalizations.of(context)!.login,
                 target: () async {
-                  submitForm();
+                  if (isPrivicy == false) {
+                    setState(() {
+                      isModalVisibleEmail = true;
+                    });
+                  } else {
+                    submitForm();
+                  }
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -240,13 +274,19 @@ class _SignInConatiner extends State<SignInConatiner> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  final provider =
-                      Provider.of<GoogleSignInProvider>(context, listen: false);
-                  provider.googleLogin(context,
-                      Provider.of<UserProvider>(context, listen: false));
+                  if (isPrivicy == false) {
+                    setState(() {
+                      isModalVisibleGoogle = true;
+                    });
+                  } else {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    final provider = Provider.of<GoogleSignInProvider>(context,
+                        listen: false);
+                    provider.googleLogin(context,
+                        Provider.of<UserProvider>(context, listen: false));
+                  }
                 },
               ),
             ),

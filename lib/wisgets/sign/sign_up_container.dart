@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/delete/modal_politic.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,8 @@ class _SignUpConatiner extends State<SignUpConatiner> {
   bool isLoading = false;
   bool passwordVisible = false;
   bool confirmPasswordVisible = false;
+  bool isPrivicy = false;
+  bool isModalVisibleEmail = false;
 
   bool is6Digits = false;
   bool isUppercase = false;
@@ -148,6 +151,15 @@ class _SignUpConatiner extends State<SignUpConatiner> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            TermsModal(
+                onDelete: () {
+                  setState(() {
+                    isPrivicy = true;
+                    isModalVisibleEmail = false;
+                  });
+                  submitForm();
+                },
+                isVisible: isModalVisibleEmail),
             Text(AppLocalizations.of(context)!.newbobok,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
@@ -623,7 +635,13 @@ class _SignUpConatiner extends State<SignUpConatiner> {
               child: ElevatedButtonTh(
                 label: AppLocalizations.of(context)!.signUp,
                 target: () async {
-                  submitForm();
+                  if (isPrivicy == false) {
+                    setState(() {
+                      isModalVisibleEmail = true;
+                    });
+                  } else {
+                    submitForm();
+                  }
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
