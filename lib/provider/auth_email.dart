@@ -90,7 +90,7 @@ class AuthEmail extends ChangeNotifier {
         'photoUrl': fileUrl,
       });
 
-      userProvider.setUser(userData);
+      //userProvider.setUser(userData);
 
       return UserData(avatar: fileUrl, username: userName, email: email);
     } on FirebaseAuthException catch (e) {

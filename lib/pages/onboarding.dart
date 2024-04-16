@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/home.dart';
@@ -96,7 +98,43 @@ class OnboardingState extends State<Onboarding> {
                     ),
                     child: VerificateModal(
                       onDelete: () async {
-                        await user.sendEmailVerification();
+                        try {
+                          await user.sendEmailVerification();
+                        } catch (error) {
+                          // Em caso de erro, exiba uma mensagem de erro
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: Text(
+                                  '${AppLocalizations.of(context)!.sendError}$error',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                    fontSize: 15,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      "OK",
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 15,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       },
                       isVisible: isModalVisible,
                     ),

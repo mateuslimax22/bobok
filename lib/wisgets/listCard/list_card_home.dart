@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListCard extends StatefulWidget {
   const ListCard({super.key, required this.userStore});
@@ -128,19 +129,117 @@ class _ListCardState extends State<ListCard>
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.data!.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Adicione uma nova resenha ou siga um avaliador.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    letterSpacing: 0.5,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.welcome,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  Text(
+                    AppLocalizations.of(context)!.homeFeatures,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      letterSpacing: 0.5,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ListTile(
+                    leading: const Icon(Icons.add),
+                    title: Text(
+                      AppLocalizations.of(context)!.addRwview,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontSize: 17,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)!.createRw,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        letterSpacing: 0.5,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.all_inclusive),
+                    title: Text(
+                      AppLocalizations.of(context)!.seeRw,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontSize: 17,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)!.tabRw,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        letterSpacing: 0.5,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.bookmark_add_outlined),
+                    title: Text(
+                      AppLocalizations.of(context)!.addRwList,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontSize: 17,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)!.addRwListCont,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        letterSpacing: 0.5,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: Text(
+                      AppLocalizations.of(context)!.personalizeProfile,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        letterSpacing: 0.5,
+                        fontSize: 17,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context)!.personalizeProfileCont,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        letterSpacing: 0.5,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           }

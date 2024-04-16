@@ -1,13 +1,14 @@
+import 'dart:io';
+
 import 'package:bobok/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class CardAdsWord extends StatefulWidget {
   const CardAdsWord({
-    Key? key,
+    super.key,
     required this.colorback,
-    required this.ads,
-  }) : super(key: key);
-  final Widget ads;
+  });
   final Color colorback;
 
   @override
@@ -15,6 +16,72 @@ class CardAdsWord extends StatefulWidget {
 }
 
 class _CardAdsWordState extends State<CardAdsWord> {
+  bool adLoaded = false;
+  late NativeAd _nativeAd;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/2247696110'
+      : 'ca-app-pub-3940256099942544/3986624511';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNativeAd();
+  }
+
+  void _loadNativeAd() {
+    _nativeAd = NativeAd(
+        adUnitId: _adUnitId,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            // debugPrint('$NativeAd loaded.');
+            setState(() {
+              adLoaded = true;
+            });
+          },
+          onAdFailedToLoad: (ad, error) {
+            // Dispose the ad here to free resources.
+            // debugPrint('$NativeAd failed to load: $error');
+            ad.dispose();
+          },
+        ),
+        request: const AdRequest(),
+        // Styling
+        nativeTemplateStyle: NativeTemplateStyle(
+            // Required: Choose a template.
+            templateType: TemplateType.small,
+            // Optional: Customize the ad's style.
+            mainBackgroundColor: Colors.purple,
+            cornerRadius: 10.0,
+            callToActionTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.cyan,
+                backgroundColor: Colors.red,
+                style: NativeTemplateFontStyle.monospace,
+                size: 16.0),
+            primaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.red,
+                backgroundColor: Colors.cyan,
+                style: NativeTemplateFontStyle.italic,
+                size: 16.0),
+            secondaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.green,
+                backgroundColor: Colors.black,
+                style: NativeTemplateFontStyle.bold,
+                size: 16.0),
+            tertiaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.brown,
+                backgroundColor: Colors.amber,
+                style: NativeTemplateFontStyle.normal,
+                size: 16.0)));
+    _nativeAd?.load();
+  }
+
+  @override
+  void dispose() {
+    _nativeAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -52,18 +119,18 @@ class _CardAdsWordState extends State<CardAdsWord> {
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(5)),
                               child: SizedBox.fromSize(
-                                  size:
-                                      const Size.fromRadius(10), // Image radius
-                                  child: IconButton(
-                                    padding: const EdgeInsets.all(0),
-                                    icon: Icon(
-                                      Icons.account_balance_wallet_rounded,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      size: 30,
-                                    ),
-                                    onPressed: () {},
-                                  )),
+                                size: const Size.fromRadius(10), // Image radius
+                                child: IconButton(
+                                  padding: const EdgeInsets.all(0),
+                                  icon: Icon(
+                                    Icons.account_balance_wallet_rounded,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {},
+                                ),
+                              ),
                             ),
                           ),
                           Padding(
@@ -71,10 +138,10 @@ class _CardAdsWordState extends State<CardAdsWord> {
                             child: Text(
                               'Ads',
                               style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: 15,
-                                  letterSpacing: 1.5),
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 15,
+                                letterSpacing: 1.5,
+                              ),
                             ),
                           ),
                         ],
@@ -131,7 +198,9 @@ class _CardAdsWordState extends State<CardAdsWord> {
                                   ),
                                 ],
                               ),
-                              child: widget.ads,
+                              child: adLoaded
+                                  ? AdWidget(ad: _nativeAd)
+                                  : const CircularProgressIndicator(),
                             ),
                           ],
                         ),

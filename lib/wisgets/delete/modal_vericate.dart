@@ -86,7 +86,7 @@ class _VerificateModalState extends State<VerificateModal> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    // widget.onDelete();
+                    widget.onDelete();
                     startCountdown();
                   },
                   child: Text(
