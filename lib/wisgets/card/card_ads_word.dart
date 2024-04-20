@@ -73,7 +73,7 @@ class _CardAdsWordState extends State<CardAdsWord> {
                 backgroundColor: Colors.amber,
                 style: NativeTemplateFontStyle.normal,
                 size: 16.0)));
-    _nativeAd?.load();
+    _nativeAd.load();
   }
 
   @override

@@ -84,7 +84,16 @@ class _ListCardRecommendationState extends State<ListCardRecommendation>
             }
             if (!reviewsSnapshot.hasData ||
                 reviewsSnapshot.data!.docs.isEmpty) {
-              return const Text('Add Indicações.');
+              return Text(
+                AppLocalizations.of(context)!.addtoInd,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              );
             }
 
             final reviews = reviewsSnapshot.data!.docs

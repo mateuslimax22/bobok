@@ -5,6 +5,7 @@ import 'package:bobok/provider/auth_email.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -29,6 +30,53 @@ class _EditProfile extends State<EditProfile> {
   bool isNumber = false;
   bool isLoadingRegister = false;
   bool isSpecialCharacters = false;
+  RewardedAd? _rewardedAd;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : 'ca-app-pub-6374572075612830/8060249344';
+
+  @override
+  void initState() {
+    super.initState();
+    showRewardedAd();
+  }
+
+  void showRewardedAd() {
+    RewardedAd.load(
+        adUnitId: _adUnitId,
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(onAdLoaded: (ad) {
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+              // Called when the ad showed the full screen content.
+              onAdShowedFullScreenContent: (ad) {},
+              // Called when an impression occurs on the ad.
+              onAdImpression: (ad) {},
+              // Called when the ad failed to show full screen content.
+              onAdFailedToShowFullScreenContent: (ad, err) {
+                ad.dispose();
+              },
+              // Called when the ad dismissed full screen content.
+              onAdDismissedFullScreenContent: (ad) {
+                ad.dispose();
+              },
+              // Called when a click is recorded for an ad.
+              onAdClicked: (ad) {});
+
+          // Keep a reference to the ad so you can show it later.
+          _rewardedAd = ad;
+        }, onAdFailedToLoad: (LoadAdError error) {
+          // ignore: avoid_print
+          print('RewardedAd failed to load: $error');
+        }));
+  }
+
+  @override
+  void dispose() {
+    _rewardedAd?.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +118,11 @@ class _EditProfile extends State<EditProfile> {
           arguments['userStore']);
       setState(() {
         isLoading = false;
+      });
+      _rewardedAd?.show(
+          onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+        // ignore: avoid_print
+        print('Reward amount: ${rewardItem.amount}');
       });
       // ignore: use_build_context_synchronously
       Navigator.of(context).pop();

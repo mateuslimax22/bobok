@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:bobok/provider/user_provider.dart';
@@ -5,6 +6,7 @@ import 'package:bobok/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SettingsMenu extends StatefulWidget {
   const SettingsMenu({super.key, this.userStore});
@@ -24,6 +26,52 @@ class _SettingsMenuState extends State<SettingsMenu> {
         // ignore: use_build_context_synchronously
         Provider.of<GoogleSignInProvider>(context, listen: false);
     provider.logout();
+  }
+
+  BannerAd? _nativeAd;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : 'ca-app-pub-6374572075612830/8060249344';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAd();
+  }
+
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: _adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _nativeAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
   }
 
   @override
@@ -90,6 +138,38 @@ class _SettingsMenuState extends State<SettingsMenu> {
                           logout();
                           Navigator.of(context).pop();
                         },
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        child: _nativeAd == null
+                            // Nothing to render yet.
+                            ? const SizedBox()
+                            // The actual ad.
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Container(
+                                  height: 45,
+                                  width: 350,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(10)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.35),
+                                        spreadRadius: 1,
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: AdWidget(ad: _nativeAd!),
+                                ),
+                              ),
                       ),
                     ],
                   ),

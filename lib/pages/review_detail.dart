@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/animated/comments_container.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class ReviewDetail extends StatefulWidget {
   const ReviewDetail({
@@ -17,10 +19,57 @@ class _ReviewDetailState extends State<ReviewDetail> {
   bool isLike = false;
   bool isSave = false;
   int countLikes = 0;
+  BannerAd? _nativeAd;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : 'ca-app-pub-6374572075612830/8060249344';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAd();
+  }
+
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    super.dispose();
+  }
+
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: _adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _nativeAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
+  }
+
   get arguments =>
       (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{})
           as Map;
 
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     setState(() {
@@ -188,25 +237,77 @@ class _ReviewDetailState extends State<ReviewDetail> {
                           ),
                         ),
                         arguments['isComment'] == false
-                            ? Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 10, 0, 3),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: SingleChildScrollView(
-                                      child: Text(
-                                        arguments['review'],
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary,
-                                          fontSize: 15,
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    height: deviceHeight * 0.9 - 140,
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 10, 0, 3),
+                                            child: Align(
+                                              alignment: Alignment.topLeft,
+                                              child: SingleChildScrollView(
+                                                child: Text(
+                                                  arguments['review'],
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimary,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        SizedBox(
+                                          child: _nativeAd == null
+                                              // Nothing to render yet.
+                                              ? const SizedBox()
+                                              // The actual ad.
+                                              : Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 15, bottom: 5),
+                                                  child: Container(
+                                                    height: 45,
+                                                    width: 350,
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary
+                                                                  .withOpacity(
+                                                                      0.35),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 4,
+                                                          offset: const Offset(
+                                                              0, 2),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: AdWidget(
+                                                        ad: _nativeAd!),
+                                                  ),
+                                                ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
+                                ],
                               )
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +374,9 @@ class _ReviewDetailState extends State<ReviewDetail> {
                                         width: 3.0,
                                       ),
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(5),
+                                        topRight: Radius.circular(5)),
                                     color:
                                         Theme.of(context).colorScheme.onError),
                                 child: Row(

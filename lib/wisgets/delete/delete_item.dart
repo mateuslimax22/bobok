@@ -97,7 +97,7 @@ class _DeleteConfirmationModalState extends State<DeleteConfirmationModal> {
                           : Padding(
                               padding: const EdgeInsets.only(top: 20),
                               child: Container(
-                                height: 50,
+                                height: 45,
                                 width: 350,
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,

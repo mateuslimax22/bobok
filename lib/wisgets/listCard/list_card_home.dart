@@ -116,9 +116,7 @@ class _ListCardState extends State<ListCard>
       _reviewsAmigosFuture =
           getReviewsAmigos(); // Atualiza a lista de reviews sempre que o usuário for atualizado
       final adcode = _nativeAdIsLoaded
-          ? CardAds(
-              colorback: Theme.of(context).colorScheme.primary,
-              ads: AdWidget(ad: _nativeAd!))
+          ? CardAds(colorback: Theme.of(context).colorScheme.primary)
           : const SizedBox();
 
       return Center(

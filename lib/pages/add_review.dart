@@ -248,7 +248,7 @@ class _AddReviewState extends State<AddReview> {
         child: SingleChildScrollView(
           reverse: false,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
             child: Form(
                 key: _formKey,
                 autovalidateMode: notValid == true
