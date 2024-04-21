@@ -10,6 +10,7 @@ class UserData {
   final List? blocked;
   final List? blocking;
   final List<dynamic>? myfav;
+  final int? ads;
 
   UserData(
       {this.uid,
@@ -20,7 +21,8 @@ class UserData {
       this.following,
       this.blocked,
       this.blocking,
-      this.myfav});
+      this.myfav,
+      this.ads});
 
   static UserData fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;

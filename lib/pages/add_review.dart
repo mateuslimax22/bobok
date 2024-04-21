@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:web_scraper/web_scraper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AddReview extends StatefulWidget {
   const AddReview({super.key});
@@ -22,6 +23,12 @@ class _AddReviewState extends State<AddReview> {
   final _formData = Map<String, Object>();
   late UserStore userStore;
 
+  BannerAd? _nativeAd;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : 'ca-app-pub-6374572075612830/8060249344';
+
   bool spoiler = false;
   bool msgError = false;
   bool notValid = false;
@@ -34,11 +41,40 @@ class _AddReviewState extends State<AddReview> {
   FocusNode myFocusNodeTitle = FocusNode();
   FocusNode myFocusNodeReview = FocusNode();
 
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: _adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _nativeAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
+  }
+
   // List of items in our dropdown menu
 
   @override
   void initState() {
     super.initState();
+    _loadAd();
     myFocusNodeTitle.addListener(() {
       setState(() {});
     });
@@ -50,6 +86,7 @@ class _AddReviewState extends State<AddReview> {
 
   @override
   void dispose() {
+    _nativeAd?.dispose();
     myFocusNodeTitle.removeListener(_onTitleFocusChange);
     super.dispose();
   }
@@ -644,6 +681,36 @@ class _AddReviewState extends State<AddReview> {
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      child: _nativeAd == null
+                          // Nothing to render yet.
+                          ? const SizedBox()
+                          // The actual ad.
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Container(
+                                height: 45,
+                                width: 350,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.35),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: AdWidget(ad: _nativeAd!),
+                              ),
+                            ),
                     ),
                   ],
                 )),

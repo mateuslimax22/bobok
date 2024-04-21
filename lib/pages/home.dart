@@ -166,6 +166,99 @@ class _HomeState extends State<Home> {
           title:
               Image.asset(imagePath, width: 133, height: 45, fit: BoxFit.fill),
           actions: [
+            IconButton(
+              icon: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 25,
+                      color: Colors.amber[800],
+                    ),
+                  ), // Substitua por seu ícone de coroa
+                  Text('Premium',
+                      style: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                ],
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Bobok Premium',
+                          style: TextStyle(
+                            letterSpacing: 0.5,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          )),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text('Remova todas as propagandas por:',
+                                style: TextStyle(
+                                  letterSpacing: 0.5,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 15,
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(' R\$: 5,99 / mês.',
+                                style: TextStyle(
+                                  letterSpacing: 0.5,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                )),
+                          ),
+                          Text('Você pode cancelar a qualquer momento!',
+                              style: TextStyle(
+                                letterSpacing: 0.5,
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 15,
+                              )),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Fechar',
+                              style: TextStyle(
+                                letterSpacing: 0.5,
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              )),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Assinar',
+                              style: TextStyle(
+                                letterSpacing: 0.5,
+                                color: Colors.amber[800],
+                                fontSize: 20,
+                              )),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
             _currentIndex == 3
                 ? IconButton(
                     icon: const Icon(Icons.more_vert),
@@ -201,7 +294,7 @@ class _HomeState extends State<Home> {
                             },
                           );
                         },
-                      )
+                      ),
           ]),
       bottomNavigationBar: CurvedNavigationBar(
           color: Theme.of(context).colorScheme.background,

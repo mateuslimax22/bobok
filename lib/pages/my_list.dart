@@ -131,7 +131,7 @@ class _MyListState extends State<MyList> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -214,7 +214,7 @@ class _MyListState extends State<MyList> {
                 ? const SizedBox()
                 // The actual ad.
                 : Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 8),
                     child: Container(
                       height: 45,
                       width: 350,
