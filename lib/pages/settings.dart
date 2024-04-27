@@ -95,8 +95,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
             child: GestureDetector(
               onTap: () {}, // impedir que o clique seja propagado para fora
               child: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                   borderRadius: const BorderRadius.only(
@@ -106,7 +105,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 20, 8, 8),
-                  child: ListView(
+                  child: Column(
                     children: [
                       ListTile(
                           leading: Icon(
@@ -149,7 +148,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
                                 padding: const EdgeInsets.only(top: 20),
                                 child: Container(
                                   height: 45,
-                                  width: 350,
+                                  width: 320,
                                   decoration: BoxDecoration(
                                     color:
                                         Theme.of(context).colorScheme.primary,

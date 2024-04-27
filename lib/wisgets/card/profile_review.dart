@@ -5,6 +5,7 @@ import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/card/ads_video.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -76,11 +77,61 @@ class _ProfileReviewState extends State<ProfileReview> {
     }
   }
 
+  void count() async {
+    if (widget.userStore!.user!.ads == 3) {
+      await InterstitialAdManager.showInterstitialAd();
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 0),
+      );
+    }
+
+    if (widget.userStore!.user!.ads != null) {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: widget.userStore!.user!.ads! + 1),
+      );
+    } else {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 1),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double cardSizeWidth = deviceWidth;
     return GestureDetector(
       onTap: () {
+        count();
         Navigator.of(context).pushNamed(
           AppRoutes.REVIEW_DETAIL,
           arguments: {
@@ -142,7 +193,7 @@ class _ProfileReviewState extends State<ProfileReview> {
                                     width: 20,
                                     alignment: Alignment.centerRight,
                                     child: Icon(
-                                      Icons.more_vert,
+                                      Icons.local_play_rounded,
                                       color: Theme.of(context)
                                           .colorScheme
                                           .tertiary,

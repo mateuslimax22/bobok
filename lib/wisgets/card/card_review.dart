@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bobok/wisgets/card/ads_video.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
@@ -42,28 +43,9 @@ class _CardReviewState extends State<CardReview> {
   bool _isModalVisible = false;
   List<QueryDocumentSnapshot>? comments;
 
-  final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/5224354917'
-      : 'ca-app-pub-6374572075612830/8060249344';
-
-  Future<void> _showInterstitialAd() async {
-    InterstitialAd.load(
-      adUnitId: _adUnitId,
-      request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (InterstitialAd ad) {
-          ad.show();
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          print('Erro ao carregar o anúncio intersticial: $error');
-        },
-      ),
-    );
-  }
-
   void count() async {
     if (widget.userStore!.user!.ads == 3) {
-      await _showInterstitialAd();
+      await InterstitialAdManager.showInterstitialAd();
       widget.userStore?.setUser(
         UserData(
             username: widget.userStore!.user!.username,
@@ -75,7 +57,7 @@ class _CardReviewState extends State<CardReview> {
             blocked: widget.userStore!.user!.blocked,
             blocking: widget.userStore!.user!.blocking,
             myfav: widget.userStore!.user!.myfav,
-            ads: 1),
+            ads: 0),
       );
     }
 

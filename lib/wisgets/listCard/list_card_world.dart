@@ -34,21 +34,39 @@ class _ListCardWorldState extends State<ListCardWorld>
     return locale.substring(0, 2);
   }
 
+  String incrementLanguagePrefix(language) {
+    if (language == "pt") {
+      return "pu";
+    } else {
+      return "eo";
+    }
+  }
+
   Future<List<QueryDocumentSnapshot>> getReviewsAmigos() async {
     // Obtendo as reviews dos amigos
     if (widget.userStore!.user!.blocking!.isNotEmpty ||
         widget.userStore!.user!.blocked!.isNotEmpty) {
       var reviewsSnapshot = await FirebaseFirestore.instance
           .collection('reviews')
-          .where('language', isLessThan: '${systemLanguagePrefix()}z')
+          .where('language', isGreaterThanOrEqualTo: systemLanguagePrefix())
+          .where('language',
+              isLessThan: incrementLanguagePrefix(systemLanguagePrefix()))
+          .orderBy('language')
+          .orderBy("datePublish", descending: true)
           .where('uid', whereNotIn: [
         ...widget.userStore!.user!.blocking!,
         ...widget.userStore!.user!.blocked!
       ]).get();
       return reviewsSnapshot.docs;
     } else {
-      var reviewsSnapshot =
-          await FirebaseFirestore.instance.collection('reviews').get();
+      var reviewsSnapshot = await FirebaseFirestore.instance
+          .collection('reviews')
+          .where('language', isGreaterThanOrEqualTo: systemLanguagePrefix())
+          .where('language',
+              isLessThan: incrementLanguagePrefix(systemLanguagePrefix()))
+          .orderBy('language')
+          .orderBy("datePublish", descending: true)
+          .get();
       return reviewsSnapshot.docs;
     }
   }
@@ -83,8 +101,7 @@ class _ListCardWorldState extends State<ListCardWorld>
                   return const SizedBox();
                 },
                 itemBuilder: (context, index) {
-                  int reverseIndex = snapshot.data!.length - 1 - index;
-                  Review review = Review.fromSnap(snapshot.data![reverseIndex]);
+                  Review review = Review.fromSnap(snapshot.data![index]);
                   return CardReviewWorld(
                     colorback: review.spoiler == true
                         ? Theme.of(context).colorScheme.secondaryContainer

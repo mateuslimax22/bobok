@@ -5,6 +5,7 @@ import 'package:bobok/pages/profile.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/card/ads_video.dart';
 import 'package:bobok/wisgets/delete/delete_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,55 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
   bool _isModalVisible = false;
   List<QueryDocumentSnapshot>? comments;
 
+  void count() async {
+    if (widget.userStore!.user!.ads == 3) {
+      await InterstitialAdManager.showInterstitialAd();
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 0),
+      );
+    }
+
+    if (widget.userStore!.user!.ads != null) {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: widget.userStore!.user!.ads! + 1),
+      );
+    } else {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 1),
+      );
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -63,6 +113,7 @@ class _CardReviewWorldState extends State<CardReviewWorld> {
   }
 
   void navigateToReviewDetail(BuildContext context, bool isComment) {
+    count();
     Navigator.of(context).pushNamed(
       AppRoutes.REVIEW_DETAIL,
       arguments: {

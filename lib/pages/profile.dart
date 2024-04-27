@@ -684,18 +684,31 @@ class _ProfileState extends State<Profile> {
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.indications,
-                                    style: TextStyle(
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_play_rounded,
+                                      size: 22,
                                       color:
                                           Theme.of(context).colorScheme.primary,
-                                      letterSpacing: 0.5,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
                                     ),
-                                  ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 8, 0, 8),
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .indications,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 isBlocking || isBlocked
                                     ? Text(
@@ -723,18 +736,34 @@ class _ProfileState extends State<Profile> {
                             padding: const EdgeInsets.only(left: 8),
                             child: Column(
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.reviews,
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      letterSpacing: 0.5,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: Icon(
+                                        Icons.movie_filter,
+                                        size: 25,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
                                     ),
-                                  ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.reviews,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 isBlocking || isBlocked
                                     ? Text(

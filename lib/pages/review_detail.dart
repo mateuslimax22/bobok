@@ -163,7 +163,6 @@ class _ReviewDetailState extends State<ReviewDetail> {
                   Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Expanded(
                   child: Container(
-                    height: deviceHeight * 0.9,
                     width: deviceWidth,
                     decoration: BoxDecoration(
                         color: Theme.of(context)
@@ -237,77 +236,66 @@ class _ReviewDetailState extends State<ReviewDetail> {
                           ),
                         ),
                         arguments['isComment'] == false
-                            ? Column(
-                                children: [
-                                  SizedBox(
-                                    height: deviceHeight * 0.9 - 140,
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                10, 10, 0, 3),
-                                            child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: SingleChildScrollView(
-                                                child: Text(
-                                                  arguments['review'],
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimary,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
+                            ? Expanded(
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 10, 0, 3),
+                                        child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: SingleChildScrollView(
+                                            child: Text(
+                                              arguments['review'],
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                                fontSize: 15,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          child: _nativeAd == null
-                                              // Nothing to render yet.
-                                              ? const SizedBox()
-                                              // The actual ad.
-                                              : Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 15, bottom: 5),
-                                                  child: Container(
-                                                    height: 45,
-                                                    width: 350,
-                                                    decoration: BoxDecoration(
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      child: _nativeAd == null
+                                          // Nothing to render yet.
+                                          ? const SizedBox()
+                                          // The actual ad.
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 15, bottom: 5),
+                                              child: Container(
+                                                height: 45,
+                                                width: 350,
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(10)),
+                                                  boxShadow: [
+                                                    BoxShadow(
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .primary,
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  10)),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary
-                                                                  .withOpacity(
-                                                                      0.35),
-                                                          spreadRadius: 1,
-                                                          blurRadius: 4,
-                                                          offset: const Offset(
-                                                              0, 2),
-                                                        ),
-                                                      ],
+                                                          .primary
+                                                          .withOpacity(0.35),
+                                                      spreadRadius: 1,
+                                                      blurRadius: 4,
+                                                      offset:
+                                                          const Offset(0, 2),
                                                     ),
-                                                    child: AdWidget(
-                                                        ad: _nativeAd!),
-                                                  ),
+                                                  ],
                                                 ),
-                                        ),
-                                      ],
+                                                child: AdWidget(ad: _nativeAd!),
+                                              ),
+                                            ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

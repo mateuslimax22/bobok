@@ -209,7 +209,7 @@ class _Search extends State<Search> {
                       padding: const EdgeInsets.only(top: 20, bottom: 5),
                       child: Container(
                         height: 45,
-                        width: 350,
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary,
                           borderRadius:

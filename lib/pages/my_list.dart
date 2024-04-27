@@ -126,6 +126,7 @@ class _MyListState extends State<MyList> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: deviceHeight,
       decoration:
           BoxDecoration(color: Theme.of(context).colorScheme.background),
       child: Column(
@@ -159,54 +160,55 @@ class _MyListState extends State<MyList> {
               ),
             ),
           ),
-          Container(
-            height: deviceHeight * 0.58,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 3.0,
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 3.0,
+                  ),
                 ),
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.onError,
               ),
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).colorScheme.onError,
-            ),
-            child: getFilteredMyFav().isEmpty
-                ? SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                          child: Text(
-                            AppLocalizations.of(context)!.emptyList,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+              child: getFilteredMyFav().isEmpty
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                            child: Text(
+                              AppLocalizations.of(context)!.emptyList,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    )
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: getFilteredMyFav().length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: (2.8 / 4),
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 2,
+                      ),
+                      itemBuilder: (ctx, i) => CardMyFav(
+                        fav: getFilteredMyFav()[i],
+                        myfav: widget.userStore?.user?.myfav,
+                        userStore: widget.userStore,
+                        attList: attList,
+                      ),
                     ),
-                  )
-                : GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: getFilteredMyFav().length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: (2.8 / 4),
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 2,
-                    ),
-                    itemBuilder: (ctx, i) => CardMyFav(
-                      fav: getFilteredMyFav()[i],
-                      myfav: widget.userStore?.user?.myfav,
-                      userStore: widget.userStore,
-                      attList: attList,
-                    ),
-                  ),
+            ),
           ),
           SizedBox(
             child: _nativeAd == null
@@ -214,7 +216,7 @@ class _MyListState extends State<MyList> {
                 ? const SizedBox()
                 // The actual ad.
                 : Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
                     child: Container(
                       height: 45,
                       width: 350,
@@ -238,6 +240,9 @@ class _MyListState extends State<MyList> {
                     ),
                   ),
           ),
+          const SizedBox(
+            height: 50,
+          )
         ],
       ),
     );
