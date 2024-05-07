@@ -84,8 +84,16 @@ class _ListFriends extends State<ListFriends> {
         titleSpacing: 5,
         title: TextField(
           controller: textEditingController,
+          style: TextStyle(
+            letterSpacing: 0.5,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.searchUser),
+            labelText: AppLocalizations.of(context)!.searchUser,
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
           onChanged: (String value) {
             setState(() {
               isShowUsers = true;
@@ -99,302 +107,310 @@ class _ListFriends extends State<ListFriends> {
         ),
       ),
       body: isShowUsers
-          ? Column(
-              children: [
-                SizedBox(
-                  height: deviceHeight * 0.78,
-                  child: FutureBuilder(
-                    future: FirebaseFirestore.instance
-                        .collection('users')
-                        .where(
-                          'uid',
-                          whereIn: arguments['following'] == true
-                              ? (arguments['listFollowing'] != null &&
-                                      (arguments['listFollowing'] as Iterable)
-                                          .isNotEmpty
-                                  ? arguments['listFollowing']
-                                  : [''])
-                              : (arguments['listFollowers'] != null &&
-                                      (arguments['listFollowers'] as Iterable)
-                                          .isNotEmpty
-                                  ? arguments['listFollowers']
-                                  : ['']),
-                        )
-                        .where(
-                          'searchname',
-                          isGreaterThanOrEqualTo: textEditingController.text,
-                        )
-                        .where('searchname', isLessThan: searchTextUpperBound)
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (snapshot.data!.docs.isEmpty) {
-                        return Center(
-                          child: Text(
-                            arguments['following'] == true
-                                ? AppLocalizations.of(context)!.nofollowing
-                                : AppLocalizations.of(context)!.nofollowers,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: 18,
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: deviceHeight * 0.78,
+                    child: FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .where(
+                            'uid',
+                            whereIn: arguments['following'] == true
+                                ? (arguments['listFollowing'] != null &&
+                                        (arguments['listFollowing'] as Iterable)
+                                            .isNotEmpty
+                                    ? arguments['listFollowing']
+                                    : [''])
+                                : (arguments['listFollowers'] != null &&
+                                        (arguments['listFollowers'] as Iterable)
+                                            .isNotEmpty
+                                    ? arguments['listFollowers']
+                                    : ['']),
+                          )
+                          .where(
+                            'searchname',
+                            isGreaterThanOrEqualTo: textEditingController.text,
+                          )
+                          .where('searchname', isLessThan: searchTextUpperBound)
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.data!.docs.isEmpty) {
+                          return Center(
+                            child: Text(
+                              arguments['following'] == true
+                                  ? AppLocalizations.of(context)!.nofollowing
+                                  : AppLocalizations.of(context)!.nofollowers,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () => {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Profile(
-                                          uid: snapshot.data!.docs[index]
-                                              ['uid'],
-                                          userStore: arguments['userStore'],
-                                          currentUid: false),
-                                    ),
-                                  )
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(5)),
-                                        child: SizedBox.fromSize(
-                                          size: const Size.fromRadius(
-                                              48), // Image radius
-                                          child: snapshot.data!.docs[index]
-                                                      ['photoUrl'] ==
-                                                  null
-                                              ? IconButton(
-                                                  padding:
-                                                      const EdgeInsets.all(0),
-                                                  icon: Icon(
-                                                    Icons.person,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .tertiary,
-                                                    size: 20,
-                                                  ),
-                                                  onPressed: () {},
-                                                )
-                                              : Image.network(
-                                                  snapshot.data!.docs[index]
-                                                      ['photoUrl'],
-                                                  fit: BoxFit.cover),
+                          );
+                        }
+                        return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Profile(
+                                            uid: snapshot.data!.docs[index]
+                                                ['uid'],
+                                            userStore: arguments['userStore'],
+                                            currentUid: false),
+                                      ),
+                                    )
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(5)),
+                                          child: SizedBox.fromSize(
+                                            size: const Size.fromRadius(
+                                                48), // Image radius
+                                            child: snapshot.data!.docs[index]
+                                                        ['photoUrl'] ==
+                                                    null
+                                                ? IconButton(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    icon: Icon(
+                                                      Icons.person,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .tertiary,
+                                                      size: 20,
+                                                    ),
+                                                    onPressed: () {},
+                                                  )
+                                                : Image.network(
+                                                    snapshot.data!.docs[index]
+                                                        ['photoUrl'],
+                                                    fit: BoxFit.cover),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        snapshot.data!.docs[index]['username'],
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            fontSize: 15,
-                                            letterSpacing: 1.5),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Text(
+                                          snapshot.data!.docs[index]
+                                              ['username'],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                              fontSize: 15,
+                                              letterSpacing: 1.5),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          });
-                    },
+                              );
+                            });
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  child: _nativeAd == null
-                      // Nothing to render yet.
-                      ? const SizedBox()
-                      // The actual ad.
-                      : Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Container(
-                            height: 45,
-                            width: 350,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.35),
-                                  spreadRadius: 1,
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                  SizedBox(
+                    child: _nativeAd == null
+                        // Nothing to render yet.
+                        ? const SizedBox()
+                        // The actual ad.
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Container(
+                              height: 45,
+                              width: 350,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.35),
+                                    spreadRadius: 1,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: AdWidget(ad: _nativeAd!),
                             ),
-                            child: AdWidget(ad: _nativeAd!),
                           ),
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             )
-          : Column(
-              children: [
-                SizedBox(
-                  height: deviceHeight * 0.79,
-                  child: FutureBuilder(
-                    future: FirebaseFirestore.instance
-                        .collection('users')
-                        .where(
-                          'uid',
-                          whereIn: arguments['following'] == true
-                              ? (arguments['listFollowing'] != null &&
-                                      (arguments['listFollowing'] as Iterable)
-                                          .isNotEmpty
-                                  ? arguments['listFollowing']
-                                  : [''])
-                              : (arguments['listFollowers'] != null &&
-                                      (arguments['listFollowers'] as Iterable)
-                                          .isNotEmpty
-                                  ? arguments['listFollowers']
-                                  : ['']),
-                        )
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (snapshot.data!.docs.isEmpty) {
-                        return Center(
-                          child: Text(
-                            arguments['following'] == true
-                                ? AppLocalizations.of(context)!.nofollowing
-                                : AppLocalizations.of(context)!.nofollowers,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: 18,
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: deviceHeight * 0.79,
+                    child: FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .where(
+                            'uid',
+                            whereIn: arguments['following'] == true
+                                ? (arguments['listFollowing'] != null &&
+                                        (arguments['listFollowing'] as Iterable)
+                                            .isNotEmpty
+                                    ? arguments['listFollowing']
+                                    : [''])
+                                : (arguments['listFollowers'] != null &&
+                                        (arguments['listFollowers'] as Iterable)
+                                            .isNotEmpty
+                                    ? arguments['listFollowers']
+                                    : ['']),
+                          )
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.data!.docs.isEmpty) {
+                          return Center(
+                            child: Text(
+                              arguments['following'] == true
+                                  ? AppLocalizations.of(context)!.nofollowing
+                                  : AppLocalizations.of(context)!.nofollowers,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () => {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Profile(
-                                          uid: snapshot.data!.docs[index]
-                                              ['uid'],
-                                          userStore: arguments['userStore'],
-                                          currentUid: false),
-                                    ),
-                                  )
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(5)),
-                                        child: SizedBox.fromSize(
-                                          size: const Size.fromRadius(
-                                              48), // Image radius
-                                          child: snapshot.data!.docs[index]
-                                                      ['photoUrl'] ==
-                                                  null
-                                              ? IconButton(
-                                                  padding:
-                                                      const EdgeInsets.all(0),
-                                                  icon: Icon(
-                                                    Icons.person,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .tertiary,
-                                                    size: 20,
-                                                  ),
-                                                  onPressed: () {},
-                                                )
-                                              : Image.network(
-                                                  snapshot.data!.docs[index]
-                                                      ['photoUrl'],
-                                                  fit: BoxFit.cover),
+                          );
+                        }
+                        return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () => {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Profile(
+                                            uid: snapshot.data!.docs[index]
+                                                ['uid'],
+                                            userStore: arguments['userStore'],
+                                            currentUid: false),
+                                      ),
+                                    )
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(5)),
+                                          child: SizedBox.fromSize(
+                                            size: const Size.fromRadius(
+                                                48), // Image radius
+                                            child: snapshot.data!.docs[index]
+                                                        ['photoUrl'] ==
+                                                    null
+                                                ? IconButton(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    icon: Icon(
+                                                      Icons.person,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .tertiary,
+                                                      size: 20,
+                                                    ),
+                                                    onPressed: () {},
+                                                  )
+                                                : Image.network(
+                                                    snapshot.data!.docs[index]
+                                                        ['photoUrl'],
+                                                    fit: BoxFit.cover),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        snapshot.data!.docs[index]['username'],
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            fontSize: 15,
-                                            letterSpacing: 1.5),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Text(
+                                          snapshot.data!.docs[index]
+                                              ['username'],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                              fontSize: 15,
+                                              letterSpacing: 1.5),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          });
-                    },
+                              );
+                            });
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  child: _nativeAd == null
-                      // Nothing to render yet.
-                      ? const SizedBox()
-                      // The actual ad.
-                      : Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Container(
-                            height: 45,
-                            width: 350,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.35),
-                                  spreadRadius: 1,
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                  SizedBox(
+                    child: _nativeAd == null
+                        // Nothing to render yet.
+                        ? const SizedBox()
+                        // The actual ad.
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Container(
+                              height: 45,
+                              width: 350,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.35),
+                                    spreadRadius: 1,
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: AdWidget(ad: _nativeAd!),
                             ),
-                            child: AdWidget(ad: _nativeAd!),
                           ),
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
     );
   }
