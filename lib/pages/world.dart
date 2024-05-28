@@ -19,42 +19,29 @@ class _World extends State<World> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Top 5",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                letterSpacing: 0.5,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                            ListCardTop5(
-                              uid: widget.uid,
-                              userId: widget.uid,
-                              userStore: widget.userStore,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 7,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5),
+        body: Container(
+          decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 3.0,
+                ),
+              ),
+              borderRadius: BorderRadius.circular(8),
+              color: Theme.of(context).colorScheme.onError),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
                           child: Column(
                             children: [
                               Text(
-                                AppLocalizations.of(context)!.world,
+                                "Top 5",
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   letterSpacing: 0.5,
@@ -62,21 +49,46 @@ class _World extends State<World> {
                                   fontSize: 20,
                                 ),
                               ),
-                              Expanded(
-                                child: SizedBox(
-                                    child: ListCardWorld(
-                                        userStore: widget.userStore)),
+                              ListCardTop5(
+                                uid: widget.uid,
+                                userId: widget.uid,
+                                userStore: widget.userStore,
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ],
+                        Expanded(
+                          flex: 7,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Column(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.world,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SizedBox(
+                                      child: ListCardWorld(
+                                          userStore: widget.userStore)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
         ));
   }
 }

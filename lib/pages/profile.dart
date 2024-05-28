@@ -4,7 +4,7 @@ import 'package:bobok/pages/settings.dart';
 import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/wisgets/btn/elevated.dart';
-import 'package:bobok/wisgets/delete/modal_block.dart';
+import 'package:bobok/wisgets/modal/modal_block.dart';
 import 'package:bobok/wisgets/listCard/List_card_profile.dart';
 import 'package:bobok/wisgets/listCard/list_recom.dart';
 import 'package:cached_network_image/cached_network_image.dart';

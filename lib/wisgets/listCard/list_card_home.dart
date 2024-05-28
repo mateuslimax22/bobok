@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
+import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/card/card_ads.dart';
 import 'package:bobok/wisgets/card/card_review.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -119,156 +120,186 @@ class _ListCardState extends State<ListCard>
           ? CardAds(colorback: Theme.of(context).colorScheme.primary)
           : const SizedBox();
 
-      return Center(
-          child: StreamBuilder<List<QueryDocumentSnapshot>>(
-        stream: _reviewsAmigosFuture.asStream(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.data!.isEmpty) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.welcome,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      letterSpacing: 0.5,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 26,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    AppLocalizations.of(context)!.homeFeatures,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
-                      letterSpacing: 0.5,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ListTile(
-                    leading: const Icon(Icons.add),
-                    title: Text(
-                      AppLocalizations.of(context)!.addRwview,
+      return Container(
+        decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 3.0,
+              ),
+            ),
+            borderRadius: BorderRadius.circular(8),
+            color: Theme.of(context).colorScheme.onError),
+        child: Center(
+            child: StreamBuilder<List<QueryDocumentSnapshot>>(
+          stream: _reviewsAmigosFuture.asStream(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.data!.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.welcome,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5,
-                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
                       ),
                     ),
-                    subtitle: Text(
-                      AppLocalizations.of(context)!.createRw,
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)!.homeFeatures,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         letterSpacing: 0.5,
-                        fontSize: 15,
+                        fontSize: 18,
                       ),
                     ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.all_inclusive),
-                    title: Text(
-                      AppLocalizations.of(context)!.seeRw,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+                    const SizedBox(height: 20),
+                    ListTile(
+                      leading: Icon(
+                        Icons.add,
                         color: Theme.of(context).colorScheme.primary,
-                        letterSpacing: 0.5,
-                        fontSize: 17,
+                        size: 30,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.addRwview,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.createRw,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          letterSpacing: 0.5,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                    subtitle: Text(
-                      AppLocalizations.of(context)!.tabRw,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        letterSpacing: 0.5,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.bookmark_add_outlined),
-                    title: Text(
-                      AppLocalizations.of(context)!.addRwList,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+                    ListTile(
+                      leading: Icon(
+                        Icons.all_inclusive,
                         color: Theme.of(context).colorScheme.primary,
-                        letterSpacing: 0.5,
-                        fontSize: 17,
+                        size: 30,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.seeRw,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.tabRw,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          letterSpacing: 0.5,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                    subtitle: Text(
-                      AppLocalizations.of(context)!.addRwListCont,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        letterSpacing: 0.5,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(
-                      AppLocalizations.of(context)!.personalizeProfile,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+                    ListTile(
+                      leading: Icon(
+                        Icons.bookmark_add_outlined,
                         color: Theme.of(context).colorScheme.primary,
-                        letterSpacing: 0.5,
-                        fontSize: 17,
+                        size: 30,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.addRwList,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.addRwListCont,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          letterSpacing: 0.5,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                    subtitle: Text(
-                      AppLocalizations.of(context)!.personalizeProfileCont,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        letterSpacing: 0.5,
-                        fontSize: 15,
+                    ListTile(
+                      leading: Icon(
+                        Icons.person,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 30,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.personalizeProfile,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            letterSpacing: 0.5,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.personalizeProfileCont,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          letterSpacing: 0.5,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: deviceHeight * 0.1,
+                    )
+                  ],
+                ),
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: attList,
+              child: ListView.separated(
+                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, index) {
+                  if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
+                    return adcode;
+                  }
+                  return const SizedBox();
+                },
+                itemBuilder: (context, index) {
+                  Review review = Review.fromSnap(snapshot.data![index]);
+                  return CardReview(
+                    colorback: review.spoiler == true
+                        ? Theme.of(context).colorScheme.secondaryContainer
+                        : Theme.of(context).colorScheme.primaryContainer,
+                    review: review,
+                    avatar: review.profileImg,
+                    user: user,
+                    reviewUid: review.uid,
+                    userStore: widget.userStore,
+                    attList: attList,
+                  );
+                },
               ),
             );
-          }
-          return RefreshIndicator(
-            onRefresh: attList,
-            child: ListView.separated(
-              itemCount: snapshot.data!.length,
-              separatorBuilder: (context, index) {
-                if (_nativeAdIsLoaded && index % 2 != 0 && index != 0) {
-                  return adcode;
-                }
-                return const SizedBox();
-              },
-              itemBuilder: (context, index) {
-                Review review = Review.fromSnap(snapshot.data![index]);
-                return CardReview(
-                  colorback: review.spoiler == true
-                      ? Theme.of(context).colorScheme.secondaryContainer
-                      : Theme.of(context).colorScheme.primaryContainer,
-                  review: review,
-                  avatar: review.profileImg,
-                  user: user,
-                  reviewUid: review.uid,
-                  userStore: widget.userStore,
-                  attList: attList,
-                );
-              },
-            ),
-          );
-        },
-      ));
+          },
+        )),
+      );
     });
   }
 }

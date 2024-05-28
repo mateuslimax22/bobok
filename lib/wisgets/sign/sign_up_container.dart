@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/provider/user_provider.dart';
 import 'package:bobok/utils/constants.dart';
-import 'package:bobok/wisgets/delete/modal_politic.dart';
+import 'package:bobok/wisgets/modal/modal_politic.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

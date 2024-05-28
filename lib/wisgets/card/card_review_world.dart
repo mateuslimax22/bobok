@@ -6,7 +6,7 @@ import 'package:bobok/provider/firestore_methods.dart';
 import 'package:bobok/utils/app_routes.dart';
 import 'package:bobok/utils/constants.dart';
 import 'package:bobok/wisgets/card/ads_video.dart';
-import 'package:bobok/wisgets/delete/delete_item.dart';
+import 'package:bobok/wisgets/modal/delete_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

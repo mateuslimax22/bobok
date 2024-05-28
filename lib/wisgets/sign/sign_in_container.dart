@@ -1,5 +1,7 @@
 import 'package:bobok/provider/auth_email.dart';
-import 'package:bobok/wisgets/delete/modal_politic.dart';
+import 'package:bobok/wisgets/modal/modal_politic.dart';
+import 'package:bobok/wisgets/modal/modal_reset_password.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,6 +29,7 @@ class _SignInConatiner extends State<SignInConatiner> {
   bool isLoading = false;
   bool isLoadingEmail = false;
   bool passwordVisible = false;
+  bool resetPass = false;
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -79,6 +82,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                   submitForm();
                 },
                 isVisible: isModalVisibleEmail),
+            ResetPassModal(isVisible: resetPass),
             TermsModal(
                 onDelete: () {
                   setState(() {
@@ -221,6 +225,29 @@ class _SignInConatiner extends State<SignInConatiner> {
                 isLoading: isLoadingEmail,
               ),
             ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                AppLocalizations.of(context)!.forgot,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall!
+                    .copyWith(letterSpacing: 0.5),
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    resetPass = true;
+                  });
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.click,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      letterSpacing: 0.5),
+                ),
+              ),
+            ]),
             Row(children: <Widget>[
               Expanded(
                 child: Container(
