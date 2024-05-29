@@ -33,7 +33,7 @@ class _EditProfile extends State<EditProfile> {
   RewardedAd? _rewardedAd;
 
   final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/5224354917'
+      ? 'ca-app-pub-6374572075612830/3880751597'
       : 'ca-app-pub-6374572075612830/8060249344';
 
   @override

@@ -29,7 +29,7 @@ class _ListCardState extends State<ListCard>
   bool _nativeAdIsLoaded = false;
 
   final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/2247696110'
+      ? 'ca-app-pub-6374572075612830/1857670592'
       : 'ca-app-pub-3940256099942544/3986624511';
 
   @override

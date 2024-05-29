@@ -22,7 +22,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
   BannerAd? _nativeAd;
 
   final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
+      ? 'ca-app-pub-6374572075612830/5574188780'
       : 'ca-app-pub-6374572075612830/8060249344';
 
   @override

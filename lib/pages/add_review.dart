@@ -26,7 +26,7 @@ class _AddReviewState extends State<AddReview> {
   BannerAd? _nativeAd;
 
   final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
+      ? 'ca-app-pub-6374572075612830/4856003489'
       : 'ca-app-pub-6374572075612830/8060249344';
 
   bool spoiler = false;
