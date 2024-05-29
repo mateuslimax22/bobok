@@ -8,18 +8,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:432378802396:android:c2c107b3fce36cca844419",
+        "mobilesdk_app_id": "1:432378802396:android:2336062dbe8e84e1844419",
         "android_client_info": {
-          "package_name": "com.example.bobok"
+          "package_name": "com.mts.bobok"
         }
       },
       "oauth_client": [
         {
-          "client_id": "432378802396-m63cvasj9qi4vjeq9hodh2u9ifr7gji9.apps.googleusercontent.com",
+          "client_id": "432378802396-5oi80dncvrcu9fo9h9144f1nv76udb23.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bobok",
-            "certificate_hash": "8d397e47ec28f1c9b40f839b0e346f23bb2c7335"
+            "package_name": "com.mts.bobok",
+            "certificate_hash": "de0f2740e5ce0075a1968c53401c5494ec74b7b3"
+          }
+        },
+        {
+          "client_id": "432378802396-ftpm7vc0qn781m9n27b35ltf5el83o42.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mts.bobok",
+            "certificate_hash": "931ee4941a434a451b0dfeb3167db321d33a0c45"
           }
         },
         {
@@ -38,6 +46,13 @@
             {
               "client_id": "432378802396-970gbviiq2p6q0tovcpesstv0thp8bff.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "432378802396-lk4bufa48add2ops7q6tkmdpoau99bsv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.testing.bobok"
+              }
             }
           ]
         }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ElevatedButtonTh extends StatefulWidget {
+class ElevatedButtonTh extends StatelessWidget {
   const ElevatedButtonTh({
     Key? key,
     required this.label,
@@ -9,39 +9,57 @@ class ElevatedButtonTh extends StatefulWidget {
     required this.fontWeight,
     required this.width,
     required this.height,
+    required this.isLoading,
+    this.backgroundColor, // Nova propriedade para a cor de fundo
   }) : super(key: key);
 
   final String label;
-  final Function() target;
+  final Function()? target;
   final double fontSize;
   final FontWeight fontWeight;
   final double width;
   final double height;
+  final bool isLoading;
+  final Color?
+      backgroundColor; // Adicionando a cor de fundo como uma propriedade
 
-  @override
-  State<ElevatedButtonTh> createState() => _ElevatedButtonThState();
-}
-
-class _ElevatedButtonThState extends State<ElevatedButtonTh> {
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            minimumSize: Size(widget.width, widget.height)),
-        onPressed: widget.target,
-        child: Text(
-          widget.label,
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.background,
-              fontSize: widget.fontSize,
-              fontWeight: widget.fontWeight,
-              letterSpacing: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          backgroundColor: backgroundColor ??
+              Theme.of(context)
+                  .colorScheme
+                  .primary, // Usando a cor fornecida ou a cor primária padrão
+          minimumSize: Size(width, height),
         ),
+        onPressed: isLoading
+            ? null
+            : () {
+                target?.call();
+              },
+        child: isLoading
+            ? Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.tertiary),
+                ),
+              )
+            : Text(
+                label,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  letterSpacing: 1.5,
+                ),
+              ),
       ),
     );
   }

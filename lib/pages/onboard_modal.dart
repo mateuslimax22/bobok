@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/user_provider.dart';
+
 class OnboardModal extends StatefulWidget {
   const OnboardModal({super.key});
 
@@ -32,7 +34,8 @@ class _OnboardModal extends State<OnboardModal> {
             onPressed: () {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogin();
+              provider.googleLogin(
+                  context, Provider.of<UserProvider>(context, listen: false));
               Navigator.pop(context);
             },
           ),

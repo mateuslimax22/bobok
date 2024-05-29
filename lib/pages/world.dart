@@ -1,0 +1,94 @@
+// ignore_for_file: dead_code
+import 'package:bobok/mobx/user_store.dart';
+import 'package:bobok/wisgets/listCard/list_card_top5.dart';
+import 'package:bobok/wisgets/listCard/list_card_world.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+
+class World extends StatefulWidget {
+  const World({super.key, this.userStore, this.uid});
+  final UserStore? userStore;
+  final String? uid;
+
+  @override
+  State<World> createState() => _World();
+}
+
+class _World extends State<World> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Container(
+          decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 3.0,
+                ),
+              ),
+              borderRadius: BorderRadius.circular(8),
+              color: Theme.of(context).colorScheme.onError),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            children: [
+                              Text(
+                                "Top 5",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              ListCardTop5(
+                                uid: widget.uid,
+                                userId: widget.uid,
+                                userStore: widget.userStore,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 7,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: Column(
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context)!.world,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SizedBox(
+                                      child: ListCardWorld(
+                                          userStore: widget.userStore)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ));
+  }
+}

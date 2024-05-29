@@ -1,11 +1,14 @@
 import 'package:bobok/wisgets/sign/sign_in_container.dart';
 import 'package:bobok/wisgets/sign/sign_up_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../utils/constants.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+  const SignIn({
+    super.key,
+  });
 
   @override
   State<SignIn> createState() => _SignIn();
@@ -71,6 +74,15 @@ class _SignIn extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    Brightness currentBrightness = Theme.of(context).brightness;
+    String imagePath = currentBrightness == Brightness.light
+        ? 'images/backZoo.png'
+        : 'images/backDark.png';
+
+    String imageLogo = currentBrightness == Brightness.light
+        ? 'images/logoW.png'
+        : 'images/logoD.png';
+
     Widget showContent = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -78,12 +90,12 @@ class _SignIn extends State<SignIn> {
         children: [
           _showLogo
               ? Text(
-                  "Não possui conta ? ",
+                  AppLocalizations.of(context)!.noAcc,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )
               : Text(
-                  "Já possui conta ? ",
+                  AppLocalizations.of(context)!.yesAcc,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
@@ -93,12 +105,12 @@ class _SignIn extends State<SignIn> {
               // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SignUpPage()), (route) => false);
             },
             child: _showLogo
-                ? Text("Cadastre-se.",
+                ? Text(AppLocalizations.of(context)!.signUp,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5))
                 : Text(
-                    "Entar ",
+                    AppLocalizations.of(context)!.login,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 0.5),
@@ -113,9 +125,9 @@ class _SignIn extends State<SignIn> {
         child: Container(
           height: deviceHeight,
           width: deviceWidth,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/backZoo.png"), fit: BoxFit.cover),
+                image: AssetImage(imagePath), fit: BoxFit.cover),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -133,10 +145,10 @@ class _SignIn extends State<SignIn> {
                                 _imageHeight,
                             width: MediaQuery.of(context).size.width *
                                 _imageHeight,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
                                   alignment: Alignment.centerLeft,
-                                  image: AssetImage("images/logoWhite.png"),
+                                  image: AssetImage(imageLogo),
                                   fit: BoxFit.contain),
                             ),
                             duration: const Duration(milliseconds: 300),
@@ -149,7 +161,7 @@ class _SignIn extends State<SignIn> {
                     decoration: BoxDecoration(
                         color: Theme.of(context)
                             .colorScheme
-                            .background
+                            .onError
                             .withOpacity(0.8),
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(20))),

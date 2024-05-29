@@ -1,22 +1,251 @@
+import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/review.dart';
+import 'package:bobok/models/user.dart';
+import 'package:bobok/provider/firestore_methods.dart';
+import 'package:bobok/provider/user_provider.dart';
+import 'package:bobok/utils/app_routes.dart';
+import 'package:bobok/utils/constants.dart';
+import 'package:bobok/wisgets/card/ads_video.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ProfileReview extends StatelessWidget {
-  const ProfileReview({
-    Key? key,
-    required this.itemReview,
-  }) : super(key: key);
+class ProfileReview extends StatefulWidget {
+  const ProfileReview(
+      {super.key,
+      required this.itemReview,
+      required this.userId,
+      required this.uid,
+      required this.userStore});
+
   final Review itemReview;
+  final String? userId;
+  final String? uid;
+  final UserStore? userStore;
+
+  @override
+  State<ProfileReview> createState() => _ProfileReviewState();
+}
+
+class _ProfileReviewState extends State<ProfileReview> {
+  late UserProvider _userProvider;
+  UserData? currentUser;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _userProvider = Provider.of<UserProvider>(context);
+    currentUser = _userProvider.user;
+  }
+
+  void fecharPopupMenu() {
+    // Chame hideMenu para fechar o PopupMenu
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _submitForm() async {
+    try {
+      String res =
+          await FirestoreMethods().addFavorite(widget.itemReview.postId);
+      if (res != "Review adicionada aos favoritos!") {
+        // ignore: use_build_context_synchronously
+        showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text(AppLocalizations.of(context)!.error),
+                  content: Text(AppLocalizations.of(context)!.errorInd),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text("OK"))
+                  ],
+                ));
+      }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+                title: Text(AppLocalizations.of(context)!.error),
+                content: Text(AppLocalizations.of(context)!.errorInd),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text("OK"))
+                ],
+              ));
+    }
+  }
+
+  void count() async {
+    if (widget.userStore!.user!.ads == 3) {
+      await InterstitialAdManager.showInterstitialAd();
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 0),
+      );
+    }
+
+    if (widget.userStore!.user!.ads != null) {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: widget.userStore!.user!.ads! + 1),
+      );
+    } else {
+      widget.userStore?.setUser(
+        UserData(
+            username: widget.userStore!.user!.username,
+            uid: widget.userStore!.user!.uid,
+            email: widget.userStore!.user!.email,
+            avatar: widget.userStore!.user!.avatar,
+            followers: widget.userStore!.user!.followers,
+            following: widget.userStore!.user!.following,
+            blocked: widget.userStore!.user!.blocked,
+            blocking: widget.userStore!.user!.blocking,
+            myfav: widget.userStore!.user!.myfav,
+            ads: 1),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 1,
-      color: Theme.of(context).colorScheme.onBackground,
-      child: GridTile(
-          child: Image.network(itemReview.imageUrl, fit: BoxFit.cover)),
+    double cardSizeWidth = deviceWidth;
+    return GestureDetector(
+      onTap: () {
+        count();
+        Navigator.of(context).pushNamed(
+          AppRoutes.REVIEW_DETAIL,
+          arguments: {
+            'userStore': widget.userStore,
+            'reviewAll': widget.itemReview,
+            'review': widget.itemReview.review,
+            'title': widget.itemReview.title,
+            'postId': widget.itemReview.postId,
+            'imageUrl': widget.itemReview.imageUrl,
+            'profileImg': widget.itemReview.profileImg,
+            'userName': widget.itemReview.username,
+            'userUid': widget.userId,
+            'isComment': false,
+            'currentUserName': widget.userStore!.user?.username,
+            'currentUserPhoto': widget.userStore!.user?.avatar,
+            'myFav': widget.userStore!.user!.myfav
+          },
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: SizedBox(
+          width: cardSizeWidth * 0.5,
+          height: 200,
+          child: Stack(
+            children: [
+              Image.network(
+                widget.itemReview.imageUrl,
+                width: cardSizeWidth * 0.5,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                width: cardSizeWidth * 0.5,
+                height: 200,
+                color: Colors.black.withOpacity(0.6),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: cardSizeWidth * 0.2,
+                            child: Text(
+                              widget.itemReview.username,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  fontSize: 14,
+                                  letterSpacing: 1.5),
+                            ),
+                          ),
+                          widget.uid == widget.userId
+                              ? PopupMenuButton(
+                                  color: Theme.of(context).colorScheme.onError,
+                                  child: Container(
+                                    height: 35,
+                                    width: 20,
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.local_play_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary,
+                                    ),
+                                  ),
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Text(
+                                            AppLocalizations.of(context)!
+                                                .addInd,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                fontSize: 15,
+                                                letterSpacing: 1.5),
+                                          ),
+                                          onTap: () {
+                                            _submitForm();
+                                            fecharPopupMenu();
+                                          },
+                                        ),
+                                      ),
+                                    ];
+                                  })
+                              : const Spacer()
+                        ],
+                      ),
+                      const Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.itemReview.title,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary,
+                                fontSize: 15,
+                                letterSpacing: 1.5),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

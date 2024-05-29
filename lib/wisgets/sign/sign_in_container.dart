@@ -1,10 +1,14 @@
-import 'package:bobok/pages/onboarding.dart';
 import 'package:bobok/provider/auth_email.dart';
+import 'package:bobok/wisgets/modal/modal_politic.dart';
+import 'package:bobok/wisgets/modal/modal_reset_password.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bobok/provider/google_sign_in.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import '../../provider/user_provider.dart';
 import '../../wisgets/btn/elevated.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignInConatiner extends StatefulWidget {
   const SignInConatiner({super.key});
@@ -18,39 +22,46 @@ class _SignInConatiner extends State<SignInConatiner> {
   final _formData = Map<String, Object>();
   bool spoiler = false;
   bool msgError = false;
+  bool isModalVisibleEmail = false;
+  bool isModalVisibleGoogle = false;
   bool notValid = false;
+  bool isPrivicy = false;
   bool isLoading = false;
+  bool isLoadingEmail = false;
   bool passwordVisible = false;
-  bool isLoadingRegister = false;
+  bool resetPass = false;
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    void _submitForm() async {
+    void submitForm() async {
+      setState(() {
+        isLoadingEmail = true;
+      });
       final isValid = _formKey.currentState?.validate() ?? false;
 
       if (!isValid) {
         notValid = true;
+        setState(() {
+          isLoadingEmail = false;
+        });
         return;
       }
 
       _formKey.currentState?.save();
 
-      setState(() {
-        isLoadingRegister = true;
-      });
-
-      final user = await AuthEmail(context).signInWithEmailAndPassword(
+      var resp = await AuthEmail(context).signInWithEmailAndPassword(
+        Provider.of<UserProvider>(context, listen: false),
         _formData["email"].toString(),
         _formData['senha'].toString(),
       );
 
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Onboarding()),
-        );
+      if (resp == "verify") {
+        print("não esta verificado");
+      } else if (resp != "login") {
+        setState(() {
+          isLoadingEmail = false;
+        });
       }
     }
 
@@ -62,12 +73,35 @@ class _SignInConatiner extends State<SignInConatiner> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Bem vindo ao BoBok',
+            TermsModal(
+                onDelete: () {
+                  setState(() {
+                    isPrivicy = true;
+                    isModalVisibleEmail = false;
+                  });
+                  submitForm();
+                },
+                isVisible: isModalVisibleEmail),
+            ResetPassModal(isVisible: resetPass),
+            TermsModal(
+                onDelete: () {
+                  setState(() {
+                    isPrivicy = true;
+                    isLoading = true;
+                    isModalVisibleGoogle = false;
+                  });
+                  final provider =
+                      Provider.of<GoogleSignInProvider>(context, listen: false);
+                  provider.googleLogin(context,
+                      Provider.of<UserProvider>(context, listen: false));
+                },
+                isVisible: isModalVisibleGoogle),
+            Text(AppLocalizations.of(context)!.welcome,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium!
-                    .copyWith(letterSpacing: 0.5)),
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    letterSpacing: 0.5,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500)),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: SizedBox(
@@ -78,9 +112,16 @@ class _SignInConatiner extends State<SignInConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     decoration: InputDecoration(
-                      labelText: "Email",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelText: AppLocalizations.of(context)!.email,
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -98,7 +139,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                       final title = email ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Email obrigatório.';
+                        return AppLocalizations.of(context)!.emailReq;
                       }
 
                       return null;
@@ -117,10 +158,17 @@ class _SignInConatiner extends State<SignInConatiner> {
                   elevation: 2.0,
                   shadowColor: Theme.of(context).colorScheme.onPrimary,
                   child: TextFormField(
+                    style: TextStyle(
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: "Senha",
-                      labelStyle: const TextStyle(letterSpacing: 0.5),
+                      labelText: AppLocalizations.of(context)!.password,
+                      labelStyle: TextStyle(
+                        letterSpacing: 0.5,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       border: InputBorder.none,
                       focusedBorder: OutlineInputBorder(
                           borderRadius:
@@ -148,7 +196,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                       final title = senha ?? '';
 
                       if (title.trim().isEmpty) {
-                        return 'Senha obrigatória.';
+                        return AppLocalizations.of(context)!.passReq;
                       }
 
                       return null;
@@ -160,16 +208,46 @@ class _SignInConatiner extends State<SignInConatiner> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ElevatedButtonTh(
-                label: 'Começar',
-                target: () {
-                  _submitForm();
+                label: AppLocalizations.of(context)!.login,
+                target: () async {
+                  if (isPrivicy == false) {
+                    setState(() {
+                      isModalVisibleEmail = true;
+                    });
+                  } else {
+                    submitForm();
+                  }
                 },
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
                 width: 260,
                 height: 45,
+                isLoading: isLoadingEmail,
               ),
             ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(
+                AppLocalizations.of(context)!.forgot,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall!
+                    .copyWith(letterSpacing: 0.5),
+              ),
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    resetPass = true;
+                  });
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.click,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      letterSpacing: 0.5),
+                ),
+              ),
+            ]),
             Row(children: <Widget>[
               Expanded(
                 child: Container(
@@ -180,7 +258,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                     )),
               ),
               Text(
-                "OR",
+                AppLocalizations.of(context)!.or,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -199,7 +277,7 @@ class _SignInConatiner extends State<SignInConatiner> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
               child: ElevatedButton.icon(
-                label: const Text("Continuar com o Google"),
+                label: Text(AppLocalizations.of(context)!.google),
                 icon: isLoading
                     ? Container(
                         width: 24,
@@ -223,12 +301,19 @@ class _SignInConatiner extends State<SignInConatiner> {
                   ),
                 ),
                 onPressed: () {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  final provider =
-                      Provider.of<GoogleSignInProvider>(context, listen: false);
-                  provider.googleLogin();
+                  if (isPrivicy == false) {
+                    setState(() {
+                      isModalVisibleGoogle = true;
+                    });
+                  } else {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    final provider = Provider.of<GoogleSignInProvider>(context,
+                        listen: false);
+                    provider.googleLogin(context,
+                        Provider.of<UserProvider>(context, listen: false));
+                  }
                 },
               ),
             ),
