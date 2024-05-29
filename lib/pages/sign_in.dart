@@ -21,7 +21,7 @@ class _SignIn extends State<SignIn> {
   bool _signIn = true;
   bool _enter = true;
   bool _showLogo = true;
-  double _imageHeight = 1.0;
+  double _imageHeight = 0.8;
 
   void _changeContainer() {
     setState(() {
@@ -64,7 +64,7 @@ class _SignIn extends State<SignIn> {
             _signIn = true;
             _showLogo = true;
             _enter = true;
-            _imageHeight = 1.0;
+            _imageHeight = 0.8;
           });
           containerChild = const SignInConatiner();
         });
@@ -137,7 +137,7 @@ class _SignIn extends State<SignIn> {
                 opacity: _signIn ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 300),
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: _showLogo
                         ? AnimatedContainer(
                             height: MediaQuery.of(context).size.height *
@@ -169,7 +169,7 @@ class _SignIn extends State<SignIn> {
                     curve: Curves.easeInOut,
                     height: containerSizeHeight
                         ? deviceHeight * 0.96
-                        : constraints.maxWidth * 1.03,
+                        : constraints.maxWidth * 1.09,
                     width: MediaQuery.of(context).size.width,
                     child: SingleChildScrollView(
                       child: Column(

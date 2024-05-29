@@ -78,6 +78,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                   setState(() {
                     isPrivicy = true;
                     isModalVisibleEmail = false;
+                    resetPass = false;
                   });
                   submitForm();
                 },
@@ -88,6 +89,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                   setState(() {
                     isPrivicy = true;
                     isLoading = true;
+                    resetPass = true;
                     isModalVisibleGoogle = false;
                   });
                   final provider =
@@ -213,6 +215,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                   if (isPrivicy == false) {
                     setState(() {
                       isModalVisibleEmail = true;
+                      resetPass = false;
                     });
                   } else {
                     submitForm();
@@ -238,6 +241,8 @@ class _SignInConatiner extends State<SignInConatiner> {
                 onTap: () {
                   setState(() {
                     resetPass = true;
+                    isModalVisibleEmail = false;
+                    isModalVisibleGoogle = false;
                   });
                 },
                 child: Text(
@@ -304,6 +309,7 @@ class _SignInConatiner extends State<SignInConatiner> {
                   if (isPrivicy == false) {
                     setState(() {
                       isModalVisibleGoogle = true;
+                      resetPass = false;
                     });
                   } else {
                     setState(() {
