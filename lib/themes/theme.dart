@@ -30,9 +30,11 @@ ThemeData lightTheme = ThemeData(
     fontFamily: GoogleFonts.actor().fontFamily,
   ),
   colorScheme: const ColorScheme(
+    // ignore: deprecated_member_use
     background: Color(0xffffffff),
     brightness: Brightness.light,
     error: Colors.red,
+    // ignore: deprecated_member_use
     onBackground: Colors.transparent,
     onError: Color.fromARGB(255, 236, 233, 255),
     onPrimary: Colors.black,

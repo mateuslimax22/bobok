@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bobok/mobx/user_store.dart';
 import 'package:bobok/models/user.dart';
 import 'package:bobok/pages/my_list.dart';
@@ -162,11 +163,14 @@ class _HomeState extends State<Home> {
       extendBody: true,
       appBar: AppBar(
           elevation: 0,
+          // ignore: deprecated_member_use
           backgroundColor: Theme.of(context).colorScheme.background,
           foregroundColor: Theme.of(context).colorScheme.primary,
           titleSpacing: 5,
-          title:
-              Image.asset(imagePath, width: 133, height: 45, fit: BoxFit.fill),
+          title: Align(
+              alignment: Alignment.centerLeft,
+              child: Image.asset(imagePath,
+                  width: 133, height: 45, fit: BoxFit.fill)),
           actions: [
             _currentIndex == 3
                 ? IconButton(
@@ -209,7 +213,7 @@ class _HomeState extends State<Home> {
           color: Theme.of(context).colorScheme.background,
           buttonBackgroundColor: Theme.of(context).colorScheme.background,
           backgroundColor: Theme.of(context).colorScheme.primary,
-          height: 50,
+          height: Platform.isIOS ? 75 : 50,
           items: [
             Icon(
               Icons.collections_bookmark,
@@ -241,17 +245,20 @@ class _HomeState extends State<Home> {
                   curve: Curves.easeInOut);
             });
           }),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: _pages.length,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          return _pages[index];
-        },
+      body: Container(
+        color: Theme.of(context).colorScheme.background,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: _pages.length,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            return _pages[index];
+          },
+        ),
       ),
     );
   }

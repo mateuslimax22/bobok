@@ -44,7 +44,7 @@ class _CardReviewState extends State<CardReview> {
   List<QueryDocumentSnapshot>? comments;
 
   void count() async {
-    if (widget.userStore!.user!.ads == 3) {
+    if (widget.userStore!.user!.ads == "bobok") {
       await InterstitialAdManager.showInterstitialAd();
       widget.userStore?.setUser(
         UserData(

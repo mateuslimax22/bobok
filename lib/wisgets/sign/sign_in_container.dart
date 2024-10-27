@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bobok/provider/auth_email.dart';
 import 'package:bobok/wisgets/modal/modal_politic.dart';
 import 'package:bobok/wisgets/modal/modal_reset_password.dart';
@@ -281,47 +283,96 @@ class _SignInConatiner extends State<SignInConatiner> {
             ]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5.0),
-              child: ElevatedButton.icon(
-                label: Text(AppLocalizations.of(context)!.google),
-                icon: isLoading
-                    ? Container(
-                        width: 24,
-                        height: 24,
-                        padding: const EdgeInsets.all(2.0),
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                          strokeWidth: 3,
+              child: Platform.isIOS
+                  ? ElevatedButton.icon(
+                      label: Text(AppLocalizations.of(context)!.apple),
+                      icon: isLoading
+                          ? Container(
+                              width: 24,
+                              height: 24,
+                              padding: const EdgeInsets.all(2.0),
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : const FaIcon(
+                              FontAwesomeIcons.apple,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width * 0.8, 50),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // <-- Radius
                         ),
-                      )
-                    : const FaIcon(
-                        FontAwesomeIcons.google,
-                        color: Color.fromARGB(255, 214, 45, 32),
                       ),
-                style: ElevatedButton.styleFrom(
-                  minimumSize:
-                      Size(MediaQuery.of(context).size.width * 0.8, 50),
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // <-- Radius
-                  ),
-                ),
-                onPressed: () {
-                  if (isPrivicy == false) {
-                    setState(() {
-                      isModalVisibleGoogle = true;
-                      resetPass = false;
-                    });
-                  } else {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    final provider = Provider.of<GoogleSignInProvider>(context,
-                        listen: false);
-                    provider.googleLogin(context,
-                        Provider.of<UserProvider>(context, listen: false));
-                  }
-                },
-              ),
+                      onPressed: () {
+                        if (isPrivicy == false) {
+                          setState(() {
+                            isModalVisibleGoogle = true;
+                            resetPass = false;
+                          });
+                        } else {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          final provider = Provider.of<GoogleSignInProvider>(
+                              context,
+                              listen: false);
+                          provider.signInWithApple(Provider.of<UserProvider>(
+                              context,
+                              listen: false));
+                        }
+                      },
+                    )
+                  : ElevatedButton.icon(
+                      label: Text(AppLocalizations.of(context)!.google),
+                      icon: isLoading
+                          ? Container(
+                              width: 24,
+                              height: 24,
+                              padding: const EdgeInsets.all(2.0),
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : const FaIcon(
+                              FontAwesomeIcons.google,
+                              color: Color.fromARGB(255, 214, 45, 32),
+                            ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width * 0.8, 50),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // <-- Radius
+                        ),
+                      ),
+                      onPressed: () {
+                        if (isPrivicy == false) {
+                          setState(() {
+                            isModalVisibleGoogle = true;
+                            resetPass = false;
+                          });
+                        } else {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          final provider = Provider.of<GoogleSignInProvider>(
+                              context,
+                              listen: false);
+                          provider.googleLogin(
+                              context,
+                              Provider.of<UserProvider>(context,
+                                  listen: false));
+                        }
+                      },
+                    ),
             ),
           ],
         ),

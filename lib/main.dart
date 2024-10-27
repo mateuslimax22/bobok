@@ -80,6 +80,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     user = FirebaseAuth.instance.currentUser;
+
+    _requestNotificationPermission();
     _firebaseMessaging.getToken().then((token) {
       print("token :$token ");
     });
@@ -87,6 +89,18 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print("Recebeu mensagem ${message.notification?.body}");
     });
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
   }
 
   // This widget is the root of your application.

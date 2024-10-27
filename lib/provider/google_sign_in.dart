@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 final userStore = UserStore();
 
@@ -39,116 +40,206 @@ class GoogleSignInProvider extends ChangeNotifier {
   }
 
   Future googleLogin(BuildContext context, UserProvider userProvider) async {
-    final googleUser = await googleSignIn.signIn();
+    if (Platform.isAndroid) {
+      final googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) return;
-    _user = googleUser;
+      if (googleUser == null) return;
+      _user = googleUser;
 
-    final googleAuth = await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
-    if (googleAuth.accessToken != null && googleAuth.idToken != null) {
-      try {
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      if (googleAuth.accessToken != null && googleAuth.idToken != null) {
+        try {
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
 
-        final UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithCredential(credential);
+          final UserCredential userCredential =
+              await FirebaseAuth.instance.signInWithCredential(credential);
 
-        final User? user = userCredential.user;
+          final User? user = userCredential.user;
 
-        if (user != null) {
-          if (user.emailVerified) {
-            DocumentReference userDocRef = FirebaseFirestore.instance
-                .collection('users')
-                .doc(_auth.currentUser!.uid);
-            DocumentSnapshot snap = await userDocRef.get();
+          if (user != null) {
+            if (user.emailVerified) {
+              DocumentReference userDocRef = FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(_auth.currentUser!.uid);
+              DocumentSnapshot snap = await userDocRef.get();
 
-            if (snap.exists) {
-              var uidFmc = snap.data() as Map<String, dynamic>;
-              if (uidFmc["uidFmc"] == '') {
+              if (snap.exists) {
+                var uidFmc = snap.data() as Map<String, dynamic>;
+                if (uidFmc["uidFmc"] == '') {
+                  final token =
+                      await _firebaseMessaging.getToken().then((token) {
+                    return token;
+                  });
+
+                  await _firestore
+                      .collection('users')
+                      .doc(_auth.currentUser!.uid)
+                      .update({
+                    'uidFmc': token,
+                  });
+                }
+                var userData = UserData.fromSnap(snap);
+                userProvider.setUser(userData);
+              } else {
+                String? fileUrl;
+                List url = [googleSignIn.currentUser!.photoUrl];
+
+                final fileRef = _storage
+                    .ref()
+                    .child("profilePics")
+                    .child(_auth.currentUser!.uid);
+
+                var response = await http.get(Uri.parse(url[0].toString()));
+                Directory documentDirectory =
+                    await getApplicationDocumentsDirectory();
+                File file = File(join(documentDirectory.path, 'imagetest.png'));
+                file.writeAsBytesSync(response.bodyBytes);
+
+                await fileRef.putFile(file);
+
+                fileUrl = await fileRef.getDownloadURL();
+                final lan = getSystemLocaleString();
                 final token = await _firebaseMessaging.getToken().then((token) {
                   return token;
                 });
 
+                //add user on database
                 await _firestore
                     .collection('users')
                     .doc(_auth.currentUser!.uid)
-                    .update({
+                    .set({
+                  'username': googleSignIn.currentUser!.displayName,
+                  'searchname':
+                      googleSignIn.currentUser!.displayName!.toLowerCase(),
+                  'uid': _auth.currentUser!.uid,
+                  'email': googleSignIn.currentUser!.email,
+                  'followers': [],
+                  'following': [],
+                  'blocked': [],
+                  'blocking': [],
                   'uidFmc': token,
+                  'language': lan,
+                  'myfav': [],
+                  'photoUrl': fileUrl,
                 });
+
+                var userData = UserData.fromMap({
+                  'username': googleSignIn.currentUser!.displayName,
+                  'uid': _auth.currentUser!.uid,
+                  'email': googleSignIn.currentUser!.email,
+                  'followers': [],
+                  'following': [],
+                  'blocked': [],
+                  'blocking': [],
+                  'myfav': [],
+                  'photoUrl': fileUrl,
+                });
+
+                userProvider.setUser(userData);
               }
-              var userData = UserData.fromSnap(snap);
-              userProvider.setUser(userData);
-            } else {
-              String? fileUrl;
-              List url = [googleSignIn.currentUser!.photoUrl];
-
-              final fileRef = _storage
-                  .ref()
-                  .child("profilePics")
-                  .child(_auth.currentUser!.uid);
-
-              var response = await http.get(Uri.parse(url[0].toString()));
-              Directory documentDirectory =
-                  await getApplicationDocumentsDirectory();
-              File file = File(join(documentDirectory.path, 'imagetest.png'));
-              file.writeAsBytesSync(response.bodyBytes);
-
-              await fileRef.putFile(file);
-
-              fileUrl = await fileRef.getDownloadURL();
-              final lan = getSystemLocaleString();
-              final token = await _firebaseMessaging.getToken().then((token) {
-                return token;
-              });
-
-              //add user on database
-              await _firestore
-                  .collection('users')
-                  .doc(_auth.currentUser!.uid)
-                  .set({
-                'username': googleSignIn.currentUser!.displayName,
-                'searchname':
-                    googleSignIn.currentUser!.displayName!.toLowerCase(),
-                'uid': _auth.currentUser!.uid,
-                'email': googleSignIn.currentUser!.email,
-                'followers': [],
-                'following': [],
-                'blocked': [],
-                'blocking': [],
-                'uidFmc': token,
-                'language': lan,
-                'myfav': [],
-                'photoUrl': fileUrl,
-              });
-
-              var userData = UserData.fromMap({
-                'username': googleSignIn.currentUser!.displayName,
-                'uid': _auth.currentUser!.uid,
-                'email': googleSignIn.currentUser!.email,
-                'followers': [],
-                'following': [],
-                'blocked': [],
-                'blocking': [],
-                'myfav': [],
-                'photoUrl': fileUrl,
-              });
-
-              userProvider.setUser(userData);
             }
           }
+        } catch (error) {
+          print("Erro durante a autenticação com o Google: $error");
+          // Trate o erro conforme necessário
         }
-      } catch (error) {
-        print("Erro durante a autenticação com o Google: $error");
-        // Trate o erro conforme necessário
       }
     }
   }
 
   Future logout() async {
-    if (googleSignIn.currentUser != null) await googleSignIn.disconnect();
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      // Verifica o provedor de autenticação
+      for (final provider in currentUser.providerData) {
+        if (provider.providerId == 'google.com' &&
+            googleSignIn.currentUser != null) {
+          await googleSignIn.disconnect();
+        } else if (provider.providerId == 'apple.com') {
+          // Apple Sign-In não requer desconexão explícita, então apenas deslogamos do Firebase
+          print(
+              "Usuário conectado com Apple Sign-In, procedendo com logout no Firebase.");
+        }
+      }
+    }
+
+    // Desloga de todas as contas do Firebase
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future signInWithApple(UserProvider userProvider) async {
+    if (Platform.isIOS) {
+      try {
+        // Solicita a credencial do Apple Sign-In
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        // Cria uma credencial OAuth para o Firebase
+        final oauthCredential = OAuthProvider("apple.com").credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        // Autentica o usuário com Firebase
+        final UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          DocumentReference userDocRef = FirebaseFirestore.instance
+              .collection('users')
+              .doc(_auth.currentUser!.uid);
+          DocumentSnapshot snap = await userDocRef.get();
+
+          if (snap.exists) {
+            var userData = UserData.fromSnap(snap);
+            userProvider.setUser(userData);
+          } else {
+            final token = await _firebaseMessaging.getToken();
+
+            // Cria um novo documento de usuário
+            await _firestore
+                .collection('users')
+                .doc(_auth.currentUser!.uid)
+                .set({
+              'username': appleCredential.givenName ?? 'User',
+              'email': appleCredential.email,
+              'uid': _auth.currentUser!.uid,
+              'followers': [],
+              'following': [],
+              'uidFmc': token,
+              'language': getSystemLocaleString(),
+              'myfav': [],
+              'photoUrl': '',
+            });
+
+            var userData = UserData.fromMap({
+              'username': appleCredential.givenName ?? 'User',
+              'uid': _auth.currentUser!.uid,
+              'email': appleCredential.email,
+              'followers': [],
+              'following': [],
+              'myfav': [],
+              'photoUrl': '',
+            });
+
+            userProvider.setUser(userData);
+          }
+        }
+      } catch (error) {
+        print("Erro durante a autenticação com a Apple: $error");
+        // Trate o erro conforme necessário
+      }
+    }
   }
 }

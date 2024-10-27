@@ -65,8 +65,10 @@ class DefaultFirebaseOptions {
     projectId: 'bobok-cc168',
     databaseURL: 'https://bobok-cc168-default-rtdb.firebaseio.com',
     storageBucket: 'bobok-cc168.appspot.com',
-    androidClientId: '432378802396-bi3c4cke4dl6qk4s9h3u7499faite4i3.apps.googleusercontent.com',
-    iosClientId: '432378802396-lk4bufa48add2ops7q6tkmdpoau99bsv.apps.googleusercontent.com',
-    iosBundleId: 'com.testing.bobok',
+    androidClientId:
+        '432378802396-5oi80dncvrcu9fo9h9144f1nv76udb23.apps.googleusercontent.com',
+    iosClientId:
+        '432378802396-72tj7mhpaft6hbslsk1ga7hlqi3jlc56.apps.googleusercontent.com',
+    iosBundleId: 'com.mts.bobok',
   );
 }

@@ -149,6 +149,7 @@ class _ReviewDetailState extends State<ReviewDetail> {
         foregroundColor: Theme.of(context).colorScheme.primary,
         titleSpacing: 5,
       ),
+      backgroundColor: Theme.of(context).colorScheme.onError,
       body: Column(
         children: [
           Expanded(
